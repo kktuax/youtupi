@@ -1,0 +1,60 @@
+<html>
+	<head>
+		<title>YouTuPi</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+		<script src="jquery-1.8.2.min.js"></script>
+		<script src="jquery.json-2.4.min.js"></script>
+		<script src="jquery.mobile-1.2.0.min.js"></script>
+		<script src="http://www.google.com/jsapi"></script>
+		<script src="youtupi.js"></script>
+	</head>
+	<body>
+		<div data-role="page">
+			<div data-role="header">
+				<h1>YouTuPi</h1>
+			</div>
+			<div data-role="content">
+				<div data-role="controlgroup" data-type="horizontal" >
+					<a href="#" onclick="playerAction('play');return false" data-role="button" data-icon="forward">Next</a>
+					<a href="#" onclick="playerAction('pause');return false" data-role="button" data-icon="refresh">Pause/Resume</a>
+					<a href="#" onclick="playerAction('stop');return false" data-role="button" data-icon="delete">Stop</a>
+				</div>
+				<div>
+					<div data-role="collapsible" data-collapsed="false" data-theme="e" data-content-theme="d">
+						<h3>Now Playing</h3>
+						<div>
+							<ul id="playlist" data-inset="true" data-role="listview" data-theme="c" data-dividertheme="d"></ul>
+						</div>
+					</div>
+				</div>
+				<div>	
+					<div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="d">
+						<h3>Search</h3>
+						<input type="search" name="search" id="search-basic" value="" />
+						<ul id="results" data-inset="true" data-role="listview"></ul>
+					</div>
+				</div>
+				<div>
+					<div data-role="collapsible" data-collapsed="true" data-theme="a" data-content-theme="d">
+						<h3>Settings</h3>
+						<div data-role="fieldcontain">
+							<label for="server">Server URL:</label>
+							<input type="text" name="server" id="server" value="http://192.168.1.2:8080"  />
+							<label for="quality">Video quality:</label>
+							<select name="select-choice-1" id="quality">
+								<option value="default">Default quality</option>
+								<option value="18" selected="selected">MP4 360p</option>
+								<option value="22">MP4 720p</option>
+								<option value="37">MP4 1080p</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div data-role="footer" data-theme="d">
+				<h4>&copy; 2013 Max Tuni</h4>
+			</div>
+		</div>
+	</body>
+</html>

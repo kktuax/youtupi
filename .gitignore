@@ -1,5 +1,8 @@
 *.py[cod]
 
+*.log
+nohup.out
+
 # C extensions
 *.so
 

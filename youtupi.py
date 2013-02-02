@@ -102,6 +102,7 @@ class control:
 		else:
 			if isProcessRunning(player):
 				if action == "stop":
+					global player
 					player.stdin.write("q")
 					player = None
 				if action == "pause":

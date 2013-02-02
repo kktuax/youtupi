@@ -14,12 +14,17 @@ function playerAction(paction){
 	);
 }
 function loadVideo(video){
+	$('#search').trigger('collapse');
+	$("#spinner").show();
 	video.type = "youtube";
 	video.format = $("#quality").val();
 	var server = $("#server").val();
 	var url = server + "/playlist";
 	var data = $.toJSON(video);
-	$.post(url, data, loadPlayList, "json");
+	$.post(url, data, function(entries){
+		$("#spinner").hide();
+		loadPlayList(entries);
+	}, "json");
 }
 $(document).ready(function() {
 	$("#search-basic").bind("change", function(event, ui) {

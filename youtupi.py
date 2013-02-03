@@ -35,10 +35,8 @@ class index:
 	def GET(self):
 		web.seeother('/static/youtupi.html')
 
-# curl -i -X POST -d '{"id": "M8GrahQw4zw", "type": "youtube", "format": "18"}' http://192.168.1.2:8080/playlist 
 class playlist:
 	def GET(self):
-		removeOldVideosFromPlaylist()
 		autoPlay()
 		playlistVideos = list()
 		for video in videos:
@@ -50,15 +48,18 @@ class playlist:
 		data = json.load(StringIO(web.data()))
 		if not isVideoOnPlaylist(data['id']):
 			if(data['type'] == "youtube"):
-				url = getYoutubeUrl(data['id'], data['format'])
+				if(data['format'] == "default"):
+					url = getYoutubeUrl(data['id'])
+				else:
+					url = getYoutubeUrl(data['id'], data['format'])
 				video = Video(data['id'], data, url)
 				videos.append(video)
 		
 		web.seeother('/playlist')
 		
 	def DELETE(self):
-		global videos
-		videos = list()
+		data = json.load(StringIO(web.data()))
+		removeVideoFromPlaylist(data['id'])
 		web.seeother('/playlist')
 
 def isVideoOnPlaylist(vid):
@@ -68,14 +69,13 @@ def isVideoOnPlaylist(vid):
 	return False
 
 def removeOldVideosFromPlaylist():
-	global videos
 	viewedVideos = filter(lambda video:video.played==True, videos)
 	if isProcessRunning(player):
-		for vv in viewedVideos[:-1]:
-			videos.remove(vv)
+		oldVideos = viewedVideos[1:]
 	else:
-		for vv in viewedVideos:
-			videos.remove(vv)
+		oldVideos = viewedVideos
+	for vv in oldVideos:
+		videos.remove(vv)
 
 def removeVideoFromPlaylist(vid):
 	global videos
@@ -85,6 +85,7 @@ def playNextVideo():
 	global player
 	if isProcessRunning(player):
 		os.killpg(player.pid, signal.SIGTERM)
+	removeOldVideosFromPlaylist()
 	for video in videos:
 		if not video.played:
 			player = subprocess.Popen(['omxplayer', '-ohdmi', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
@@ -96,15 +97,18 @@ def autoPlay():
 		playNextVideo()
 
 class control:
+	
 	def GET(self, action):
 		if action == "play":
 			playNextVideo()
 		else:
+			global player
 			if isProcessRunning(player):
 				if action == "stop":
-					global player
 					player.stdin.write("q")
 					player = None
+					global videos
+					videos = list()
 				if action == "pause":
 					player.stdin.write("p")
 				if action == "volup":
@@ -115,6 +119,21 @@ class control:
 					player.stdin.write("\x1B[C")
 				if action == "backward":
 					player.stdin.write("\x1B[D")
+		web.seeother('/playlist')
+		
+	def POST(self, action):
+		if action == "play":
+			data = json.load(StringIO(web.data()))
+			svideo = None
+			for video in videos:
+				if video.vid == data['id']:
+					svideo = video
+					break
+			if svideo:
+				videos.remove(svideo)
+				svideo.played = False
+				videos.insert(0, svideo)
+				playNextVideo()
 		web.seeother('/playlist')
 
 def isProcessRunning(process):

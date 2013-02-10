@@ -4,9 +4,9 @@ YouTuPi
 YouTube (mobile) web frontend for your Raspberry Pi
 ---------------------------------------------------
 
-YouTuPi lets you play [YouTube](http://www.youtube.com/) videos in your [http://www.raspberrypi.org/](Raspberry Pi) using a (mobile) web interface. 
+YouTuPi lets you play [YouTube](http://www.youtube.com/) videos in your [Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. 
 
-YouTube video search uses the YouTube Data API. Videos are added to a playlist with the usual options (next/pause/resume/stop). The video URL is retrieved using [youtube-dl](http://rg3.github.com/youtube-dl/) and the actual playback happens in the [Omxplayer](https://github.com/huceke/omxplayer).
+Video search is performed in the client using the YouTube Data API. Videos are added to a playlist with the usual options: next/pause/resume/stop. The video URL is retrieved using [youtube-dl](http://rg3.github.com/youtube-dl/) and the actual playback happens in the [Omxplayer](https://github.com/huceke/omxplayer).
 
 Technologies used
 -----------------
@@ -16,26 +16,26 @@ Technologies used
  * [Omxplayer](https://github.com/huceke/omxplayer) as video player
  * [JQuery mobile](http://jquerymobile.com) UI frontend
 
-Installing
+How-To
 ----------
 
-# Dependencies
+# Install the dependencies
 
     sudo apt-get install omxplayer python-pip
     sudo pip install web.py
     sudo wget http://youtube-dl.org/downloads/2013.02.02/youtube-dl -O /usr/local/bin/youtube-dl
     sudo chmod a+x /usr/local/bin/youtube-dl
 
-# Installing last version of master branch
+# Get the last version of master branch
 
     cd ~
     wget https://github.com/kktuax/youtupi/archive/master.zip
     unzip master.zip
 
-Using YouTuPi
--------------
+Use YouTuPi
+-----------
 
- * Launch YouTuPi server
+# Launch YouTuPi server
 
     cd ~/youtupi-master
     nohup python youtupi.py >/dev/null 2>&1 &

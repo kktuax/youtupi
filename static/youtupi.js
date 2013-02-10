@@ -33,6 +33,7 @@ function loadVideo(video){
 	}, "json");
 }
 $(document).ready(function() {
+	$("#server").val(window.location.protocol + "//" + window.location.host);
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();
 		$("#results").listview("refresh");

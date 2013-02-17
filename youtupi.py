@@ -1,24 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os, signal, sys, subprocess, threading
 import web
-import os
-import signal
-import sys
-import subprocess
 import json
 from StringIO import StringIO
 
-urls = (
-	'/(.*)/', 'redirect',
-	'/playlist', 'playlist',
-	'/control/(.*)', 'control',
-	'/', 'index'
-)
-app = web.application(urls, globals())
-
 player = None
 videos = list()
+lock = threading.RLock()
 
 class Video:
 	def __init__(self, vid, data, url):
@@ -26,6 +16,67 @@ class Video:
 		self.data = data
 		self.url = url
 		self.played = False
+
+def addVideo(data):
+	if(data['type'] == "youtube"):
+		if(data['format'] == "default"):
+			url = getYoutubeUrl(data['id'])
+		else:
+			url = getYoutubeUrl(data['id'], data['format'])
+		video = Video(data['id'], data, url)
+		videos.append(video)
+
+def removeOldVideosFromPlaylist():
+	viewedVideos = filter(lambda video:video.played==True, videos)
+	if isProcessRunning(player):
+		oldVideos = viewedVideos[1:]
+	else:
+		oldVideos = viewedVideos
+	for vv in oldVideos:
+		videos.remove(vv)
+
+def removeVideoFromPlaylist(vid):
+	global videos
+	videos = filter(lambda video:video.vid!=vid, videos)
+
+def playNextVideo():
+	with lock:
+		global player
+		if isProcessRunning(player):
+			os.killpg(player.pid, signal.SIGTERM)
+		removeOldVideosFromPlaylist()
+		for video in videos:
+			if not video.played:
+				player = subprocess.Popen(['omxplayer', '-ohdmi', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+				video.played = True
+				break
+
+def autoPlay():
+	if (not isProcessRunning(player)) and (len(videos) > 0):
+		playNextVideo()
+
+def isProcessRunning(process):
+	if process:
+		if process.poll() == None:
+			return True
+	return False
+
+def getYoutubeUrl(video, vformat = None):
+	url = "http://www.youtube.com/watch?v=" + video
+	if not vformat: 
+		args = ['youtube-dl', '-g', url]
+	else:
+		args = ['youtube-dl', '-f', vformat, '-g', url]
+	yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+	(url, err) = yt_dl.communicate()
+	if yt_dl.returncode != 0:
+		if vformat != None:
+			return getYoutubeUrl(video, None)
+		else:
+			sys.stderr.write(err)
+			raise RuntimeError('Error getting URL.')
+	else:
+		return url.decode('UTF-8').strip()
 
 class redirect:
 	def GET(self, path):
@@ -46,55 +97,13 @@ class playlist:
 	
 	def POST(self):
 		data = json.load(StringIO(web.data()))
-		if not isVideoOnPlaylist(data['id']):
-			if(data['type'] == "youtube"):
-				if(data['format'] == "default"):
-					url = getYoutubeUrl(data['id'])
-				else:
-					url = getYoutubeUrl(data['id'], data['format'])
-				video = Video(data['id'], data, url)
-				videos.append(video)
-		
+		addVideo(data)
 		web.seeother('/playlist')
 		
 	def DELETE(self):
 		data = json.load(StringIO(web.data()))
 		removeVideoFromPlaylist(data['id'])
 		web.seeother('/playlist')
-
-def isVideoOnPlaylist(vid):
-	for video in videos:
-		if video.vid == vid:
-			return True
-	return False
-
-def removeOldVideosFromPlaylist():
-	viewedVideos = filter(lambda video:video.played==True, videos)
-	if isProcessRunning(player):
-		oldVideos = viewedVideos[1:]
-	else:
-		oldVideos = viewedVideos
-	for vv in oldVideos:
-		videos.remove(vv)
-
-def removeVideoFromPlaylist(vid):
-	global videos
-	videos = filter(lambda video:video.vid!=vid, videos)
-
-def playNextVideo():
-	global player
-	if isProcessRunning(player):
-		os.killpg(player.pid, signal.SIGTERM)
-	removeOldVideosFromPlaylist()
-	for video in videos:
-		if not video.played:
-			player = subprocess.Popen(['omxplayer', '-ohdmi', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-			video.played = True
-			break
-
-def autoPlay():
-	if (not isProcessRunning(player)) and (len(videos) > 0):
-		playNextVideo()
 
 class control:
 	
@@ -136,26 +145,12 @@ class control:
 				playNextVideo()
 		web.seeother('/playlist')
 
-def isProcessRunning(process):
-	if process:
-		if process.poll() == None:
-			return True
-	return False
-
-def getYoutubeUrl(video, vformat = None):
-	url = "http://www.youtube.com/watch?v=" + video
-	if not vformat: 
-		args = ['youtube-dl', '-g', url]
-	else:
-		args = ['youtube-dl', '-f', vformat, '-g', url]
-	
-	yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-	(url, err) = yt_dl.communicate()
-	if yt_dl.returncode != 0:
-		sys.stderr.write(err)
-		raise RuntimeError('Error getting URL.')
-		
-	return url.decode('UTF-8').strip()
-
 if __name__ == "__main__":
+	urls = (
+		'/(.*)/', 'redirect',
+		'/playlist', 'playlist',
+		'/control/(.*)', 'control',
+		'/', 'index'
+	)
+	app = web.application(urls, globals())
 	app.run()

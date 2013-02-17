@@ -44,7 +44,6 @@ def playNextVideo():
 		global player
 		if isProcessRunning(player):
 			os.killpg(player.pid, signal.SIGTERM)
-		removeOldVideosFromPlaylist()
 		for video in videos:
 			if not video.played:
 				player = subprocess.Popen(['omxplayer', '-ohdmi', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
@@ -52,6 +51,7 @@ def playNextVideo():
 				break
 
 def autoPlay():
+	removeOldVideosFromPlaylist()
 	if (not isProcessRunning(player)) and (len(videos) > 0):
 		playNextVideo()
 

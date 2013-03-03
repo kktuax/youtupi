@@ -46,7 +46,8 @@ def playNextVideo():
 			os.killpg(player.pid, signal.SIGTERM)
 		for video in videos:
 			if not video.played:
-				player = subprocess.Popen(['omxplayer', '-ohdmi', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+				#player = subprocess.Popen(['mplayer', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+				player = subprocess.Popen(['omxplayer', '-o hdmi', '--refresh', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
 				video.played = True
 				break
 
@@ -64,9 +65,9 @@ def isProcessRunning(process):
 def getYoutubeUrl(video, vformat = None):
 	url = "http://www.youtube.com/watch?v=" + video
 	if not vformat: 
-		args = ['youtube-dl', '-g', url]
+		args = ['./youtube-dl/youtube-dl', '-g', url]
 	else:
-		args = ['youtube-dl', '-f', vformat, '-g', url]
+		args = ['./youtube-dl/youtube-dl', '-f', vformat, '-g', url]
 	yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 	(url, err) = yt_dl.communicate()
 	if yt_dl.returncode != 0:
@@ -84,7 +85,7 @@ class redirect:
 
 class index:
 	def GET(self):
-		web.seeother('/static/youtupi.html')
+		web.seeother('/static/index.html')
 
 class playlist:
 	def GET(self):

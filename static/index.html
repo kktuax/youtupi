@@ -1,0 +1,75 @@
+<html>
+    <head>
+        <title>YouTuPi</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"> 
+        <link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+        <script src="jquery-1.8.2.min.js"></script>
+        <script src="jquery.json-2.4.min.js"></script>
+        <script src="jquery.mobile-1.2.0.min.js"></script>
+        <script src="http://www.google.com/jsapi"></script>
+        <script src="youtupi.js"></script>
+    </head>
+    <body>
+        <div data-role="page" id="one">
+            <div data-role="content">
+                <div data-role="controlgroup" data-type="horizontal" >
+                    <a href="#" onclick="playerAction('play');return false" data-role="button" data-icon="forward">Next</a>
+                    <a href="#" onclick="playerAction('pause');return false" title="Pause/Resume" data-role="button">||</a>
+                    <a href="#" onclick="playerAction('stop');return false" data-role="button" data-icon="delete">Stop</a>
+                </div>
+                <div>
+                    <div>
+                        <h3>Now Playing</h3>
+                        <div>
+                            <ul id="playlist" data-inset="true" data-role="listview"></ul>
+                        </div>
+                        <div id="spinner" class="spinner" style="display:none;">
+                            <img id="img-spinner" src="images/spinner.gif" alt="Loading"/>
+                        </div>
+                    </div>
+                </div>
+                <div data-role="header" data-id="myfooter">
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a href="#one" class="ui-btn-active"><h2>Playlist</h2></a></li>
+                            <li><a href="#two"><h2>Youtube</h2></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-role="page" id="two">
+            <div data-role="content">
+                <div data-role="collapsible" data-collapsed="true">
+                    <h3>Settings</h3>
+                    <div data-role="fieldcontain">
+                        <label for="server">Server URL:</label>
+                        <input type="text" name="server" id="server" value=""  />
+                        <label for="quality">Video quality:</label>
+                        <select name="select-choice-1" id="quality">
+                            <option value="default">Default quality</option>
+                            <option value="18" selected="selected">MP4 360p</option>
+                            <option value="22">MP4 720p</option>
+                            <option value="37">MP4 1080p</option>
+                        </select>
+                        <label for="slider">Show # results:</label>
+                        <input type="range" name="slider" id="slider" value="50" min="10" max="100"  />
+                    </div>
+                </div>
+                <div id="search">
+                    <h3>Search</h3>
+                    <input type="search" name="search" id="search-basic" value="" />
+                    <ul id="results" data-inset="true" data-role="listview" data-filter="true" data-split-icon="gear"></ul>
+                </div>
+                <div data-role="footer" data-id="myfooter">
+                    <div data-role="navbar" data-position="fixed">
+                        <ul>
+                            <li><a href="#one"><h2>Playlist</h2></a></li>
+                            <li><a href="#two" class="ui-btn-active"><h2>Youtube</h2></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

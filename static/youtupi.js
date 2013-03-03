@@ -20,7 +20,7 @@ function playerAction(paction){
 	);
 }
 function loadVideo(video){
-	$('#search').trigger('collapse');
+	//$('#search').trigger('collapse');
 	$("#spinner").show();
 	video.type = "youtube";
 	video.format = $("#quality").val();
@@ -31,6 +31,12 @@ function loadVideo(video){
 		$("#spinner").hide();
 		loadPlayList(entries);
 	}, "json");
+}
+function tabPlaylist(){
+    $('#search').hide()
+}
+function tabYoutube(){
+    $('#search').show()
 }
 $(document).ready(function() {
 	$("#server").val(window.location.protocol + "//" + window.location.host);
@@ -47,7 +53,7 @@ $(document).ready(function() {
 				query = query.substring(2, query.length);
 				url = 'http://gdata.youtube.com/feeds/api/users/'+query+'/favorites?v=2&alt=jsonc';
 			}else{
-				url = 'http://gdata.youtube.com/feeds/api/videos?vq='+query+'&max-results=15&v=2&alt=jsonc&orderby=relevance&sortorder=descending';
+				url = 'http://gdata.youtube.com/feeds/api/videos?vq='+query+'&max-results='+$('#slider').val()+'&v=2&alt=jsonc&orderby=relevance&sortorder=descending';
 			}
 			$.getJSON(url, function(response){
 				var entries = response.data.items || [];
@@ -60,8 +66,9 @@ $(document).ready(function() {
 					video.id = entry.id;
 					video.description = entry.description;
 					video.title = entry.title;
-					video.thumbnail = entry.thumbnail.sqDefault;
-					var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + '</h3><p>'+video.description + '</p></a></li>');
+					video.duration = entry.duration;
+					video.thumbnail = entry.thumbnail.hqDefault;
+					var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + ' (' + Math.round(video.duration/60) + ':' + video.duration % 60 + ')' + '</h3><p>'+video.description + '</p></a></li>');
 					itemval.bind('click', {video: video}, function(event) {
 						loadVideo(event.data.video);
 					});
@@ -77,4 +84,12 @@ $(document).ready(function() {
 			server + "/playlist", loadPlayList
 		);
 	}, 3000);
+
+    var docHeight = $(window).height();
+    var footerHeight = $('#myfooter').height();
+    var footerTop = $('#myfooter').position().top + footerHeight;
+
+    if (footerTop < docHeight) {
+        $('#myfooter').css('margin-top', 10 + (docHeight - footerTop) + 'px');
+    }
 });

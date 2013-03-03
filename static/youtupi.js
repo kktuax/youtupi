@@ -86,10 +86,10 @@ $(document).ready(function() {
 	}, 3000);
 
     var docHeight = $(window).height();
-    var footerHeight = $('#myfooter').height();
-    var footerTop = $('#myfooter').position().top + footerHeight;
+    var footerHeight = $('#footer').height();
+    var footerTop = $('#footer').position().top + footerHeight;
 
     if (footerTop < docHeight) {
-        $('#myfooter').css('margin-top', 10 + (docHeight - footerTop) + 'px');
+        $('#footer').css('margin-top', 10 + (docHeight - footerTop) + 'px');
     }
 });

@@ -28,11 +28,12 @@
                         </div>
                     </div>
                 </div>
-                <div data-role="header" data-id="myfooter">
+                <div data-role="footer" data-position="fixed" data-id="myfooter" class="ui-bar">
                     <div data-role="navbar">
                         <ul>
-                            <li><a href="#one" class="ui-btn-active"><h2>Playlist</h2></a></li>
+                            <li><a href="#one" class="ui-btn-active ui-state-persist"><h2>Playlist</h2></a></li>
                             <li><a href="#two"><h2>Youtube</h2></a></li>
+                            <li><a href="#three"><h2>Files</h2></a></li>
                         </ul>
                     </div>
                 </div>
@@ -61,11 +62,29 @@
                     <input type="search" name="search" id="search-basic" value="" />
                     <ul id="results" data-inset="true" data-role="listview" data-filter="true" data-split-icon="gear"></ul>
                 </div>
-                <div data-role="footer" data-id="myfooter">
-                    <div data-role="navbar" data-position="fixed">
+                <div data-role="footer" data-position="fixed" data-id="myfooter" class="ui-bar">
+                    <div data-role="navbar">
                         <ul>
                             <li><a href="#one"><h2>Playlist</h2></a></li>
-                            <li><a href="#two" class="ui-btn-active"><h2>Youtube</h2></a></li>
+                            <li><a href="#two" class="ui-btn-active ui-state-persist"><h2>Youtube</h2></a></li>
+                            <li><a href="#three"><h2>Files</h2></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div data-role="page" id="three">
+            <div data-role="content">
+                <div id="files">
+                    <h3>Files</h3>
+                    <ul id="filelist" data-inset="true" data-role="listview" data-filter="true" data-split-icon="gear"></ul>
+                </div>
+                <div data-role="footer" data-position="fixed" data-id="myfooter" class="ui-bar">
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a href="#one"><h2>Playlist</h2></a></li>
+                            <li><a href="#two"><h2>Youtube</h2></a></li>
+                            <li><a href="#three" class="ui-btn-active ui-state-persist"><h2>Files</h2></a></li>
                         </ul>
                     </div>
                 </div>

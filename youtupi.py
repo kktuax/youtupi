@@ -47,7 +47,7 @@ def playNextVideo():
 		for video in videos:
 			if not video.played:
 				#player = subprocess.Popen(['mplayer', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-				player = subprocess.Popen(['omxplayer', '-o hdmi', '--refresh', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+				player = subprocess.Popen(['omxplayer', '-ohdmi', '--refresh', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
 				video.played = True
 				break
 

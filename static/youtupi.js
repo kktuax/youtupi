@@ -1,10 +1,10 @@
+var server = window.location.protocol + "//" + window.location.host;
 function loadPlayList(entries){
 	$("#playlist").empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
 		var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + '</h3><p>'+video.description + '</p></a></li>');
 		itemval.bind('click', {video: video}, function(event) {
-			var server = $("#server").val();
 			var url = server + "/control/play";
 			var data = $.toJSON(event.data.video);
 			$.post(url, data, loadPlayList, "json");
@@ -14,7 +14,6 @@ function loadPlayList(entries){
 	$("#playlist").listview("refresh");
 }
 function playerAction(paction){
-	var server = $("#server").val();
 	$.getJSON(
 		server + "/control/"+paction, loadPlayList
 	);
@@ -24,7 +23,6 @@ function loadVideo(video){
 	$("#spinner").show();
 	video.type = "youtube";
 	video.format = $("#quality").val();
-	var server = $("#server").val();
 	var url = server + "/playlist";
 	var data = $.toJSON(video);
 	$.post(url, data, function(entries){
@@ -38,8 +36,8 @@ function tabPlaylist(){
 function tabYoutube(){
     $('#search').show()
 }
-$(document).ready(function() {
-	$("#server").val(window.location.protocol + "//" + window.location.host);
+
+$(document).delegate("#youtube", "pageinit", function() {
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();
 		$("#results").listview("refresh");
@@ -78,18 +76,12 @@ $(document).ready(function() {
 			});
 		}
 	});
+});
+
+$(document).delegate("#one", "pageinit", function() {
 	window.setInterval(function(){
-		var server = $("#server").val();
 		$.getJSON(
 			server + "/playlist", loadPlayList
 		);
 	}, 3000);
-
-    var docHeight = $(window).height();
-    var footerHeight = $('#footer').height();
-    var footerTop = $('#footer').position().top + footerHeight;
-
-    if (footerTop < docHeight) {
-        $('#footer').css('margin-top', 10 + (docHeight - footerTop) + 'px');
-    }
 });

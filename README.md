@@ -23,8 +23,6 @@ How-To
 
     sudo apt-get install omxplayer python-pip
     sudo pip install web.py
-    sudo wget http://youtube-dl.org/downloads/2013.02.02/youtube-dl -O /usr/local/bin/youtube-dl
-    sudo chmod a+x /usr/local/bin/youtube-dl
 
 # Get the last version of master branch
 

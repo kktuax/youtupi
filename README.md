@@ -26,7 +26,7 @@ How-To
 
 # Clone YouTuPi and retrieve its submodules
 
-    sudo apt-get git
+    sudo apt-get install git
     cd ~
     git clone git://github.com/kktuax/youtupi.git
     cd youtupi

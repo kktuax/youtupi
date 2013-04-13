@@ -1,5 +1,9 @@
 var server = window.location.protocol + "//" + window.location.host;
 
+$(document).bind('pageinit', function () {
+    $.mobile.defaultPageTransition = 'none';
+});
+
 function fillVideoList(entries, listSelect, clickEvent){
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {

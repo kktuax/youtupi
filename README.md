@@ -24,18 +24,21 @@ How-To
     sudo apt-get install omxplayer python-pip
     sudo pip install web.py
 
-# Get the last version of master branch
+# Clone YouTuPi and retrieve its submodules
 
+    sudo apt-get git
     cd ~
-    wget https://github.com/kktuax/youtupi/archive/master.zip
-    unzip master.zip
+    git clone git://github.com/kktuax/youtupi.git
+    cd youtupi
+    git submodule init
+    git submodule update
 
 Use YouTuPi
 -----------
 
 # Launch YouTuPi server
 
-    cd ~/youtupi-master
+    cd ~/youtupi
     nohup python youtupi.py >/dev/null 2>&1 &
 
  * Grab your Tablet/Phone/PC and go to: http://192.168.1.2:8080 (replace 192.168.1.2 with your Raspberry Pi address).

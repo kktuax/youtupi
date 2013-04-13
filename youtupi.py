@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, signal, sys, subprocess, threading
+import os, signal, sys, subprocess, threading, time
 import os.path
 from os.path import expanduser
 import heapq
@@ -58,8 +58,9 @@ def playNextVideo():
 			os.killpg(player.pid, signal.SIGTERM)
 		for video in videos:
 			if not video.played:
-				#player = subprocess.Popen(['mplayer', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
 				player = subprocess.Popen(['omxplayer', '-ohdmi', '--refresh', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+				while not isProcessRunning(player):
+					time.sleep(1)
 				video.played = True
 				break
 

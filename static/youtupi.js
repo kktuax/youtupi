@@ -1,6 +1,6 @@
 var server = window.location.protocol + "//" + window.location.host;
 function loadPlayList(entries){
-	$("#playlist").empty();
+	$("#playlist-list").empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
 		var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + '</h3><p>'+video.description + '</p></a></li>');
@@ -9,9 +9,9 @@ function loadPlayList(entries){
 			var data = $.toJSON(event.data.video);
 			$.post(url, data, loadPlayList, "json");
 		});
-		$("#playlist").append(itemval);
+		$("#playlist-list").append(itemval);
 	}
-	$("#playlist").listview("refresh");
+	$("#playlist-list").listview("refresh");
 }
 function playerAction(paction){
 	$.getJSON(
@@ -19,7 +19,7 @@ function playerAction(paction){
 	);
 }
 function loadVideo(video){
-	//$('#search').trigger('collapse');
+	tabPlaylist();
 	$("#spinner").show();
 	video.type = "youtube";
 	video.format = $("#quality").val();
@@ -31,10 +31,7 @@ function loadVideo(video){
 	}, "json");
 }
 function tabPlaylist(){
-    $('#search').hide()
-}
-function tabYoutube(){
-    $('#search').show()
+    $(".link-playlist").first().trigger('click');
 }
 
 $(document).delegate("#youtube", "pageinit", function() {

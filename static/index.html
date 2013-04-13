@@ -10,7 +10,7 @@
         <script src="youtupi.js"></script>
     </head>
     <body>
-        <div data-role="page" id="one">
+        <div data-role="page" id="playlist">
             <div data-role="content">
                 <div data-role="controlgroup" data-type="horizontal" >
                     <a href="#" onclick="playerAction('play');return false" data-role="button" data-icon="forward">Next</a>
@@ -21,7 +21,7 @@
                     <div>
                         <h3>Now Playing</h3>
                         <div>
-                            <ul id="playlist" data-inset="true" data-role="listview"></ul>
+                            <ul id="playlist-list" data-inset="true" data-role="listview"></ul>
                         </div>
                         <div id="spinner" class="spinner" style="display:none;">
                             <img id="img-spinner" src="images/spinner.gif" alt="Loading"/>
@@ -31,9 +31,9 @@
                 <div data-role="footer" data-position="fixed" data-id="myfooter" class="ui-bar">
                     <div data-role="navbar">
                         <ul>
-                            <li><a href="#one" class="ui-btn-active ui-state-persist"><h2>Playlist</h2></a></li>
+                            <li><a href="#playlist" class="ui-btn-active ui-state-persist link-playlist"><h2>Playlist</h2></a></li>
                             <li><a href="#youtube"><h2>Youtube</h2></a></li>
-                            <li><a href="#three"><h2>Files</h2></a></li>
+                            <li><a href="#files"><h2>Files</h2></a></li>
                         </ul>
                     </div>
                 </div>
@@ -63,15 +63,15 @@
                 <div data-role="footer" data-position="fixed" data-id="myfooter" class="ui-bar">
                     <div data-role="navbar">
                         <ul>
-                            <li><a href="#one"><h2>Playlist</h2></a></li>
+                            <li><a href="#playlist" class="link-playlist"><h2>Playlist</h2></a></li>
                             <li><a href="#youtube" class="ui-btn-active ui-state-persist"><h2>Youtube</h2></a></li>
-                            <li><a href="#three"><h2>Files</h2></a></li>
+                            <li><a href="#files"><h2>Files</h2></a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div data-role="page" id="three">
+        <div data-role="page" id="files">
             <div data-role="content">
                 <div id="files">
                     <h3>Files</h3>
@@ -80,9 +80,9 @@
                 <div data-role="footer" data-position="fixed" data-id="myfooter" class="ui-bar">
                     <div data-role="navbar">
                         <ul>
-                            <li><a href="#one"><h2>Playlist</h2></a></li>
+                            <li><a href="#playlist" class="link-playlist"><h2>Playlist</h2></a></li>
                             <li><a href="#youtube"><h2>Youtube</h2></a></li>
-                            <li><a href="#three" class="ui-btn-active ui-state-persist"><h2>Files</h2></a></li>
+                            <li><a href="#files" class="ui-btn-active ui-state-persist"><h2>Files</h2></a></li>
                         </ul>
                     </div>
                 </div>

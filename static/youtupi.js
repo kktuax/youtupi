@@ -1,28 +1,36 @@
 var server = window.location.protocol + "//" + window.location.host;
-function loadPlayList(entries){
-	$("#playlist-list").empty();
+
+function fillVideoList(entries, listSelect, clickEvent){
+	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
-		var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + '</h3><p>'+video.description + '</p></a></li>');
-		itemval.bind('click', {video: video}, function(event) {
-			var url = server + "/control/play";
-			var data = $.toJSON(event.data.video);
-			$.post(url, data, loadPlayList, "json");
-		});
-		$("#playlist-list").append(itemval);
+		thumbnail = "images/video.png";
+		if(video.thumbnail != undefined){
+			thumbnail = video.thumbnail;
+		}
+		var itemval = $('<li><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + '</h3><p>'+video.description + '</p></a></li>');
+		itemval.bind('click', {video: video}, clickEvent);
+		$(listSelect).append(itemval);
 	}
-	$("#playlist-list").listview("refresh");
+	$(listSelect).listview("refresh");
 }
+
+function loadPlayList(entries){
+	fillVideoList(entries, "#playlist-list", function(event) {
+		var url = server + "/control/play";
+		var data = $.toJSON(event.data.video);
+		$.post(url, data, loadPlayList, "json");
+	});
+}
+
 function playerAction(paction){
 	$.getJSON(
-		server + "/control/"+paction, loadPlayList
+		server + "/control/" + paction, loadPlayList
 	);
 }
 function loadVideo(video){
 	tabPlaylist();
 	$("#spinner").show();
-	video.type = "youtube";
-	video.format = $("#quality").val();
 	var url = server + "/playlist";
 	var data = $.toJSON(video);
 	$.post(url, data, function(entries){
@@ -31,7 +39,7 @@ function loadVideo(video){
 	}, "json");
 }
 function tabPlaylist(){
-    $(".link-playlist").first().trigger('click');
+	$(".link-playlist").first().trigger('click');
 }
 
 $(document).delegate("#youtube", "pageinit", function() {
@@ -63,6 +71,8 @@ $(document).delegate("#youtube", "pageinit", function() {
 					video.title = entry.title;
 					video.duration = entry.duration;
 					video.thumbnail = entry.thumbnail.hqDefault;
+					video.type = "youtube";
+					video.format = $("#quality").val();
 					var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + ' (' + Math.round(video.duration/60) + ':' + video.duration % 60 + ')' + '</h3><p>'+video.description + '</p></a></li>');
 					itemval.bind('click', {video: video}, function(event) {
 						loadVideo(event.data.video);
@@ -75,7 +85,17 @@ $(document).delegate("#youtube", "pageinit", function() {
 	});
 });
 
-$(document).delegate("#one", "pageinit", function() {
+$(document).delegate("#files", "pageinit", function() {
+	$.getJSON(
+		server + "/local", function(entries){
+			fillVideoList(entries, "#filelist", function(event) {
+				loadVideo(event.data.video);
+			});
+		}
+	);
+});
+
+$(document).delegate("#playlist", "pageinit", function() {
 	window.setInterval(function(){
 		$.getJSON(
 			server + "/playlist", loadPlayList

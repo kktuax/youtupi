@@ -30,13 +30,14 @@ class Video:
 		self.played = False
 
 def addVideo(data):
+	url = data['id']
 	if(data['type'] == "youtube"):
 		if(data['format'] == "default"):
 			url = getYoutubeUrl(data['id'])
 		else:
 			url = getYoutubeUrl(data['id'], data['format'])
-		video = Video(data['id'], data, url)
-		videos.append(video)
+	video = Video(data['id'], data, url)
+	videos.append(video)
 
 def removeOldVideosFromPlaylist():
 	viewedVideos = filter(lambda video:video.played==True, videos)
@@ -129,7 +130,7 @@ class local:
 			for local_video_file in find_newest_files(expanduser(folder)):
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
-				local_video = {'id': local_video_file, 'date': date, 'name': name, 'type': 'local'}
+				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local'}
 				local_videos.append(local_video)
 		return json.dumps(local_videos, indent=4)
 

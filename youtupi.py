@@ -2,9 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import os, signal, sys, subprocess, threading
+import os.path
+from os.path import expanduser
+import heapq
+import datetime
 import web
 import json
 from StringIO import StringIO
+
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+fname = 'youtupi.conf'
+conf = {}
+if os.path.isfile(fname):
+	conf = json.load(open(fname))
 
 player = None
 videos = list()
@@ -109,9 +121,13 @@ class index:
 class local:
 	def GET(self):
 		local_videos = list()
-		for video in find_newest_files():
-			local_videos.append(video.data)
-		
+		folders = conf.get('local-folders', ['~'])
+		for folder in folders:
+			for local_video_file in find_newest_files(expanduser(folder)):
+				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
+				name = os.path.basename(local_video_file)
+				local_video = {'id': local_video_file, 'date': date, 'name': name, 'type': 'local'}
+				local_videos.append(local_video)
 		return json.dumps(local_videos, indent=4)
 
 class playlist:
@@ -176,6 +192,7 @@ class control:
 if __name__ == "__main__":
 	urls = (
 		'/(.*)/', 'redirect',
+		'/local', 'local',
 		'/playlist', 'playlist',
 		'/control/(.*)', 'control',
 		'/', 'index'

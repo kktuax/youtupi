@@ -79,6 +79,25 @@ def getYoutubeUrl(video, vformat = None):
 	else:
 		return url.decode('UTF-8').strip()
 
+def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv")):
+	return heapq.nlargest(count,
+		(os.path.join(dirname, filename)
+		for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True)
+		for filename in filenames
+		if filename.endswith(extension)),
+		key=lambda fn: os.stat(fn).st_mtime)
+
+def find_files(rootfolder=expanduser("~"), search="", extension=(".avi", ".mp4", ".mkv")):
+	if not search:
+		return find_newest_files(rootfolder, extension=extension)
+	files = set()
+	for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True):
+		for filename in filenames:
+			if filename.endswith(extension):
+				if search.lower() in filename.lower():
+					files.add(os.path.join(dirname, filename))
+	return sorted(files)
+
 class redirect:
 	def GET(self, path):
 		web.seeother('/' + path)
@@ -86,6 +105,14 @@ class redirect:
 class index:
 	def GET(self):
 		web.seeother('/static/index.html')
+
+class local:
+	def GET(self):
+		local_videos = list()
+		for video in find_newest_files():
+			local_videos.append(video.data)
+		
+		return json.dumps(local_videos, indent=4)
 
 class playlist:
 	def GET(self):

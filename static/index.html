@@ -26,6 +26,7 @@
                     <a href="#" onclick="playerAction('play');return false" data-role="button" data-icon="forward">Next</a>
                     <a href="#" onclick="playerAction('pause');return false" title="Pause/Resume" data-role="button">||</a>
                     <a href="#" onclick="playerAction('stop');return false" data-role="button" data-icon="delete">Stop</a>
+                    <a href="#" data-role="button" data-icon="arrow-d">Download</a>
                 </div>
                 <div>
                     <div>
@@ -68,7 +69,10 @@
                 </div>
                 <div id="search">
                     <input type="search" name="search" id="search-basic" value="" />
-                    <ul id="results" data-inset="true" data-role="listview" data-filter="true" data-split-icon="gear"></ul>
+                    <ul id="results" data-inset="true" data-role="listview" data-filter="true"></ul>
+                    <div id="spinner-youtube" class="spinner" style="display:none;">
+                        <img src="images/spinner.gif" alt="Loading"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,7 +89,7 @@
              </div>
              <div data-role="content">
                  <div id="files">
-                     <ul id="filelist" data-inset="true" data-role="listview" data-filter="true" data-split-icon="gear"></ul>
+                     <ul id="filelist" data-inset="true" data-role="listview" data-filter="true"></ul>
                  </div>
              </div>
             </div>

@@ -81,7 +81,6 @@ function getYoutubeResponseVideos(response){
 		video.description = entry.description;
 		video.title = entry.title;
 		video.duration = entry.duration;
-		video.thumbnail = "images/video.png";
 		if(typeof entry.thumbnail != 'undefined'){
 			if(typeof entry.thumbnail.hqDefault != 'undefined'){
 				video.thumbnail = entry.thumbnail.hqDefault;
@@ -102,8 +101,10 @@ $(document).delegate("#youtube", "pageinit", function() {
 		$("#results").listview("refresh");
 		var url = getYoutubeQueryUrl();
 		if(url !== undefined){
+			$("#spinner-youtube").show();
 			$.getJSON(url, function(response){
 				fillVideoList(getYoutubeResponseVideos(response), "#results");
+				$("#spinner-youtube").hide();
 			});
 		}
 	});

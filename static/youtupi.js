@@ -74,7 +74,14 @@ $(document).delegate("#youtube", "pageinit", function() {
 					video.description = entry.description;
 					video.title = entry.title;
 					video.duration = entry.duration;
-					video.thumbnail = entry.thumbnail.hqDefault;
+					video.thumbnail = "images/video.png";
+					if(typeof entry.thumbnail != 'undefined'){
+						if(typeof entry.thumbnail.hqDefault != 'undefined'){
+							video.thumbnail = entry.thumbnail.hqDefault;
+						}else if(typeof entry.thumbnail.sqDefault != 'undefined'){
+							video.thumbnail = entry.thumbnail.sqDefault;
+						}
+					}
 					video.type = "youtube";
 					video.format = $("#quality").val();
 					var itemval = $('<li><a href="#"><img src="'+ video.thumbnail + '" /><h3>' + video.title + ' (' + Math.round(video.duration/60) + ':' + video.duration % 60 + ')' + '</h3><p>'+video.description + '</p></a></li>');

@@ -47,17 +47,6 @@ function playerAction(paction){
 	);
 }
 
-function download(){
-	$("#download-button").addClass("ui-disabled");
-	$("#download").show();
-	$.getJSON(
-		server + "/control/download", function(){
-			$("#download").hide();
-			$("#download-button").removeClass("ui-disabled");
-		}
-	);
-}
-
 function loadVideo(video){
 	tabPlaylist();
 	$("#spinner").show();
@@ -144,7 +133,12 @@ $(document).delegate("#files", "pageinit", function() {
 
 $(document).delegate("#playlist", "pageinit", function() {
 	$("#download-button").bind("click", function(event, ui) {
-		download();
+		$("#download-button").addClass("ui-disabled");
+		$.getJSON(
+			server + "/control/download", function(){
+				$("#download-button").removeClass("ui-disabled");
+			}
+		);
 	});
 	window.setInterval(function(){
 		$.getJSON(

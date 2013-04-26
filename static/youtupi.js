@@ -111,9 +111,11 @@ $(document).delegate("#youtube", "pageinit", function() {
 });
 
 $(document).delegate("#files", "pageinit", function() {
+	$("#spinner-files").show();
 	$.getJSON(
 		server + "/local", function(entries){
 			fillVideoList(entries, "#filelist");
+			$("#spinner-files").hide();
 		}
 	);
 });

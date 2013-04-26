@@ -22,7 +22,7 @@ How-To
 # Install the dependencies
 
     sudo apt-get install omxplayer python-pip
-    sudo pip install web.py
+    sudo pip install web.py beautifulsoup4
 
 # Clone YouTuPi and retrieve its submodules
 

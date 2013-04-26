@@ -84,12 +84,17 @@ def ensure_dir(f):
 def downloadVideo():
 	with lock:
 		removeOldVideosFromPlaylist()
+		dfolder = expanduser(conf.get('download-folder', "~/Downloads"))
+		ensure_dir(dfolder)
 		for video in videos:
-			if video.played and (video.data['type'] == "youtube"):
-				dfolder = expanduser(conf.get('download-folder', "~/Downloads"))
-				ensure_dir(dfolder)
-				dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
-				download(video.url, dfile)
+			if video.played:
+				if video.data['type'] == "youtube":
+					dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
+					download(video.url, dfile)
+				else:
+					from periscope.periscope import Periscope
+					p = Periscope(dfolder)
+					p.downloadSubtitle(video.url, p.get_preferedLanguages())
 				break
 
 def autoPlay():

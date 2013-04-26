@@ -4,6 +4,12 @@ $(document).bind('pageinit', function () {
     $.mobile.defaultPageTransition = 'none';
 });
 
+/** 
+ * Refresh listview with array of videos
+ * @param {entries} array of videos
+ * @param {listSelect} selector of listview to update 
+ * @param {function} event on video click, by default adds to playlist
+ * */
 function fillVideoList(entries, listSelect, clickEvent){
 	if(typeof clickEvent === 'undefined') { 
 		clickEvent = function(event){
@@ -24,6 +30,9 @@ function fillVideoList(entries, listSelect, clickEvent){
 	$(listSelect).listview("refresh");
 }
 
+/** 
+ * Load playlist items with play video on click event
+ * */
 function loadPlayList(entries){
 	fillVideoList(entries, "#playlist-list", function(event) {
 		var url = server + "/control/play";
@@ -37,6 +46,7 @@ function playerAction(paction){
 		server + "/control/" + paction, loadPlayList
 	);
 }
+
 function loadVideo(video){
 	tabPlaylist();
 	$("#spinner").show();
@@ -47,6 +57,7 @@ function loadVideo(video){
 		loadPlayList(entries);
 	}, "json");
 }
+
 function tabPlaylist(){
 	$(".link-playlist").first().trigger('click');
 }

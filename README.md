@@ -32,6 +32,7 @@ How-To
     cd youtupi
     git submodule init
     git submodule update
+    git submodule -q foreach git pull -q origin master
 
 Use YouTuPi
 -----------

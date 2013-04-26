@@ -8,6 +8,7 @@ import heapq
 import datetime
 import web
 import json
+import urllib2
 from StringIO import StringIO
 
 abspath = os.path.abspath(__file__)
@@ -61,10 +62,34 @@ def playNextVideo():
 			removeOldVideosFromPlaylist()
 		for video in videos:
 			if not video.played:
-				player = subprocess.Popen(['omxplayer', '-ohdmi', '--refresh', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+				player = subprocess.Popen(['omxplayer', '-ohdmi', video.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
 				while not isProcessRunning(player):
 					time.sleep(1)
 				video.played = True
+				break
+
+def download(url, destination):
+	with open(destination, 'w') as f:
+		try:
+			f.write(urllib2.urlopen(url).read())
+			f.close()
+		except urllib2.HTTPError:
+			raise RuntimeError('Error getting URL.')
+
+def ensure_dir(f):
+	d = os.path.dirname(f)
+	if not os.path.exists(d):
+		os.makedirs(d)
+
+def downloadVideo():
+	with lock:
+		removeOldVideosFromPlaylist()
+		for video in videos:
+			if video.played and (video.data['type'] == "youtube"):
+				dfolder = expanduser(conf.get('download-folder', "~/Downloads"))
+				ensure_dir(dfolder)
+				dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
+				download(video.url, dfile)
 				break
 
 def autoPlay():
@@ -158,6 +183,8 @@ class control:
 	def GET(self, action):
 		if action == "play":
 			playNextVideo()
+		elif action == "download":
+			downloadVideo()
 		else:
 			global player
 			if isProcessRunning(player):

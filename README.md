@@ -32,7 +32,6 @@ How-To
     cd youtupi
     git submodule init
     git submodule update
-    git submodule -q foreach git pull -q origin master
 
 Use YouTuPi
 -----------
@@ -44,3 +43,11 @@ Use YouTuPi
 
  * Grab your Tablet/Phone/PC and go to: http://192.168.1.2:8080 (replace 192.168.1.2 with your Raspberry Pi address).
  * Enjoy!
+
+
+Updating YouTuPi
+----------------
+
+    cd ~/youtupi
+    git pull
+    git submodule -q foreach git pull -q origin master

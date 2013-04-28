@@ -1,0 +1,34 @@
+### BEGIN INIT INFO
+# Provides: YouTuPi
+# Required-Start: $remote_fs $syslog
+# Required-Stop: $remote_fs $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: YouTuPi
+# Description: YouTuPi
+### END INIT INFO
+ 
+ 
+#! /bin/sh
+
+YOUTUPI_HOME=/home/pi/youtupi 
+YOUTUPI_USER=pi
+ 
+export HOME
+case "$1" in
+    start)
+        echo "Starting YouTuPi"
+        cd $YOUTUPI_HOME
+        sudo -u $YOUTUPI_USER ./youtupi.py >/dev/null 2>&1 &
+    ;;
+    stop)
+        echo "Stopping YouTuPi"
+        LCD_PID=`ps auxwww | grep youtupi.py | head -1 | awk '{print $2}'`
+        kill -9 $LCD_PID
+    ;;
+    *)
+        echo "Usage: /etc/init.d/youtupi {start|stop}"
+        exit 1
+    ;;
+esac
+exit 0

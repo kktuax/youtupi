@@ -34,11 +34,64 @@ function fillVideoList(entries, listSelect, clickEvent){
  * Load playlist items with play video on click event
  * */
 function loadPlayList(entries){
+	updateControls(entries.length);
 	fillVideoList(entries, "#playlist-list", function(event) {
-		var url = server + "/control/play";
 		var data = $.toJSON(event.data.video);
-		$.post(url, data, loadPlayList, "json");
+		var playBtn = {
+			click: function () { 
+				var url = server + "/control/play";
+				$.post(url, data, loadPlayList, "json");
+				$.mobile.sdCurrentDialog.close();
+			}
+		};
+		var deleteBtn = {
+			click: function () {
+				$.ajax({
+					url: server + "/playlist",
+					type: 'DELETE',
+					data: data,
+					dataType: 'json',
+					success: loadPlayList
+				});
+				$.mobile.sdCurrentDialog.close();
+			}
+		};
+		var downloadBtn = {
+			click: function () { 
+				var url = server + "/video/download";
+				$.post(url, data, loadPlayList, "json");
+				$.mobile.sdCurrentDialog.close();
+			}
+		};
+		$(document).simpledialog2({
+			mode: 'button',
+			headerText: event.data.video.title,
+			headerClose: true,
+			buttons : {
+				'Play': playBtn,
+				'Download': downloadBtn,
+				'Delete': deleteBtn
+			}
+		});
 	});
+}
+
+function updateControls(playListLength){
+	if(playListLength == 0){
+		$("#playlist-empty").show();
+		$("#playlist-playing").hide();
+		$("#next-button").addClass("ui-disabled");
+		$("#pause-button").addClass("ui-disabled");
+		$("#stop-button").addClass("ui-disabled");
+	}else{
+		$("#playlist-empty").hide();
+		$("#playlist-playing").show();
+		if(playListLength > 1){
+			$("#next-button").removeClass("ui-disabled");
+		}
+		$("#pause-button").removeClass("ui-disabled");
+		$("#stop-button").removeClass("ui-disabled");
+	}
 }
 
 function playerAction(paction){
@@ -161,13 +214,14 @@ $(document).delegate("#files", "pageinit", function() {
 });
 
 $(document).delegate("#playlist", "pageinit", function() {
-	$("#download-button").bind("click", function(event, ui) {
-		$("#download-button").addClass("ui-disabled");
-		$.getJSON(
-			server + "/control/download", function(){
-				$("#download-button").removeClass("ui-disabled");
-			}
-		);
+	$("#next-button").bind("click", function(event, ui) {
+		playerAction('play');
+	});
+	$("#pause-button").bind("click", function(event, ui) {
+		playerAction('pause');
+	});
+	$("#stop-button").bind("click", function(event, ui) {
+		playerAction('stop');
 	});
 	window.setInterval(function(){
 		$.getJSON(

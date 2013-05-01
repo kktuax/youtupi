@@ -30,15 +30,14 @@ class Video:
 		self.url = url
 		self.played = False
 
-def addVideo(data):
+def createVideo(data):
 	url = data['id']
 	if(data['type'] == "youtube"):
 		if(data['format'] == "default"):
 			url = getYoutubeUrl(data['id'])
 		else:
 			url = getYoutubeUrl(data['id'], data['format'])
-	video = Video(data['id'], data, url)
-	videos.append(video)
+	return Video(data['id'], data, url)
 
 def removeOldVideosFromPlaylist():
 	viewedVideos = filter(lambda video:video.played==True, videos)
@@ -52,6 +51,13 @@ def removeOldVideosFromPlaylist():
 def removeVideoFromPlaylist(vid):
 	global videos
 	videos = filter(lambda video:video.vid!=vid, videos)
+	
+def findVideoInPlaylist(vid):
+	fvideos = filter(lambda video:video.vid==vid, videos)
+	if(len(fvideos)>0):
+		return fvideos[0]
+	else:
+		return None
 
 def playNextVideo():
 	with lock:
@@ -76,26 +82,20 @@ def download(url, destination):
 		except urllib2.HTTPError:
 			raise RuntimeError('Error getting URL.')
 
-def ensure_dir(f):
-	d = os.path.dirname(f)
+def ensure_dir(d):
 	if not os.path.exists(d):
 		os.makedirs(d)
 
-def downloadVideo():
-	with lock:
-		removeOldVideosFromPlaylist()
-		dfolder = expanduser(conf.get('download-folder', "~/Downloads"))
-		ensure_dir(dfolder)
-		for video in videos:
-			if video.played:
-				if video.data['type'] == "youtube":
-					dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
-					download(video.url, dfile)
-				else:
-					from periscope.periscope import Periscope
-					p = Periscope(dfolder)
-					p.downloadSubtitle(video.url, p.get_preferedLanguages())
-				break
+def downloadVideo(video):
+	dfolder = expanduser(conf.get('download-folder', "~/Downloads"))
+	ensure_dir(dfolder)
+	if video.data['type'] == "youtube":
+		dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
+		download(video.url, dfile)
+	else:
+		from periscope.periscope import Periscope
+		p = Periscope(dfolder)
+		p.downloadSubtitle(video.url, p.get_preferedLanguages())
 
 def autoPlay():
 	removeOldVideosFromPlaylist()
@@ -175,7 +175,8 @@ class playlist:
 	
 	def POST(self):
 		data = json.load(StringIO(web.data()))
-		addVideo(data)
+		video = createVideo(data)
+		videos.append(video)
 		web.seeother('/playlist')
 		
 	def DELETE(self):
@@ -188,8 +189,6 @@ class control:
 	def GET(self, action):
 		if action == "play":
 			playNextVideo()
-		elif action == "download":
-			downloadVideo()
 		else:
 			global player
 			if isProcessRunning(player):
@@ -225,11 +224,23 @@ class control:
 				playNextVideo()
 		web.seeother('/playlist')
 
+class video:
+	
+	def POST(self, action):
+		if action == "download":
+			data = json.load(StringIO(web.data()))
+			video = findVideoInPlaylist(data['id'])
+			if(video == None):
+				video = createVideo(data)
+			downloadVideo(video)
+		web.seeother('/playlist')
+
 if __name__ == "__main__":
 	urls = (
 		'/(.*)/', 'redirect',
 		'/local', 'local',
 		'/playlist', 'playlist',
+		'/video/(.*)', 'video',
 		'/control/(.*)', 'control',
 		'/', 'index'
 	)

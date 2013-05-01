@@ -3,9 +3,11 @@
 		<title>YouTuPi</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1"> 
 		<link rel="stylesheet" href="jquery.mobile-1.3.1.min.css" />
+		<link rel="stylesheet" href="jquery.mobile.simpledialog.min.css" />
 		<script src="jquery-1.8.2.min.js"></script>
 		<script src="jquery.json-2.4.min.js"></script>
 		<script src="jquery.mobile-1.3.1.min.js"></script>
+		<script src="jquery.mobile.simpledialog2.min.js"></script>
 		<script src="http://www.google.com/jsapi"></script>
 		<script src="youtupi.js"></script>
 	</head>
@@ -22,20 +24,22 @@
 				</div>
 			</div>
 			<div data-role="content">
-				<div data-role="controlgroup" data-type="horizontal" >
-					<a href="#" onclick="playerAction('play');return false" data-role="button" data-icon="forward">Next</a>
-					<a href="#" onclick="playerAction('pause');return false" title="Pause/Resume" data-role="button">||</a>
-					<a href="#" onclick="playerAction('stop');return false" data-role="button" data-icon="delete">Stop</a>
-					<a href="#" data-role="button" data-icon="arrow-d" id="download-button">Download</a>
+				<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
+					<a href="#" data-role="button" data-icon="forward" id="next-button" class="ui-disabled">Next</a>
+					<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="ui-disabled">||</a>
+					<a href="#" data-role="button" data-icon="delete" id="stop-button" class="ui-disabled">Stop</a>
 				</div>
-				<div>
+				<div id="playlist-empty">
+					<h3>No entries in the playlist</h3>
+				</div>
+				<div id="playlist-playing" style="display:none;">
 					<h3>Now Playing</h3>
 					<div>
 						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>
 					</div>
-					<div id="spinner" class="spinner" style="display:none;">
-						<img id="img-spinner" src="images/spinner.gif" alt="Loading"/>
-					</div>
+				</div>
+				<div id="spinner" class="spinner" style="display:none;">
+					<img id="img-spinner" src="images/spinner.gif" alt="Loading"/>
 				</div>
 			</div>
 		</div>

@@ -32,7 +32,6 @@ How-To
     cd youtupi
     git submodule init
     git submodule update
-    git submodule -q foreach git pull -q origin master
 
 Use YouTuPi
 -----------
@@ -44,3 +43,26 @@ Use YouTuPi
 
  * Grab your Tablet/Phone/PC and go to: http://192.168.1.2:8080 (replace 192.168.1.2 with your Raspberry Pi address).
  * Enjoy!
+
+# Configuration file
+
+You can customize the download folder and some other parameters in the JSON configuration file youtupi.conf
+
+    {
+        "local-folders": [
+                "~/Media",
+                "~/Downloads"
+        ],
+        "download-folder": "~/Downloads"
+    }
+
+
+# Updating YouTuPi
+
+    git pull
+    git submodule -q foreach git pull -q origin master
+    
+# Installing YouTuPi as a service
+
+    sudo cp service/youtupi /etc/init.d/
+    sudo update-rc.d youtupi default

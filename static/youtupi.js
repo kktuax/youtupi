@@ -123,14 +123,19 @@ function addLocalStorageFor(select, key){
 		$(select).bind("change", function(event, ui) {
 			localStorage.setItem(key, $(select).val());
 		});
+		return true;
+	}else{
+		return false;
 	}
 }
 
 $(document).delegate("#youtube", "pageinit", function() {
-	addLocalStorageFor("#quality", "quality");
-	addLocalStorageFor("#slider", "slider");
-	$("#slider" ).slider("refresh");
-	$("#quality").selectmenu("refresh");
+	if(addLocalStorageFor("#quality", "quality")){
+		$("#quality").selectmenu("refresh");
+	}
+	if(addLocalStorageFor("#slider", "slider")){
+		$("#slider" ).slider("refresh");
+	}
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();
 		$("#results").listview("refresh");

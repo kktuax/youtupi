@@ -106,7 +106,31 @@ function getYoutubeResponseVideos(response){
 	return videos;
 }
 
+function supports_html5_storage() {
+	try {
+		return 'localStorage' in window && window['localStorage'] !== null;
+	} catch (e) {
+		return false;
+	}
+}
+
+function addLocalStorageFor(select, key){
+	if(supports_html5_storage()){
+		var oldValue = localStorage.getItem(key);
+		if(oldValue){
+			$(select).val(oldValue);
+		}
+		$(select).bind("change", function(event, ui) {
+			localStorage.setItem(key, $(select).val());
+		});
+	}
+}
+
 $(document).delegate("#youtube", "pageinit", function() {
+	addLocalStorageFor("#quality", "quality");
+	addLocalStorageFor("#slider", "slider");
+	$("#slider" ).slider("refresh");
+	$("#quality").selectmenu("refresh");
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();
 		$("#results").listview("refresh");

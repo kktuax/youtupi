@@ -3,4 +3,4 @@
 	url = git://github.com/rg3/youtube-dl.git
 [submodule "periscope"]
 	path = periscope
-	url = git@github.com:kktuax/periscope.git
+	url = git://github.com/kktuax/periscope.git

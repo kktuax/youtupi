@@ -111,9 +111,9 @@ def isProcessRunning(process):
 def getYoutubeUrl(video, vformat = None):
 	url = "http://www.youtube.com/watch?v=" + video
 	if not vformat: 
-		args = ['./youtube-dl/youtube-dl', '-g', url]
+		args = ['youtube-dl', '-g', url]
 	else:
-		args = ['./youtube-dl/youtube-dl', '-f', vformat, '-g', url]
+		args = ['youtube-dl', '-f', vformat, '-g', url]
 	yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 	(url, err) = yt_dl.communicate()
 	if yt_dl.returncode != 0:

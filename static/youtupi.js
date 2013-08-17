@@ -59,7 +59,7 @@ function loadPlayList(entries){
 		var downloadBtn = {
 			click: function () { 
 				var url = server + "/video/download";
-				$.post(url, data, loadPlayList, "json");
+				$.post(url, data, function(){ showNotification("Video downloaded"); }, "json");
 				$.mobile.sdCurrentDialog.close();
 			}
 		};
@@ -108,7 +108,10 @@ function loadVideo(video){
 	$.post(url, data, function(entries){
 		$("#spinner").hide();
 		loadPlayList(entries);
-	}, "json");
+	}, "json").fail(function() {
+		$("#spinner").hide(); 
+		showNotification("Error loading video"); 
+	});
 }
 
 function tabPlaylist(){
@@ -180,6 +183,15 @@ function addLocalStorageFor(select, key){
 	}else{
 		return false;
 	}
+}
+
+function showNotification(message){
+	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.96, "top": $(window).scrollTop() + 100 })
+	.appendTo( $.mobile.pageContainer )
+	.delay( 1500 )
+	.fadeOut( 400, function(){
+		$(this).remove();
+	});
 }
 
 $(document).delegate("#youtube", "pageinit", function() {

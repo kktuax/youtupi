@@ -21,8 +21,13 @@ How-To
 
 # Install the dependencies
 
-    sudo apt-get install omxplayer python-pip
-    sudo pip install web.py beautifulsoup4 youtube_dl
+    sudo apt-get install omxplayer python-pip youtube-dl
+    sudo pip install web.py beautifulsoup4
+    
+# Make sure youtube-dl is in its last version
+
+    sudo youtube-dl --version
+    sudo youtube-dl --update
 
 # Clone YouTuPi and retrieve its submodules
 

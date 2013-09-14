@@ -64,6 +64,8 @@ You can customize the download folder and some other parameters in the JSON conf
 
 # Updating YouTuPi
 
+    sudo pip install --upgrade youtube_dl
+    cd ~/youtupi
     git pull
     git submodule -q foreach git pull -q origin master
     

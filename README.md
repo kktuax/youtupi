@@ -24,10 +24,6 @@ How-To
     sudo apt-get install omxplayer python-pip youtube-dl
     sudo pip install web.py beautifulsoup4
     
-# Make sure youtube-dl is in its last version
-
-    sudo youtube-dl --version
-    sudo youtube-dl --update
 
 # Clone YouTuPi and retrieve its submodules
 
@@ -68,7 +64,7 @@ You can customize the download folder and some other parameters in the JSON conf
     sudo cp service/youtupi /etc/init.d/
     sudo update-rc.d youtupi defaults
 
-# Updating YouTuPi
+## Updating YouTuPi
 
     sudo /etc/init.d/youtupi update
     

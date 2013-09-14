@@ -26,8 +26,15 @@ case "$1" in
         LCD_PID=`ps auxwww | grep youtupi.py | head -1 | awk '{print $2}'`
         kill -9 $LCD_PID
     ;;
+    update)
+        echo "Updating YouTuPi"
+	sudo pip install --upgrade youtube_dl
+        cd $YOUTUPI_HOME
+	git pull
+	git submodule -q foreach git pull -q origin master
+    ;;
     *)
-        echo "Usage: /etc/init.d/youtupi {start|stop}"
+        echo "Usage: /etc/init.d/youtupi {start|stop|update}"
         exit 1
     ;;
 esac

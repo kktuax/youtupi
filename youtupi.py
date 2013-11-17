@@ -1,23 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import os, signal, sys, subprocess, threading, time
+import signal, sys, subprocess, threading, time
 import os.path
 from os.path import expanduser
-import heapq
-import datetime
 import web
 import json
-import urllib2
 from StringIO import StringIO
-
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-os.chdir(dname)
-fname = 'youtupi.conf'
-conf = {}
-if os.path.isfile(fname):
-	conf = json.load(open(fname))
+from youtupi.util import config, downloader
+from youtupi.modules import local
 
 player = None
 videos = list()
@@ -74,26 +65,16 @@ def playNextVideo():
 				video.played = True
 				break
 
-def download(url, destination):
-	tdestination = destination + ".part"
-	with open(tdestination, 'w') as f:
-		try:
-			f.write(urllib2.urlopen(url).read())
-			f.close()
-			os.rename(tdestination, destination)
-		except urllib2.HTTPError:
-			raise RuntimeError('Error getting URL.')
-
 def ensure_dir(d):
 	if not os.path.exists(d):
 		os.makedirs(d)
 
 def downloadVideo(video):
-	dfolder = expanduser(conf.get('download-folder', "~/Downloads"))
+	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
 	ensure_dir(dfolder)
 	if video.data['type'] == "youtube":
 		dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
-		download(video.url, dfile)
+		downloader.download(video.url, dfile)
 	else:
 		from periscope.periscope import Periscope
 		p = Periscope(dfolder)
@@ -127,25 +108,6 @@ def getYoutubeUrl(video, vformat = None):
 	else:
 		return url.decode('UTF-8').strip()
 
-def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv")):
-	return heapq.nlargest(count,
-		(os.path.join(dirname, filename)
-		for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True)
-		for filename in filenames
-		if filename.endswith(extension)),
-		key=lambda fn: os.stat(fn).st_mtime)
-
-def find_files(rootfolder=expanduser("~"), search="", extension=(".avi", ".mp4", ".mkv")):
-	if not search:
-		return find_newest_files(rootfolder, extension=extension)
-	files = set()
-	for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True):
-		for filename in filenames:
-			if filename.endswith(extension):
-				if search.lower() in filename.lower():
-					files.add(os.path.join(dirname, filename))
-	return sorted(files)
-
 class redirect:
 	def GET(self, path):
 		web.seeother('/' + path)
@@ -153,18 +115,6 @@ class redirect:
 class index:
 	def GET(self):
 		web.seeother('/static/index.html')
-
-class local:
-	def GET(self):
-		local_videos = list()
-		folders = conf.get('local-folders', ['~'])
-		for folder in folders:
-			for local_video_file in find_newest_files(expanduser(folder)):
-				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
-				name = os.path.basename(local_video_file)
-				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local'}
-				local_videos.append(local_video)
-		return json.dumps(local_videos, indent=4)
 
 class playlist:
 	def GET(self):
@@ -237,13 +187,14 @@ class video:
 			downloadVideo(video)
 		web.seeother('/playlist')
 
+
 if __name__ == "__main__":
 	urls = (
 		'/(.*)/', 'redirect',
-		'/local', 'local',
 		'/playlist', 'playlist',
 		'/video/(.*)', 'video',
 		'/control/(.*)', 'control',
+		'/local', local.module_local,
 		'/', 'index'
 	)
 	app = web.application(urls, globals())

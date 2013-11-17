@@ -1,34 +1,19 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import signal, sys, subprocess, threading, time
+import signal, subprocess, threading, time
 import os.path
 from os.path import expanduser
 import web
 import json
 from StringIO import StringIO
+from youtupi.video import createVideo
 from youtupi.util import config, downloader
 from youtupi.modules import local
 
 player = None
 videos = list()
 lock = threading.RLock()
-
-class Video:
-	def __init__(self, vid, data, url):
-		self.vid = vid
-		self.data = data
-		self.url = url
-		self.played = False
-
-def createVideo(data):
-	url = data['id']
-	if(data['type'] == "youtube"):
-		if(data['format'] == "default"):
-			url = getYoutubeUrl(data['id'])
-		else:
-			url = getYoutubeUrl(data['id'], data['format'])
-	return Video(data['id'], data, url)
 
 def removeOldVideosFromPlaylist():
 	viewedVideos = filter(lambda video:video.played==True, videos)
@@ -90,23 +75,6 @@ def isProcessRunning(process):
 		if process.poll() == None:
 			return True
 	return False
-
-def getYoutubeUrl(video, vformat = None):
-	url = "http://www.youtube.com/watch?v=" + video
-	if not vformat: 
-		args = ['youtube-dl', '-g', url]
-	else:
-		args = ['youtube-dl', '-f', vformat, '-g', url]
-	yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-	(url, err) = yt_dl.communicate()
-	if yt_dl.returncode != 0:
-		if vformat != None:
-			return getYoutubeUrl(video, None)
-		else:
-			sys.stderr.write(err)
-			raise RuntimeError('Error getting URL.')
-	else:
-		return url.decode('UTF-8').strip()
 
 class redirect:
 	def GET(self, path):
@@ -186,7 +154,6 @@ class video:
 				video = createVideo(data)
 			downloadVideo(video)
 		web.seeother('/playlist')
-
 
 if __name__ == "__main__":
 	urls = (

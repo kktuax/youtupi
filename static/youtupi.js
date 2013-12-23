@@ -177,7 +177,7 @@ $(document).delegate("#search", "pageinit", function() {
 function getSearchData(){
 	var engine = $("#engine").val();
 	if(engine != "youtube"){
-		return { 'search': $("#search-basic").val() }
+		return { 'search': $("#search-basic").val(), 'count': $("#slider").val() }
 	}else{
 		return null;
 	}

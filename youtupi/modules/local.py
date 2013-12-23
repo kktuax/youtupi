@@ -12,6 +12,17 @@ from youtupi.playlist import findVideoInPlaylist
 from youtupi.video import createVideo
 from youtupi.util import config, ensure_dir		
 
+def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mkv")):
+	if not search:
+		return find_newest_files(rootfolder, count=count, extension=extension)
+	files = set()
+	for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True):
+		for filename in filenames:
+			if filename.endswith(extension):
+				if isFileInKeyWords(filename, search):
+					files.add(os.path.join(dirname, filename))
+	return sorted(files)[0:count]
+
 def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv")):
 	return heapq.nlargest(count,
 		(os.path.join(dirname, filename)
@@ -20,27 +31,24 @@ def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", "
 		if filename.endswith(extension)),
 		key=lambda fn: os.stat(fn).st_mtime)
 
-def find_files(rootfolder=expanduser("~"), search="", extension=(".avi", ".mp4", ".mkv")):
-	if not search:
-		return find_newest_files(rootfolder, extension=extension)
-	files = set()
-	for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True):
-		for filename in filenames:
-			if filename.endswith(extension):
-				if search.lower() in filename.lower():
-					files.add(os.path.join(dirname, filename))
-	return sorted(files)
+def isFileInKeyWords(filename, search):
+	words = search.split()
+	for word in words:
+		if word.lower() not in filename.lower():
+			return False
+	return True
 
 class local:
 	
 	def GET(self):
 		user_data = web.input()
 		search = user_data.search
+		count = int(user_data.count)
 		local_videos = list()
 		folders = config.conf.get('local-folders', ['~'])
 		print 'Searching "' + search + '" in folders: ' + ', '.join(folders)
 		for folder in folders:
-			for local_video_file in find_files(expanduser(folder), search=search):
+			for local_video_file in find_files(expanduser(folder), search=search, count=count):
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
 				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local'}

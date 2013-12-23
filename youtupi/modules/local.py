@@ -3,11 +3,14 @@
 
 import os.path
 from os.path import expanduser
+from StringIO import StringIO
 import heapq
 import datetime
 import json
 import web
-from youtupi.util import config		
+from youtupi.playlist import findVideoInPlaylist
+from youtupi.video import createVideo
+from youtupi.util import config, ensure_dir		
 
 def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv")):
 	return heapq.nlargest(count,
@@ -42,5 +45,24 @@ class local:
 				local_videos.append(local_video)
 		return json.dumps(local_videos, indent=4)
 
-urls = ("", "local")
+def downloadSubtitle(video):
+	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
+	ensure_dir(dfolder)
+	from periscope.periscope import Periscope
+	p = Periscope(dfolder)
+	p.downloadSubtitle(video.url, p.get_preferedLanguages())
+
+class subtitle_dl:
+	def POST(self, action):
+		data = json.load(StringIO(web.data()))
+		video = findVideoInPlaylist(data['id'])
+		if(video == None):
+			video = createVideo(data)
+		downloadSubtitle(video)
+
+urls = (
+	"", "local",
+	'/subtitle-dl', "subtitle_dl"
+)
+
 module_local = web.application(urls, locals())

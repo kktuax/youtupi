@@ -1,5 +1,10 @@
-import subprocess, sys
+import subprocess, sys, web, json
+import os.path
+from StringIO import StringIO
+from os.path import expanduser
 from youtupi.video import Video 
+from youtupi.util import config, downloader, ensure_dir
+from youtupi.playlist import findVideoInPlaylist
 
 def createVideo(data):
     if(data['type'] == "youtube"):
@@ -27,3 +32,21 @@ def getYoutubeUrl(video, vformat = None):
             raise RuntimeError('Error getting URL.')
     else:
         return url.decode('UTF-8').strip()
+
+def downloadVideo(video):
+    dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
+    ensure_dir(dfolder)
+    dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
+    downloader.download(video.url, dfile)
+
+class youtube_dl:
+    
+    def POST(self, action):
+        data = json.load(StringIO(web.data()))
+        video = findVideoInPlaylist(data['id'])
+        if(video == None):
+            video = createVideo(data)
+        downloadVideo(video)
+
+urls = ("", "youtube_dl")
+module_youtube = web.application(urls, locals())

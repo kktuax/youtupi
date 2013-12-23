@@ -51,19 +51,20 @@ class local:
 			for local_video_file in find_files(expanduser(folder), search=search, count=count):
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
-				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local'}
+				subtitleOperation = {'name': 'subtitle', 'text': 'Subtitles', 'successMessage': 'Subtitle downloaded'};
+				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation]}
 				local_videos.append(local_video)
 		return json.dumps(local_videos, indent=4)
 
 def downloadSubtitle(video):
 	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
-	ensure_dir(dfolder)
+	ensure_dir.ensure_dir(dfolder)
 	from periscope.periscope import Periscope
 	p = Periscope(dfolder)
 	p.downloadSubtitle(video.url, p.get_preferedLanguages())
 
 class subtitle_dl:
-	def POST(self, action):
+	def POST(self):
 		data = json.load(StringIO(web.data()))
 		video = findVideoInPlaylist(data['id'])
 		if(video == None):
@@ -71,8 +72,8 @@ class subtitle_dl:
 		downloadSubtitle(video)
 
 urls = (
-	"", "local",
-	'/subtitle-dl', "subtitle_dl"
+	"-search", "local",
+	'-subtitle', "subtitle_dl"
 )
 
 module_local = web.application(urls, locals())

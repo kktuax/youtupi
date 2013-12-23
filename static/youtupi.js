@@ -56,22 +56,22 @@ function loadPlayList(entries){
 				$.mobile.sdCurrentDialog.close();
 			}
 		};
-		var downloadBtn = {
-			click: function () { 
-				var url = server + "/video/download";
-				$.post(url, data, function(){ showNotification("Video downloaded"); }, "json");
-				$.mobile.sdCurrentDialog.close();
-			}
-		};
+		buttons = { 'Play': playBtn, 'Delete': deleteBtn };
+		for(operationKey in event.data.video.operations){
+			operation = event.data.video.operations[operationKey]
+			buttons[operation.text] = {
+				click: function () { 
+					var url = server + "/" + event.data.video.type + "-" + operation.name;
+					$.post(url, data, function(){ showNotification(operation.successMessage); }, "json");
+					$.mobile.sdCurrentDialog.close();
+				}
+			};
+		}
 		$(document).simpledialog2({
 			mode: 'button',
 			headerText: event.data.video.title,
 			headerClose: true,
-			buttons : {
-				'Play': playBtn,
-				'Download': downloadBtn,
-				'Delete': deleteBtn
-			}
+			buttons : buttons
 		});
 	});
 }
@@ -179,7 +179,7 @@ function getSearchData(){
 	if(engine != "youtube"){
 		return { 'search': $("#search-basic").val(), 'count': $("#slider").val() }
 	}else{
-		return null;
+		return undefined;
 	}
 }
 
@@ -188,7 +188,7 @@ function getSearchUrl(){
 	if(engine == "youtube"){
 		return getYoutubeQueryUrl();
 	}else{
-		return server + "/search-" + engine;
+		return server + "/" + engine + "-search";
 	}
 }
 

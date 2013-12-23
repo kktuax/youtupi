@@ -55,8 +55,8 @@ if __name__ == "__main__":
 		'/playlist', 'playlist',
 		'/video/(.*)', 'video',
 		'/control/(.*)', 'control',
-		'/search-local', local.module_local,
-		'/youtube-dl', youtube.module_youtube,
+		'/local', local.module_local,
+		'/youtube', youtube.module_youtube,
 		'/', 'index'
 	)
 	app = web.application(urls, globals())

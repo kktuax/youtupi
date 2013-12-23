@@ -35,18 +35,18 @@ def getYoutubeUrl(video, vformat = None):
 
 def downloadVideo(video):
     dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
-    ensure_dir(dfolder)
+    ensure_dir.ensure_dir(dfolder)
     dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
     downloader.download(video.url, dfile)
 
 class youtube_dl:
     
-    def POST(self, action):
+    def POST(self):
         data = json.load(StringIO(web.data()))
         video = findVideoInPlaylist(data['id'])
         if(video == None):
             video = createVideo(data)
         downloadVideo(video)
 
-urls = ("", "youtube_dl")
+urls = ("-download", "youtube_dl")
 module_youtube = web.application(urls, locals())

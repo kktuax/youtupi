@@ -59,10 +59,15 @@ function loadPlayList(entries){
 		buttons = { 'Play': playBtn, 'Delete': deleteBtn };
 		for(operationKey in event.data.video.operations){
 			operation = event.data.video.operations[operationKey]
+			successFunction = function(data){ 
+				showNotification(operation.successMessage); 
+			}
 			buttons[operation.text] = {
 				click: function () { 
 					var url = server + "/" + event.data.video.type + "-" + operation.name;
-					$.post(url, data, function(){ showNotification(operation.successMessage); }, "json");
+					$.post(url, data).done(function( data ) {
+						showNotification(operation.successMessage);
+					}, "json");
 					$.mobile.sdCurrentDialog.close();
 				}
 			};

@@ -55,7 +55,7 @@ if __name__ == "__main__":
 		'/playlist', 'playlist',
 		'/video/(.*)', 'video',
 		'/control/(.*)', 'control',
-		'/local', local.module_local,
+		'/search-local', local.module_local,
 		'/youtube-dl', youtube.module_youtube,
 		'/', 'index'
 	)

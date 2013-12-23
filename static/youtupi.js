@@ -118,50 +118,6 @@ function tabPlaylist(){
 	$(".link-playlist").first().trigger('click');
 }
 
-function getYoutubeQueryUrl(){
-	var url;
-	var query = $("#search-basic").val();
-	if(query != ''){
-		if(query.substring(0, 2) == "u:"){
-			query = query.substring(2, query.length);
-			url = 'https://gdata.youtube.com/feeds/api/users/'+query+'/uploads?v=2&alt=jsonc';
-		}else if(query.substring(0, 2) == "f:"){
-			query = query.substring(2, query.length);
-			url = 'http://gdata.youtube.com/feeds/api/users/'+query+'/favorites?v=2&alt=jsonc';
-		}else{
-			url = 'http://gdata.youtube.com/feeds/api/videos?vq='+query+'&max-results='+$('#slider').val()+'&v=2&alt=jsonc&orderby=relevance&sortorder=descending';
-		}
-	}
-	return url;
-}
-
-function getYoutubeResponseVideos(response){
-	var videos = [];
-	var entries = response.data.items || [];
-	for (var i = 0; i < entries.length; i++) {
-		var entry = entries[i];
-		if(typeof entry.video != 'undefined'){
-			entry = entry.video;
-		}
-		var video = {}
-		video.id = entry.id;
-		video.description = entry.description;
-		video.title = entry.title;
-		video.duration = entry.duration;
-		if(typeof entry.thumbnail != 'undefined'){
-			if(typeof entry.thumbnail.hqDefault != 'undefined'){
-				video.thumbnail = entry.thumbnail.hqDefault;
-			}else if(typeof entry.thumbnail.sqDefault != 'undefined'){
-				video.thumbnail = entry.thumbnail.sqDefault;
-			}
-		}
-		video.type = "youtube";
-		video.format = $("#quality").val();
-		videos.push(video);
-	}
-	return videos;
-}
-
 function supports_html5_storage() {
 	try {
 		return 'localStorage' in window && window['localStorage'] !== null;
@@ -194,7 +150,10 @@ function showNotification(message){
 	});
 }
 
-$(document).delegate("#youtube", "pageinit", function() {
+$(document).delegate("#search", "pageinit", function() {
+	if(addLocalStorageFor("#engine", "engine")){
+		$("#engine").selectmenu("refresh");
+	}
 	if(addLocalStorageFor("#quality", "quality")){
 		$("#quality").selectmenu("refresh");
 	}
@@ -204,26 +163,43 @@ $(document).delegate("#youtube", "pageinit", function() {
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();
 		$("#results").listview("refresh");
-		var url = getYoutubeQueryUrl();
+		var url = getSearchUrl();
 		if(url !== undefined){
-			$("#spinner-youtube").show();
-			$.getJSON(url, function(response){
-				fillVideoList(getYoutubeResponseVideos(response), "#results");
-				$("#spinner-youtube").hide();
+			$("#spinner-search").show();
+			$.getJSON(url, getSearchData(), function(response){
+				fillVideoList(processSearchResponse(response), "#results");
+				$("#spinner-search").hide();
 			});
 		}
 	});
 });
 
-$(document).delegate("#files", "pageinit", function() {
-	$("#spinner-files").show();
-	$.getJSON(
-		server + "/local", function(entries){
-			fillVideoList(entries, "#filelist");
-			$("#spinner-files").hide();
-		}
-	);
-});
+function getSearchData(){
+	var engine = $("#engine").val();
+	if(engine != "youtube"){
+		return { 'search': $("#search-basic").val() }
+	}else{
+		return null;
+	}
+}
+
+function getSearchUrl(){
+	var engine = $("#engine").val();
+	if(engine == "youtube"){
+		return getYoutubeQueryUrl();
+	}else{
+		return server + "/search-" + engine;
+	}
+}
+
+function processSearchResponse(response){
+	var engine = $("#engine").val();
+	if(engine == "youtube"){
+		return getYoutubeResponseVideos(response);
+	}else{
+		return response;
+	}
+}
 
 $(document).delegate("#playlist", "pageinit", function() {
 	$("#next-button").bind("click", function(event, ui) {

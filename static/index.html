@@ -10,6 +10,7 @@
 		<script src="jquery.mobile.simpledialog2.min.js"></script>
 		<script src="http://www.google.com/jsapi"></script>
 		<script src="youtupi.js"></script>
+		<script src="youtupi.youtube.js"></script>
 	</head>
 	<body>
 		<div data-role="page" id="playlist">
@@ -18,8 +19,7 @@
 				<div data-role="navbar">
 					<ul>
 						<li><a href="#playlist" data-theme="b" class="link-playlist">Playlist</a></li>
-						<li><a href="#youtube">Youtube</a></li>
-						<li><a href="#files">Files</a></li>
+						<li><a href="#search">Search</a></li>
 					</ul>
 				</div>
 			</div>
@@ -43,14 +43,13 @@
 				</div>
 			</div>
 		</div>
-		<div data-role="page" id="youtube">
+		<div data-role="page" id="search">
 			<div data-role="header">
 				<h1>YouTuPi</h1>
 				<div data-role="navbar">
 					<ul>
 						<li><a href="#playlist" class="link-playlist">Playlist</a></li>
-						<li><a href="#youtube" data-theme="b">Youtube</a></li>
-						<li><a href="#files">Files</a></li>
+						<li><a href="#search" data-theme="b">Search</a></li>
 					</ul>
 				</div>
 			</div>
@@ -58,6 +57,11 @@
 				<div data-role="collapsible" data-collapsed="true" data-content-theme="c">
 					<h3>Settings</h3>
 					<div data-role="fieldcontain">
+						<label for="engine">Search in:</label>
+						<select name="select-choice-0" id="engine">
+							<option value="youtube" selected="selected">Youtube</option>
+							<option value="local">Local files</option>
+						</select>
 						<label for="quality">Video quality:</label>
 						<select name="select-choice-1" id="quality">
 							<option value="default">Default quality</option>
@@ -72,31 +76,11 @@
 				<div id="search">
 					<input type="search" name="search" id="search-basic" value="" />
 					<ul id="results" data-inset="true" data-role="listview" data-filter="true"></ul>
-					<div id="spinner-youtube" class="spinner" style="display:none;">
+					<div id="spinner-search" class="spinner" style="display:none;">
 						<img src="images/spinner.gif" alt="Loading"/>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div data-role="page" id="files">
-			 <div data-role="header">
-				<h1>YouTuPi</h1>
-				<div data-role="navbar">
-					<ul>
-						<li><a href="#playlist" class="link-playlist">Playlist</a></li>
-						<li><a href="#youtube">Youtube</a></li>
-						<li><a href="#files" data-theme="b">Files</a></li>
-					</ul>
-				</div>
-			 </div>
-			 <div data-role="content">
-				 <div id="files">
-					 <ul id="filelist" data-inset="true" data-role="listview" data-filter="true"></ul>
-					 <div id="spinner-files" class="spinner" style="display:none;">
-						<img src="images/spinner.gif" alt="Loading"/>
-					 </div>
-				 </div>
-			 </div>
 		</div>
 	</body>
 </html>

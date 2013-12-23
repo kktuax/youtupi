@@ -34,11 +34,13 @@ def find_files(rootfolder=expanduser("~"), search="", extension=(".avi", ".mp4",
 class local:
 	
 	def GET(self):
+		user_data = web.input()
+		search = user_data.search
 		local_videos = list()
 		folders = config.conf.get('local-folders', ['~'])
-		print 'Searching in folders: ' + ', '.join(folders)
+		print 'Searching "' + search + '" in folders: ' + ', '.join(folders)
 		for folder in folders:
-			for local_video_file in find_newest_files(expanduser(folder)):
+			for local_video_file in find_files(expanduser(folder), search=search):
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
 				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local'}

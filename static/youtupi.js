@@ -23,11 +23,28 @@ function fillVideoList(entries, listSelect, clickEvent){
 		if(video.thumbnail != undefined){
 			thumbnail = video.thumbnail;
 		}
-		var itemval = $('<li><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + '</h3><p>'+video.description + '</p></a></li>');
+		var	duration = getDurationString(video.duration);
+		if(duration){
+			duration = " [" + duration + "]";
+		}
+		var itemval = $('<li><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
 		itemval.bind('click', {video: video}, clickEvent);
 		$(listSelect).append(itemval);
 	}
 	$(listSelect).listview("refresh");
+}
+
+function getDurationString(time){
+	if(time == undefined) return "";
+	var duration = "";
+	var hours = Math.floor(time / 3600);
+	if(hours > 0) duration = duration + hours + ":";
+	time = time - hours * 3600;
+	var minutes = Math.floor(time / 60);
+	duration = duration + (((minutes < 10) && (hours > 0)) ? ("0" + minutes) : minutes);
+	var seconds = time - minutes * 60;
+	duration = duration + ((seconds < 10) ? (":0" + seconds) : (":" + seconds));
+	return duration;
 }
 
 /** 

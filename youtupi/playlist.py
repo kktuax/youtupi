@@ -26,10 +26,12 @@ def removeVideo(vid):
     video = findVideoInPlaylist(vid)
     if video:
         if video == playingVideo():
-            playNextVideo()
-        else:
-            global videos
-            videos = filter(lambda video:video.vid!=vid, videos)
+            if len(videos) == 1:
+                stopPlayer()
+            else:
+                playNextVideo()
+        global videos
+        videos = filter(lambda video:video.vid!=vid, videos)
     
 def findVideoInPlaylist(vid):
     fvideos = filter(lambda video:video.vid==vid, videos)

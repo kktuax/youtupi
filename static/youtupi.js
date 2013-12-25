@@ -68,20 +68,21 @@ function loadPlayList(entries){
 				$.mobile.sdCurrentDialog.close();
 			}
 		};
-		buttons = { 'Play': playBtn, 'Skip': deleteBtn };
+		var buttons = { 'Play': playBtn, 'Skip': deleteBtn };
 		for(operationKey in event.data.video.operations){
-			operation = event.data.video.operations[operationKey]
-			successFunction = function(data){ 
-				showNotification(operation.successMessage); 
-			}
-			buttons[operation.text] = {
-				click: function () { 
-					var url = server + "/" + event.data.video.type + "-" + operation.name;
-					$.post(url, data).done(function( data ) {
-						showNotification(operation.successMessage);
-					}, "json");
-					$.mobile.sdCurrentDialog.close();
+			var operation = event.data.video.operations[operationKey];
+			var type = event.data.video.type;
+			var buttonClick = function(e, type, operation, data){
+				var successFunction = function(){ 
+					showNotification(operation.successMessage); 
 				}
+				var url = server + "/" + type + "-" + operation.name;
+				$.post(url, data).done(successFunction, "json");
+				$.mobile.sdCurrentDialog.close();
+			}
+			buttons[operation.text] = { 
+				click: buttonClick,
+				args: new Array(type, operation, data)
 			};
 		}
 		$(document).simpledialog2({

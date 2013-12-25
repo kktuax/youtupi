@@ -23,8 +23,13 @@ def playList():
     return videos
 
 def removeVideo(vid):
-    global videos
-    videos = filter(lambda video:video.vid!=vid, videos)
+    video = findVideoInPlaylist(vid)
+    if video:
+        if video == playingVideo():
+            playNextVideo()
+        else:
+            global videos
+            videos = filter(lambda video:video.vid!=vid, videos)
     
 def findVideoInPlaylist(vid):
     fvideos = filter(lambda video:video.vid==vid, videos)

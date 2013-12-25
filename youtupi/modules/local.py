@@ -8,7 +8,7 @@ import heapq
 import datetime
 import json
 import web
-from youtupi.playlist import findVideoInPlaylist, playingVideo, playNextVideo, removeVideo
+from youtupi.playlist import findVideoInPlaylist, removeVideo
 from youtupi.video import createVideo
 from youtupi.util import config, ensure_dir		
 from periscope.periscope import Periscope
@@ -75,12 +75,7 @@ class subtitle_dl:
 class delete:
 	def POST(self):
 		data = json.load(StringIO(web.data()))
-		video = findVideoInPlaylist(data['id'])
-		if video:
-			if video == playingVideo():
-				playNextVideo()
-			else:
-				removeVideo(data['id'])
+		removeVideo(data['id'])
 		if os.path.isfile(data['id']):
 			os.remove(data['id'])
 

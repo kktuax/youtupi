@@ -232,5 +232,5 @@ $(document).delegate("#playlist", "pageinit", function() {
 		$.getJSON(
 			server + "/playlist", loadPlayList
 		);
-	}, 3000);
+	}, 5000);
 });

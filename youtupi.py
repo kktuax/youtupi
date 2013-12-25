@@ -5,7 +5,7 @@ import web, json
 from StringIO import StringIO
 from youtupi.video import createVideo
 from youtupi.modules import local, youtube
-from youtupi.playlist import autoPlay, removeVideo, playNextVideo, playVideo, addVideo, controlPlayer, playList
+from youtupi.playlist import removeVideo, playNextVideo, playVideo, addVideo, controlPlayer, playList
 
 class redirect:
 	def GET(self, path):
@@ -17,7 +17,6 @@ class index:
 
 class playlist:
 	def GET(self):
-		autoPlay()
 		playlistVideos = list()
 		for video in playList():
 			playlistVideos.append(video.data)

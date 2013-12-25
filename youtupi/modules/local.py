@@ -56,7 +56,7 @@ class search:
 				deleteOperation = {'name': 'delete', 'text': 'Delete', 'successMessage': 'File deleted'};
 				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation, deleteOperation]}
 				local_videos.append(local_video)
-		return json.dumps(local_videos, indent=4)
+		return json.dumps(local_videos[0:count], indent=4)
 
 def downloadSubtitle(video):
 	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))

@@ -64,10 +64,11 @@ def playVideo(videoId):
         playNextVideo()
 
 def autoPlay():
+    threading.Timer(1, autoPlay).start()
     removeOldVideosFromPlaylist()
     if (not isProcessRunning(player)) and (len(videos) > 0):
         playNextVideo()
-
+    
 def isProcessRunning(process):
     if process:
         if process.poll() == None:
@@ -90,3 +91,5 @@ def controlPlayer(action):
         player.stdin.write("\x1B[C")
     if action == "backward":
         player.stdin.write("\x1B[D")
+
+autoPlay()

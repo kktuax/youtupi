@@ -4,14 +4,20 @@ player = None
 videos = list()
 lock = threading.RLock()
 
+def playingVideo():
+    if isProcessRunning(player):
+        viewedVideos = filter(lambda video:video.played==True, videos)
+        lastPlayedVideo = viewedVideos[-1:]
+        if lastPlayedVideo:
+            return lastPlayedVideo[0]
+    return None
+
 def removeOldVideosFromPlaylist():
     viewedVideos = filter(lambda video:video.played==True, videos)
-    if isProcessRunning(player):
-        oldVideos = viewedVideos[1:]
-    else:
-        oldVideos = viewedVideos
-    for vv in oldVideos:
-        videos.remove(vv)
+    currentVideo = playingVideo()
+    for vv in viewedVideos:
+        if vv != currentVideo:
+            videos.remove(vv)
 
 def playList():
     return videos

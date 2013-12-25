@@ -63,17 +63,12 @@ function loadPlayList(entries){
 		};
 		var deleteBtn = {
 			click: function () {
-				$.ajax({
-					url: server + "/playlist",
-					type: 'DELETE',
-					data: data,
-					dataType: 'json',
-					success: loadPlayList
-				});
+				var url = server + "/playlist";
+				$.ajax({url: url, type: 'DELETE', data: data, dataType: 'json', success: loadPlayList});
 				$.mobile.sdCurrentDialog.close();
 			}
 		};
-		buttons = { 'Play': playBtn, 'Delete': deleteBtn };
+		buttons = { 'Play': playBtn, 'Skip': deleteBtn };
 		for(operationKey in event.data.video.operations){
 			operation = event.data.video.operations[operationKey]
 			successFunction = function(data){ 

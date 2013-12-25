@@ -8,10 +8,11 @@ import heapq
 import datetime
 import json
 import web
-from youtupi.playlist import findVideoInPlaylist
+from youtupi.playlist import findVideoInPlaylist, playingVideo, playNextVideo, removeVideo
 from youtupi.video import createVideo
 from youtupi.util import config, ensure_dir		
-
+from periscope.periscope import Periscope
+	
 def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mkv")):
 	if not search:
 		return find_newest_files(rootfolder, count=count, extension=extension)
@@ -38,7 +39,7 @@ def isFileInKeyWords(filename, search):
 			return False
 	return True
 
-class local:
+class search:
 	
 	def GET(self):
 		user_data = web.input()
@@ -52,14 +53,14 @@ class local:
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
 				subtitleOperation = {'name': 'subtitle', 'text': 'Subtitles', 'successMessage': 'Subtitle downloaded'};
-				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation]}
+				deleteOperation = {'name': 'delete', 'text': 'Delete', 'successMessage': 'File deleted'};
+				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation, deleteOperation]}
 				local_videos.append(local_video)
 		return json.dumps(local_videos, indent=4)
 
 def downloadSubtitle(video):
 	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
 	ensure_dir.ensure_dir(dfolder)
-	from periscope.periscope import Periscope
 	p = Periscope(dfolder)
 	p.downloadSubtitle(video.url, p.get_preferedLanguages())
 
@@ -71,9 +72,22 @@ class subtitle_dl:
 			video = createVideo(data)
 		downloadSubtitle(video)
 
+class delete:
+	def POST(self):
+		data = json.load(StringIO(web.data()))
+		video = findVideoInPlaylist(data['id'])
+		if video:
+			if video == playingVideo():
+				playNextVideo()
+			else:
+				removeVideo(data['id'])
+		if os.path.isfile(data['id']):
+			os.remove(data['id'])
+
 urls = (
-	"-search", "local",
-	'-subtitle', "subtitle_dl"
+	"-search", "search",
+	'-subtitle', "subtitle_dl",
+	'-delete', "delete"
 )
 
 module_local = web.application(urls, locals())

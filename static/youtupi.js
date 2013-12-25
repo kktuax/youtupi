@@ -190,6 +190,9 @@ $(document).delegate("#search", "pageinit", function() {
 			});
 		}
 	});
+	$("#engine").bind("change", function(event, ui) {
+		$("#search-basic").trigger("change");
+	});
 });
 
 function getSearchData(){

@@ -58,15 +58,15 @@ function loadPlayList(entries){
 			click: function () { 
 				var url = server + "/control/play";
 				$.post(url, data, loadPlayList, "json");
-				$.mobile.sdCurrentDialog.close();
-			}
+			},
+			close: true
 		};
 		var deleteBtn = {
 			click: function () {
 				var url = server + "/playlist";
 				$.ajax({url: url, type: 'DELETE', data: data, dataType: 'json', success: loadPlayList});
-				$.mobile.sdCurrentDialog.close();
-			}
+			},
+			close: true
 		};
 		var buttons = { 'Play': playBtn, 'Skip': deleteBtn };
 		for(operationKey in event.data.video.operations){
@@ -78,11 +78,11 @@ function loadPlayList(entries){
 				}
 				var url = server + "/" + type + "-" + operation.name;
 				$.post(url, data).done(successFunction, "json");
-				$.mobile.sdCurrentDialog.close();
 			}
 			buttons[operation.text] = { 
 				click: buttonClick,
-				args: new Array(type, operation, data)
+				args: new Array(type, operation, data),
+				close: true
 			};
 		}
 		$(document).simpledialog2({

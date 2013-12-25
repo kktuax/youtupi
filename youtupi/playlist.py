@@ -81,10 +81,11 @@ def isProcessRunning(process):
     return False
 
 def controlPlayer(action):
+    global player
+    global videos
     if action == "stop":
         player.stdin.write("q")
         player = None
-        global videos
         videos = list()
     if action == "pause":
         player.stdin.write("p")

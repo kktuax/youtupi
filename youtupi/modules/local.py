@@ -4,10 +4,7 @@
 import os.path
 from os.path import expanduser
 from StringIO import StringIO
-import heapq
-import datetime
-import json
-import web
+import heapq, datetime, web, json, codecs, magic
 from youtupi.playlist import findVideoInPlaylist, removeVideo
 from youtupi.video import createVideo
 from youtupi.util import config, ensure_dir		
@@ -63,6 +60,26 @@ def downloadSubtitle(video):
 	ensure_dir.ensure_dir(dfolder)
 	p = Periscope(dfolder)
 	p.downloadSubtitle(video.url, p.get_preferedLanguages())
+	toUtf8File(os.path.splitext(video.vid)[0] + ".srt")
+	
+def toUtf8File(srtFile):
+	if os.path.isfile(srtFile):
+		blob = open(srtFile, "r").read()
+		m = magic.open(magic.MAGIC_MIME_ENCODING)
+		m.load()
+		file_encoding = m.buffer(blob)
+		if file_encoding != 'utf-8':
+			base = os.path.splitext(srtFile)[0]
+			extension = os.path.splitext(srtFile)[1]
+			srtFileTmp = base + "-tmp." + extension
+			os.rename(srtFile, srtFileTmp)
+			file_stream = codecs.open(srtFileTmp, 'r', file_encoding)
+			file_output = codecs.open(srtFile, 'w', 'utf-8')
+			for l in file_stream:
+				file_output.write(l)
+			file_stream.close()
+			file_output.close()
+			os.remove(srtFileTmp)
 
 class subtitle_dl:
 	def POST(self):

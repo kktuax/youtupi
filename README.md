@@ -21,7 +21,7 @@ How-To
 
 # Install the dependencies
 
-    sudo apt-get install omxplayer python-pip youtube-dl
+    sudo apt-get install omxplayer python-pip python-magic youtube-dl
     sudo pip install web.py beautifulsoup4
     
 

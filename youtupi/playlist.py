@@ -89,10 +89,11 @@ def prepareVideo(video):
 def autoPlay():
     threading.Timer(1, autoPlay).start()
     removeOldVideosFromPlaylist()
-    for nvideo in videos[:2]:
-        prepareVideo(nvideo)
-    if (not isProcessRunning(player)) and (len(videos) > 0):
-        playNextVideo()
+    if videos:
+        if not isProcessRunning(player):
+            playNextVideo()
+        for nvideo in videos[:2]:
+            prepareVideo(nvideo)
     
 def isProcessRunning(process):
     if process:

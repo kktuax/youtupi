@@ -2,19 +2,18 @@ import subprocess, sys, web, json
 import os.path
 from StringIO import StringIO
 from os.path import expanduser
-from youtupi.video import Video 
+from youtupi.video import Video
 from youtupi.util import config, downloader, ensure_dir
-from youtupi.playlist import findVideoInPlaylist
 
-def createVideo(data):
+def getUrl(data):
     if(data['type'] == "youtube"):
+        print 'Locating URL for: ' + data['id']
         if(data['format'] == "default"):
-            url = getYoutubeUrl(data['id'])
+            return getYoutubeUrl(data['id'])
         else:
-            url = getYoutubeUrl(data['id'], data['format'])
-        return Video(data['id'], data, url)
+            return getYoutubeUrl(data['id'], data['format'])
     else:
-        raise Exception("Unkown video type")
+        return None
 
 def getYoutubeUrl(video, vformat = None):
     url = "http://www.youtube.com/watch?v=" + video
@@ -33,20 +32,21 @@ def getYoutubeUrl(video, vformat = None):
     else:
         return url.decode('UTF-8').strip()
 
-def downloadVideo(video):
-    dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
-    ensure_dir.ensure_dir(dfolder)
-    dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
-    downloader.download(video.url, dfile)
+
 
 class youtube_dl:
     
     def POST(self):
+        from youtupi.playlist import findVideoInPlaylist, prepareVideo
         data = json.load(StringIO(web.data()))
         video = findVideoInPlaylist(data['id'])
-        if(video == None):
-            video = createVideo(data)
-        downloadVideo(video)
+        if video:
+            dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
+            ensure_dir.ensure_dir(dfolder)
+            dfile = os.path.join(dfolder, video.data['title'] + ".mp4")
+            if not video.url:
+                prepareVideo(video)
+            downloader.download(video.url, dfile)
 
 urls = ("-download", "youtube_dl")
 module_youtube = web.application(urls, locals())

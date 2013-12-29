@@ -1,8 +1,9 @@
 import os, signal, subprocess, threading, time
+from youtupi.video import Video
+from youtupi.modules import local, youtube
 
 player = None
 videos = list()
-lock = threading.RLock()
 
 def playingVideo():
     if isProcessRunning(player):
@@ -19,20 +20,19 @@ def removeOldVideosFromPlaylist():
         if vv != currentVideo:
             videos.remove(vv)
 
-def playList():
-    return videos
-
-def removeVideo(vid):
-    video = findVideoInPlaylist(vid)
+def removeVideo(videoId):
+    video = findVideoInPlaylist(videoId)
     if video:
         if video == playingVideo():
             if len(videos) == 1:
                 stopPlayer()
             else:
                 playNextVideo()
-        global videos
-        videos = filter(lambda video:video.vid!=vid, videos)
-    
+        videos.remove(video)
+
+def playList():
+    return videos
+
 def findVideoInPlaylist(vid):
     fvideos = filter(lambda video:video.vid==vid, videos)
     if fvideos:
@@ -52,14 +52,19 @@ def playNextVideo():
     if nextVideo:
         playVideo(nextVideo[0].vid)
 
-def addVideo(video):
+def addVideo(data):
+    video = Video(data['id'], data)
     videos.append(video)
+
+lock = threading.RLock()
 
 def playVideo(videoId):
     with lock:
         stopPlayer()
         svideo = findVideoInPlaylist(videoId)
         if svideo:
+            if not svideo.url:
+                prepareVideo(svideo)
             if svideo != videos[0]:
                 removeOldVideosFromPlaylist()
                 videos.remove(svideo)
@@ -70,9 +75,22 @@ def playVideo(videoId):
                 time.sleep(1)
             svideo.played = True
 
+videoUrlLock = threading.RLock()
+
+def prepareVideo(video):
+    with videoUrlLock:        
+        if not video.url:
+            url = local.getUrl(video.data)
+            if not url:
+                url = youtube.getUrl(video.data)
+            video.url = url
+
+
 def autoPlay():
     threading.Timer(1, autoPlay).start()
     removeOldVideosFromPlaylist()
+    for nvideo in videos[:2]:
+        prepareVideo(nvideo)
     if (not isProcessRunning(player)) and (len(videos) > 0):
         playNextVideo()
     

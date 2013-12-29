@@ -3,8 +3,8 @@
 
 import web, json
 from StringIO import StringIO
-from youtupi.video import createVideo
-from youtupi.modules import local, youtube
+from youtupi.modules.local import module_local
+from youtupi.modules.youtube import module_youtube
 from youtupi.playlist import removeVideo, playNextVideo, playVideo, addVideo, controlPlayer, playList
 
 class redirect:
@@ -24,8 +24,7 @@ class playlist:
 	
 	def POST(self):
 		data = json.load(StringIO(web.data()))
-		video = createVideo(data)
-		addVideo(video)
+		addVideo(data)
 		web.seeother('/playlist')
 		
 	def DELETE(self):
@@ -54,8 +53,8 @@ if __name__ == "__main__":
 		'/playlist', 'playlist',
 		'/video/(.*)', 'video',
 		'/control/(.*)', 'control',
-		'/local', local.module_local,
-		'/youtube', youtube.module_youtube,
+		'/local', module_local,
+		'/youtube', module_youtube,
 		'/', 'index'
 	)
 	app = web.application(urls, globals())

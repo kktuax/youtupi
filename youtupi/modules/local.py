@@ -5,10 +5,14 @@ import os.path
 from os.path import expanduser
 from StringIO import StringIO
 import heapq, datetime, web, json, codecs, magic
-from youtupi.playlist import findVideoInPlaylist, removeVideo
-from youtupi.video import createVideo
 from youtupi.util import config, ensure_dir		
 from periscope.periscope import Periscope
+
+def getUrl(data):
+	if(data['type'] == "local"):
+		return data['id']
+	else:
+		return None
 	
 def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mkv")):
 	if not search:
@@ -59,7 +63,7 @@ def downloadSubtitle(video):
 	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
 	ensure_dir.ensure_dir(dfolder)
 	p = Periscope(dfolder)
-	p.downloadSubtitle(video.url, p.get_preferedLanguages())
+	p.downloadSubtitle(video.vid, p.get_preferedLanguages())
 	toUtf8File(os.path.splitext(video.vid)[0] + ".srt")
 	
 def toUtf8File(srtFile):
@@ -84,14 +88,15 @@ def toUtf8File(srtFile):
 class subtitle_dl:
 	def POST(self):
 		data = json.load(StringIO(web.data()))
+		from youtupi.playlist import findVideoInPlaylist
 		video = findVideoInPlaylist(data['id'])
-		if(video == None):
-			video = createVideo(data)
-		downloadSubtitle(video)
+		if video:
+			downloadSubtitle(video)
 
 class delete:
 	def POST(self):
 		data = json.load(StringIO(web.data()))
+		from youtupi.playlist import removeVideo
 		removeVideo(data['id'])
 		if os.path.isfile(data['id']):
 			os.remove(data['id'])

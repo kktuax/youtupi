@@ -63,12 +63,11 @@ def playVideo(videoId):
         stopPlayer()
         svideo = findVideoInPlaylist(videoId)
         if svideo:
-            if not svideo.url:
-                prepareVideo(svideo)
             if svideo != videos[0]:
-                removeOldVideosFromPlaylist()
                 videos.remove(svideo)
                 videos.insert(0, svideo)
+            if not svideo.url:
+                prepareVideo(svideo)
             global player
             player = subprocess.Popen(['omxplayer', '-ohdmi', svideo.url], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
             while not isProcessRunning(player):

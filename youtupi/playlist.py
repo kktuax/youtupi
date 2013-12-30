@@ -68,8 +68,12 @@ def playVideo(videoId):
                 videos.insert(0, svideo)
             if not svideo.url:
                 prepareVideo(svideo)
+            playerArgs = ['omxplayer', '-o hdmi']
+            if svideo.url.startswith("http"):
+                playerArgs.append('--live')
+            playerArgs.append("'" + svideo.url + "'")
             global player
-            player = subprocess.Popen(['omxplayer', '-ohdmi', "'" + svideo.url + "'"], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+            player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
             while not isProcessRunning(player):
                 time.sleep(1)
             svideo.played = True

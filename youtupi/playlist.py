@@ -72,8 +72,9 @@ def playVideo(videoId):
             if svideo.url.startswith("http"):
                 playerArgs.append('--live')
             playerArgs.append("'" + svideo.url + "'")
+            print "Running player: " + " ".join(playerArgs)
             global player
-            player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+            player = subprocess.Popen(" ".join(playerArgs), shell=True, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
             while not isProcessRunning(player):
                 time.sleep(1)
             svideo.played = True
@@ -90,13 +91,13 @@ def prepareVideo(video):
 
 
 def autoPlay():
-    threading.Timer(1, autoPlay).start()
     removeOldVideosFromPlaylist()
     if videos:
         if not isProcessRunning(player):
             playNextVideo()
         for nvideo in videos[:2]:
             prepareVideo(nvideo)
+    threading.Timer(1, autoPlay).start()
     
 def isProcessRunning(process):
     if process:

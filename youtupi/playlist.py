@@ -66,6 +66,7 @@ def playVideo(videoId):
             if svideo != videos[0]:
                 videos.remove(svideo)
                 videos.insert(0, svideo)
+                removeOldVideosFromPlaylist()
             if not svideo.url:
                 prepareVideo(svideo)
             playerArgs = ['omxplayer', '-o hdmi']

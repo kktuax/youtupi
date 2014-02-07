@@ -70,8 +70,6 @@ def playVideo(videoId):
             if not svideo.url:
                 prepareVideo(svideo)
             playerArgs = ["omxplayer", "-o", "hdmi"]
-            if svideo.url.startswith("http"):
-                playerArgs.append("--live")
             playerArgs.append(svideo.url)
             print "Running player: " + " ".join(playerArgs)
             global player

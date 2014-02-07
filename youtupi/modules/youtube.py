@@ -8,12 +8,19 @@ from youtupi.util import config, downloader, ensure_dir
 def getUrl(data):
     if(data['type'] == "youtube"):
         print 'Locating URL for: ' + data['id']
-        if(data['format'] == "default"):
-            return getYoutubeUrl(data['id'])
-        else:
-            return getYoutubeUrl(data['id'], data['format'])
-    else:
-        return None
+        formats = ["default", "18", "22", "37"]
+        # first requested format
+        reqFormatIdx = formats.index(data['format'])
+        formats[reqFormatIdx], formats[0] = formats[0], formats[reqFormatIdx]
+        for eformat in formats:
+            try:
+                if(eformat == "default"):
+                    return getYoutubeUrl(data['id'])
+                else:
+                    return getYoutubeUrl(data['id'], eformat)
+            except RuntimeError:
+                print 'Unable to fetch valid URL in format: ' + eformat
+    return None
 
 def getYoutubeUrl(video, vformat = None):
     url = "http://www.youtube.com/watch?v=" + video
@@ -24,15 +31,21 @@ def getYoutubeUrl(video, vformat = None):
     yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     (url, err) = yt_dl.communicate()
     if yt_dl.returncode != 0:
-        if vformat != None:
-            return getYoutubeUrl(video, None)
-        else:
-            sys.stderr.write(err)
-            raise RuntimeError('Error getting URL.')
+        sys.stderr.write(err)
+        raise RuntimeError('Error getting URL.')
     else:
-        return url.decode('UTF-8').strip()
+        rurl = url.decode('UTF-8').strip()
+        if not isValidUrl(rurl):
+            raise RuntimeError('Invalid URL.')
+        return rurl
 
-
+def isValidUrl(url):
+    args = ['omxplayer', '-i', url]
+    opi = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    (exitm, out) = opi.communicate()
+    if out:
+        return True
+    return False
 
 class youtube_dl:
     

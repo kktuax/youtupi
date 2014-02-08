@@ -23,15 +23,17 @@ case "$1" in
     ;;
     stop)
         echo "Stopping YouTuPi"
-        LCD_PID=`ps auxwww | grep youtupi.py | head -1 | awk '{print $2}'`
-        kill -9 $LCD_PID
+        killall -9 youtupi.py
     ;;
     update)
+	$0 stop
         echo "Updating YouTuPi"
-	sudo pip install --upgrade youtube_dl
+	sudo youtube-dl -U
         cd $YOUTUPI_HOME
 	git pull
 	git submodule -q foreach git pull -q origin master
+	chown -R $YOUTUPI_USER:$YOUTUPI_USER $YOUTUPI_HOME
+        $0 start
     ;;
     *)
         echo "Usage: /etc/init.d/youtupi {start|stop|update}"

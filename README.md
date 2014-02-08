@@ -4,50 +4,35 @@ YouTuPi
 YouTube (mobile) web frontend for your Raspberry Pi
 ---------------------------------------------------
 
-YouTuPi lets you play [YouTube](http://www.youtube.com/) videos in your [Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. 
+YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in your [Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. 
 
-Video search is performed in the client using the YouTube Data API. Videos are added to a playlist with the usual options: next/pause/resume/stop. The video URL is retrieved using [youtube-dl](http://rg3.github.com/youtube-dl/) and the actual playback happens in the [Omxplayer](https://github.com/huceke/omxplayer).
+YouTuPi provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the [raspbian](http://www.raspbian.org/) media player). It has two modules:
+ * Local for available media in the filesystem
+ * Youtube support thanks to [youtube-dl](http://rg3.github.com/youtube-dl/) 
 
-Technologies used
------------------
+Installation
+------------
 
- * [web.py](http://webpy.org/) as HTTP server 
- * [youtube-dl](http://rg3.github.com/youtube-dl/) for youtube support  
- * [Omxplayer](https://github.com/huceke/omxplayer) as video player
- * [JQuery mobile](http://jquerymobile.com) UI frontend
-
-How-To
-----------
-
-# Install the dependencies
-
-    sudo apt-get install omxplayer python-pip python-magic youtube-dl
-    sudo pip install web.py beautifulsoup4
-    
-
-# Clone YouTuPi and retrieve its submodules
-
-    sudo apt-get install git
     cd ~
-    git clone git://github.com/kktuax/youtupi.git
-    cd youtupi
-    git submodule init
-    git submodule update
+    curl https://raw.github.com/kktuax/youtupi/master/service/install.sh -o youtupi-install.sh
+    chmod +x youtupi-install.sh 
+    sudo ./youtupi-install.sh
 
 Use YouTuPi
 -----------
 
-# Launch YouTuPi server
-
-    cd ~/youtupi
-    nohup python youtupi.py >/dev/null 2>&1 &
+ * Start youtupi
+ 
+    sudo /etc/init.d/youtupi start
 
  * Grab your Tablet/Phone/PC and go to: http://192.168.1.2:8080 (replace 192.168.1.2 with your Raspberry Pi address).
  * Enjoy!
 
 # Configuration file
 
-You can customize the download folder and some other parameters in the JSON configuration file youtupi.conf
+You can customize the download folder and some other parameters in the JSON configuration file
+
+    nano /home/pi/youtupi/youtupi.conf
 
     {
         "local-folders": [
@@ -58,13 +43,8 @@ You can customize the download folder and some other parameters in the JSON conf
     }
 
 
-# Installing YouTuPi as a service
-
-    cd ~/youtupi
-    sudo cp service/youtupi /etc/init.d/
-    sudo update-rc.d youtupi defaults
-
 ## Updating YouTuPi
 
+Problems? Try updating...
+
     sudo /etc/init.d/youtupi update
-    

@@ -13,4 +13,3 @@ git submodule update
 chown -R $YOUTUPI_USER:$YOUTUPI_USER $YOUTUPI_HOME
 cp $YOUTUPI_HOME/service/youtupi /etc/init.d/
 update-rc.d youtupi defaults
-/etc/init.d/youtupi start

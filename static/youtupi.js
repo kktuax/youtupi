@@ -186,6 +186,7 @@ $(document).delegate("#search", "pageinit", function() {
 			$("#spinner-search").show();
 			$.getJSON(url, getSearchData(), function(response){
 				fillVideoList(processSearchResponse(response), "#results");
+			}).always(function() {
 				$("#spinner-search").hide();
 			});
 		}

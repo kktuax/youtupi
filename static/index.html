@@ -4,6 +4,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1"> 
 		<link rel="stylesheet" href="jquery.mobile-1.3.1.min.css" />
 		<link rel="stylesheet" href="jquery.mobile.simpledialog.min.css" />
+		<link rel="stylesheet" href="youtupi.css" />
 		<script src="jquery-1.8.2.min.js"></script>
 		<script src="jquery.json-2.4.min.js"></script>
 		<script src="jquery.mobile-1.3.1.min.js"></script>
@@ -54,14 +55,28 @@
 				</div>
 			</div>
 			<div data-role="content">
-				<div data-role="collapsible" data-collapsed="true" data-content-theme="c">
+				<div id="search">
+					<fieldset class="ui-grid-a">
+						<div class="ui-block-a">
+							<select name="select-choice-0" id="engine">
+								<option value="youtube" selected="selected">Youtube</option>
+								<option value="local">Local files</option>
+							</select>
+						</div>
+						<div class="ui-block-b">
+							<a href="#settings" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup">Settings</a>
+						</div>
+					</fieldset>
+					<input type="search" name="search" id="search-basic" value="" />
+					<ul id="results" data-inset="true" data-role="listview"></ul>
+					<div id="spinner-search" class="spinner" style="display:none;">
+						<img src="images/spinner.gif" alt="Loading"/>
+					</div>
+				</div>
+				<div data-role="popup" data-overlay-theme="a" data-content-theme="c" id="settings" class="ui-content">
+				 	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
 					<h3>Settings</h3>
-					<div data-role="fieldcontain">
-						<label for="engine">Search in:</label>
-						<select name="select-choice-0" id="engine">
-							<option value="youtube" selected="selected">Youtube</option>
-							<option value="local">Local files</option>
-						</select>
+					<div class="ui-body ui-body-c">
 						<label for="quality">Video quality:</label>
 						<select name="select-choice-1" id="quality">
 							<option value="default">Default quality</option>
@@ -70,14 +85,7 @@
 							<option value="37">MP4 1080p</option>
 						</select>
 						<label for="slider">Show # results:</label>
-						<input type="range" name="slider" id="slider" value="50" min="10" max="100"  />
-					</div>
-				</div>
-				<div id="search">
-					<input type="search" name="search" id="search-basic" value="" />
-					<ul id="results" data-inset="true" data-role="listview"></ul>
-					<div id="spinner-search" class="spinner" style="display:none;">
-						<img src="images/spinner.gif" alt="Loading"/>
+						<input type="range" name="slider" id="slider" value="25" min="10" max="50"  />
 					</div>
 				</div>
 			</div>

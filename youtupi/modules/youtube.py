@@ -1,4 +1,4 @@
-import subprocess, sys, web, json
+import subprocess, re, string, sys, web, json
 import os.path
 from StringIO import StringIO
 from os.path import expanduser
@@ -8,19 +8,33 @@ from youtupi.util import config, downloader, ensure_dir
 def getUrl(data):
     if(data['type'] == "youtube"):
         print 'Locating URL for: ' + data['id']
-        formats = ["default", "18", "22", "37"]
-        # first requested format
-        reqFormatIdx = formats.index(data['format'])
-        formats[reqFormatIdx], formats[0] = formats[0], formats[reqFormatIdx]
+        formats = getYoutubeFormats(data['id'])
+        if data['format'] == "high":
+            formats = formats[::-1]
         for eformat in formats:
             try:
-                if(eformat == "default"):
-                    return getYoutubeUrl(data['id'])
-                else:
-                    return getYoutubeUrl(data['id'], eformat)
+                return getYoutubeUrl(data['id'], eformat)
             except RuntimeError:
                 print 'Unable to fetch valid URL in format: ' + eformat
     return None
+
+def getYoutubeFormats(video):
+    url = "http://www.youtube.com/watch?v=" + video
+    args = ['youtube-dl', '-F', url]
+    yt_dl = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    (response, err) = yt_dl.communicate()
+    if yt_dl.returncode != 0:
+        sys.stderr.write(err)
+        raise RuntimeError('Error getting format list.')
+    else:
+        formats = []
+        formatsRegexp = re.compile("(\d+)\s{2,}([\d\w]+)\s{2,}(.+)\s{2,}(.+)")
+        responseLines = string.split(response.decode('UTF-8').strip(), '\n')
+        for line in responseLines:
+            formatResponse = formatsRegexp.search(line)
+            if formatResponse and "mp4" in formatResponse.group(2) and not "DASH" in formatResponse.group(4):
+                formats.append(formatResponse.group(1))
+        return formats
 
 def getYoutubeUrl(video, vformat = None):
     url = "http://www.youtube.com/watch?v=" + video

@@ -1,4 +1,4 @@
-import os, signal, subprocess, threading, time
+import os, subprocess, threading, time
 from youtupi.video import Video
 from youtupi.modules import local, youtube
 

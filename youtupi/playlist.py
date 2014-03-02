@@ -127,10 +127,12 @@ def prepareVideo(video):
 def autoPlay():
     removeOldVideosFromPlaylist()
     if videos:
-        for nvideo in videos[:2]:
+        for nvideo in videos[:1]:
             prepareVideo(nvideo)
         if not isProcessRunning(player):
             playNextVideo()
+        for nvideo in videos[:3]:
+            prepareVideo(nvideo)
     threading.Timer(1, autoPlay).start()
     
 def isProcessRunning(process):

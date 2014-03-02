@@ -28,11 +28,12 @@ def getYoutubeFormats(video):
         raise RuntimeError('Error getting format list.')
     else:
         formats = []
+        validFormats = ['mp4', 'webm']
         formatsRegexp = re.compile("(\d+)\s{2,}([\d\w]+)\s{2,}(.+)\s{2,}(.+)")
         responseLines = string.split(response.decode('UTF-8').strip(), '\n')
         for line in responseLines:
             formatResponse = formatsRegexp.search(line)
-            if formatResponse and "mp4" in formatResponse.group(2) and not "DASH" in formatResponse.group(4):
+            if formatResponse and formatResponse.group(2) in validFormats and not "DASH" in formatResponse.group(4):
                 formats.append(formatResponse.group(1))
         return formats
 

@@ -70,13 +70,14 @@ def playVideo(videoId):
                 removeOldVideosFromPlaylist()
             if not svideo.url:
                 prepareVideo(svideo)
-            playerArgs = ["omxplayer", "-o", "hdmi"]
-            playerArgs.append(svideo.url)
-            print "Running player: " + " ".join(playerArgs)
-            global player
-            player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-            while not isProcessRunning(player):
-                time.sleep(1)
+            if svideo.url:
+                playerArgs = ["omxplayer", "-o", "hdmi"]
+                playerArgs.append(svideo.url)
+                print "Running player: " + " ".join(playerArgs)
+                global player
+                player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
+                while not isProcessRunning(player):
+                    time.sleep(1)
             svideo.played = True
 
 videoUrlLock = threading.RLock()

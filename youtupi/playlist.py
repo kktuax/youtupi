@@ -43,8 +43,9 @@ def findVideoInPlaylist(vid):
 def stopPlayer():
     global player
     if isProcessRunning(player):
-        os.killpg(player.pid, signal.SIGTERM)
-        player = None
+        player.stdin.write("q")
+        while isProcessRunning(player):
+            time.sleep(1)
 
 def playNextVideo():
     viewedVideos = filter(lambda video:video.played==False, videos)

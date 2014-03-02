@@ -1,4 +1,4 @@
-import os, subprocess, threading, time, re
+import os, subprocess, threading, signal, time, re
 from youtupi.video import Video
 from youtupi.modules import local, youtube
 
@@ -44,8 +44,13 @@ def stopPlayer():
     global player
     if isProcessRunning(player):
         player.stdin.write("q")
+        cont = 0
         while isProcessRunning(player):
             time.sleep(1)
+            cont = cont + 1
+            if cont > 10:
+                os.killpg(player.pid, signal.SIGTERM)
+                player = None
 
 def playNextVideo():
     viewedVideos = filter(lambda video:video.played==False, videos)

@@ -116,16 +116,16 @@ def prepareVideo(video):
             if not url:
                 url = youtube.getUrl(video.data)
             video.url = url
-        if video.url and not video.duration:
-            video.duration = getVideoDuration(video)
+        if video.url and not video.data["duration"]:
+            video.data["duration"] = getVideoDuration(video)
 
 def autoPlay():
     removeOldVideosFromPlaylist()
     if videos:
-        if not isProcessRunning(player):
-            playNextVideo()
         for nvideo in videos[:2]:
             prepareVideo(nvideo)
+        if not isProcessRunning(player):
+            playNextVideo()
     threading.Timer(1, autoPlay).start()
     
 def isProcessRunning(process):

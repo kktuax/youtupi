@@ -121,7 +121,7 @@ def prepareVideo(video):
             if not url:
                 url = youtube.getUrl(video.data)
             video.url = url
-        if video.url and not video.data["duration"]:
+        if video.url and not video.data.get("duration", None):
             video.data["duration"] = getVideoDuration(video)
 
 def autoPlay():

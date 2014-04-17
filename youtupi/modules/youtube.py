@@ -49,18 +49,7 @@ def getYoutubeUrl(video, vformat = None):
         sys.stderr.write(err)
         raise RuntimeError('Error getting URL.')
     else:
-        rurl = url.decode('UTF-8').strip()
-        if not isValidUrl(rurl):
-            raise RuntimeError('Invalid URL.')
-        return rurl
-
-def isValidUrl(url):
-    args = ['omxplayer', '-i', url]
-    opi = subprocess.Popen(args, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    (exitm, out) = opi.communicate()
-    if out:
-        return True
-    return False
+        return url.decode('UTF-8').strip()
 
 class youtube_dl:
     

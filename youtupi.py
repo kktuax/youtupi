@@ -5,7 +5,8 @@ import web, json
 from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
-from youtupi.playlist import prepareVideo, findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, controlPlayer, playList
+from youtupi.playlist import prepareVideo, findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, resetPlaylist, playList
+from youtupi.engine.PlaybackEngineFactory import engine
 
 class redirect:
 	def GET(self, path):
@@ -37,8 +38,15 @@ class control:
 	def GET(self, action):
 		if action == "play":
 			playNextVideo()
-		else:			
-			controlPlayer(action)
+		elif action == "stop":
+			engine.stop()
+			resetPlaylist()
+		elif action == "pause":
+			engine.togglePause()
+		elif action == "volup":
+			engine.volumeUp()
+		elif action == "voldown":
+			engine.volumeDown()
 		web.seeother('/playlist')
 		
 	def POST(self, action):
@@ -48,6 +56,9 @@ class control:
 			if video:
 				prepareVideo(video)
 				playVideo(data['id'])
+		if action == "position":
+			data = json.load(StringIO(web.data()))
+			engine.setPosition(int(data['seconds']))
 		web.seeother('/playlist')
 
 if __name__ == "__main__":

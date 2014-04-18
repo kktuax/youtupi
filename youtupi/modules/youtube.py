@@ -2,7 +2,6 @@ import subprocess, re, string, sys, web, json
 import os.path
 from StringIO import StringIO
 from os.path import expanduser
-from youtupi.video import Video
 from youtupi.util import config, downloader, ensure_dir
 
 def getUrl(data):
@@ -54,10 +53,12 @@ def getYoutubeUrl(video, vformat = None):
 class youtube_dl:
     
     def POST(self):
-        from youtupi.playlist import findVideoInPlaylist, prepareVideo
+        from youtupi.playlist import findVideoInPlaylist
+        from youtupi.modules.videoUrl import prepareVideo
         data = json.load(StringIO(web.data()))
         video = findVideoInPlaylist(data['id'])
         if video:
+            
             dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
             ensure_dir.ensure_dir(dfolder)
             dfile = os.path.join(dfolder, video.data['title'] + ".mp4")

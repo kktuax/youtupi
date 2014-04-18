@@ -1,6 +1,6 @@
-import threading, time
+import threading
 from youtupi.video import Video
-from youtupi.modules import local, youtube
+from youtupi.modules.videoUrl import prepareVideo
 from youtupi.engine.PlaybackEngineFactory import engine
 
 TIMEOUT = 60
@@ -11,25 +11,24 @@ def resetPlaylist():
     global videos
     videos = list()
             
-def playingVideo():
-    if engine.isPlaying():
-        viewedVideos = filter(lambda video:video.played==True, videos)
-        lastPlayedVideo = viewedVideos[-1:]
-        if lastPlayedVideo:
-            return lastPlayedVideo[0]
+def currentVideo():
+    viewedVideos = filter(lambda video:video.played==True, videos)
+    lastPlayedVideo = viewedVideos[-1:]
+    if lastPlayedVideo:
+        return lastPlayedVideo[0]
     return None
 
 def removeOldVideosFromPlaylist():
     viewedVideos = filter(lambda video:video.played==True, videos)
-    currentVideo = playingVideo()
+    cv = currentVideo()
     for vv in viewedVideos:
-        if vv != currentVideo:
+        if vv != cv:
             videos.remove(vv)
 
 def removeVideo(videoId):
     video = findVideoInPlaylist(videoId)
     if video:
-        if video == playingVideo():
+        if video == currentVideo():
             playNextVideo()
         videos.remove(video)
 
@@ -47,56 +46,43 @@ def playNextVideo():
     viewedVideos = filter(lambda video:video.played==False, videos)
     nextVideo = viewedVideos[:1]
     if nextVideo:
-        try:
-            playVideo(nextVideo[0].vid)
-        except RuntimeError:
-            print 'Error playing video'
-            removeVideo(nextVideo[0].vid)
+        playVideo(nextVideo[0].vid)
+        removeOldVideosFromPlaylist()
     else:
         engine.stop()
+        resetPlaylist()
 
 def addVideo(data):
     video = Video(data['id'], data)
     videos.append(video)
 
-lock = threading.RLock()
-
 def playVideo(videoId):
-    with lock:
-        svideo = findVideoInPlaylist(videoId)
-        if svideo:
+    svideo = findVideoInPlaylist(videoId)
+    if svideo:
+        print 'Requested video ' + videoId
+        if svideo == currentVideo():
+            engine.setPosition(0)
+        else:
+            svideo.played = True
+            removeOldVideosFromPlaylist()
             if svideo != videos[0]:
                 videos.remove(svideo)
                 videos.insert(0, svideo)
-                removeOldVideosFromPlaylist()
-            cont = 0
-            while not svideo.url:
-                time.sleep(1)
-                cont = cont + 1
-                if cont > TIMEOUT:
-                    raise RuntimeError('Error playing video: video not prepared')
-            engine.play(svideo)
-            svideo.played = True
-
-videoUrlLock = threading.RLock()
-
-def prepareVideo(video):
-    with videoUrlLock:        
-        if not video.url:
-            url = local.getUrl(video.data)
-            if not url:
-                url = youtube.getUrl(video.data)
-            video.url = url
+            if not svideo.url:
+                prepareVideo(svideo)
+            try:
+                engine.play(svideo)
+            except RuntimeError:
+                print 'Error playing video ' + videoId
+                removeVideo(svideo.vid)
 
 def autoPlay():
     removeOldVideosFromPlaylist()
     if videos:
-        for nvideo in videos[:1]:
-            prepareVideo(nvideo)
         if not engine.isPlaying():
             playNextVideo()
         else:
-            svideo = playingVideo()
+            svideo = currentVideo()
             if svideo:
                 position = engine.getPosition()
                 if position:

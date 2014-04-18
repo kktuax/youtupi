@@ -5,7 +5,7 @@ import web, json
 from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
-from youtupi.playlist import prepareVideo, findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, resetPlaylist, playList
+from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
 
 class redirect:
@@ -52,9 +52,7 @@ class control:
 	def POST(self, action):
 		if action == "play":
 			data = json.load(StringIO(web.data()))
-			video = findVideoInPlaylist(data['id'])
-			if video:
-				prepareVideo(video)
+			if findVideoInPlaylist(data['id']):
 				playVideo(data['id'])
 		if action == "position":
 			data = json.load(StringIO(web.data()))

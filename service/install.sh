@@ -4,6 +4,7 @@ YOUTUPI_HOME=/home/pi/youtupi
 YOUTUPI_USER=pi
 
 curl https://yt-dl.org/latest/youtube-dl -o /usr/local/bin/youtube-dl
+chmod +x /usr/local/bin/youtube-dl
 apt-get install omxplayer python-pip python-magic git
 pip install web.py beautifulsoup4
 git clone git://github.com/kktuax/youtupi.git $YOUTUPI_HOME

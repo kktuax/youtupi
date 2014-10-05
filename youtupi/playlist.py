@@ -85,7 +85,7 @@ def playVideo(videoId):
                 cont = cont + 1
                 if cont > TIMEOUT:
                     raise RuntimeError('Error playing video: video not prepared')
-            playerArgs = ["omxplayer", "-o", "hdmi"]
+            playerArgs = ["omxplayer", "-o", "both"]
             playerArgs.append(svideo.url)
             print "Running player: " + " ".join(playerArgs)
             global player

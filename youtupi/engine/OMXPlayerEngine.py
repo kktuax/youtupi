@@ -22,7 +22,7 @@ class OMXPlayerEngine(PlaybackEngine):
     def play(self, video):
         if self.isPlaying():
             self.stop()
-        playerArgs = ["omxplayer", "-o", "hdmi"]
+        playerArgs = ["omxplayer", "-o", "both"]
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)

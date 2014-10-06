@@ -1,3 +1,6 @@
 [submodule "periscope"]
 	path = periscope
 	url = git://github.com/kktuax/periscope.git
+[submodule "pafy"]
+	path = pafy
+	url = https://github.com/np1/pafy.git

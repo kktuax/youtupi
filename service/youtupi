@@ -26,13 +26,9 @@ case "$1" in
         killall -9 youtupi.py
     ;;
     update)
-	$0 stop
+		$0 stop
         echo "Updating YouTuPi"
-	sudo youtube-dl -U
-        cd $YOUTUPI_HOME
-	git pull
-	git submodule -q foreach git pull -q origin master
-	chown -R $YOUTUPI_USER:$YOUTUPI_USER $YOUTUPI_HOME
+		bash $YOUTUPI_HOME/update.sh
         $0 start
     ;;
     *)

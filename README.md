@@ -3,7 +3,7 @@ YouTuPi
 
 YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in your [Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. It provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the [raspbian](http://www.raspbian.org/) media player). It has two modules:
  * Local for available media in the filesystem
- * Youtube support thanks to [youtube-dl](http://rg3.github.com/youtube-dl/) 
+ * Youtube support thanks to [pafy](https://github.com/np1/pafy) 
 
 Installation
 ------------

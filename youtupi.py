@@ -46,6 +46,7 @@ class control:
 			data = json.load(StringIO(web.data()))
 			video = findVideoInPlaylist(data['id'])
 			if video:
+				video.played = False
 				prepareVideo(video)
 				playVideo(data['id'])
 		web.seeother('/playlist')

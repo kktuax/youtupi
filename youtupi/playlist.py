@@ -72,9 +72,11 @@ TIMEOUT = 60
 
 def playVideo(videoId):
     with lock:
-        stopPlayer()
         svideo = findVideoInPlaylist(videoId)
         if svideo:
+            if svideo.played:
+                return
+            stopPlayer()
             if svideo != videos[0]:
                 videos.remove(svideo)
                 videos.insert(0, svideo)

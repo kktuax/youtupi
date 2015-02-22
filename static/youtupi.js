@@ -101,6 +101,7 @@ function updateControls(playListLength){
 		$("#next-button").addClass("ui-disabled");
 		$("#pause-button").addClass("ui-disabled");
 		$("#stop-button").addClass("ui-disabled");
+		$("#player-button").addClass("ui-disabled");
 	}else{
 		$("#playlist-empty").hide();
 		$("#playlist-playing").show();
@@ -108,6 +109,7 @@ function updateControls(playListLength){
 			$("#next-button").removeClass("ui-disabled");
 		}
 		$("#pause-button").removeClass("ui-disabled");
+		$("#player-button").removeClass("ui-disabled");
 		$("#stop-button").removeClass("ui-disabled");
 	}
 }
@@ -232,6 +234,12 @@ $(document).delegate("#playlist", "pageinit", function() {
 	});
 	$("#stop-button").bind("click", function(event, ui) {
 		playerAction('stop');
+	});
+	$("#volup-button").bind("click", function(event, ui) {
+		playerAction('volup');
+	});
+	$("#voldown-button").bind("click", function(event, ui) {
+		playerAction('voldown');
 	});
 	window.setInterval(function(){
 		$.getJSON(

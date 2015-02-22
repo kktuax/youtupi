@@ -2,7 +2,7 @@ from youtupi.engine.PlaybackEngine import PlaybackEngine
 import os, subprocess, time, dbus
 
 TIMEOUT = 60
-DBUS_RETRY_LIMIT = 600
+DBUS_RETRY_LIMIT = 50
 SECONDS_FACTOR = 1000000
 
 '''

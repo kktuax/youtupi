@@ -50,12 +50,12 @@ class control:
 		web.seeother('/playlist')
 		
 	def POST(self, action):
+		data = json.load(StringIO(web.data()))
 		if action == "play":
-			data = json.load(StringIO(web.data()))
-			if findVideoInPlaylist(data['id']):
+			video = findVideoInPlaylist(data['id'])
+			if video:
 				playVideo(data['id'])
 		if action == "position":
-			data = json.load(StringIO(web.data()))
 			engine.setPosition(int(data['seconds']))
 		web.seeother('/playlist')
 

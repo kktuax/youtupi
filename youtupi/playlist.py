@@ -65,16 +65,6 @@ def playVideo(videoId):
         else:
             svideo.played = True
             removeOldVideosFromPlaylist()
-            if svideo != videos[0]:
-                videos.remove(svideo)
-                videos.insert(0, svideo)
-            if not svideo.url:
-                prepareVideo(svideo)
-            try:
-                engine.play(svideo)
-            except RuntimeError:
-                print 'Error playing video ' + videoId
-                removeVideo(svideo.vid)
 
 def autoPlay():
     removeOldVideosFromPlaylist()

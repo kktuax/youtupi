@@ -1,5 +1,5 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
-import os, subprocess, time, dbus
+import os, subprocess, dbus
 
 TIMEOUT = 60
 SECONDS_FACTOR = 1000000
@@ -25,33 +25,22 @@ class OMXPlayerEngine(PlaybackEngine):
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-        cont = 0
-        while not self.isPlaying():
-            time.sleep(1)
-            cont = cont + 1
-            if cont > TIMEOUT:
-                raise RuntimeError('Error playing video')
     
     def stop(self):
-        if self.isPlaying():
+        if self.player:
             self.tryToSendAction(dbus.Int32("15"))
-            cont = 0
-            while self.isPlaying():
-                time.sleep(1)
-                cont = cont + 1
-                if cont > TIMEOUT:
-                    print 'Unable to stop player'            
         self.player = None
     
     def togglePause(self):
-        self.tryToSendAction(dbus.Int32("16"))
+        if self.player:
+            self.tryToSendAction(dbus.Int32("16"))
     
     def setPosition(self, seconds):
-        try:
-            if self.isPlaying():
+        if self.isPlaying():
+            try:
                 self.omxController().SetPosition(dbus.ObjectPath("/not/used"), dbus.Int64(seconds*SECONDS_FACTOR))
-        except:
-            print 'Unable to set position'
+            except:
+                print 'Unable to set position'
     
     def getPosition(self):
         if self.player:
@@ -71,10 +60,12 @@ class OMXPlayerEngine(PlaybackEngine):
         return None
     
     def volumeUp(self):
-        self.tryToSendAction(dbus.Int32("18"))
+        if self.player:
+            self.tryToSendAction(dbus.Int32("18"))
     
     def volumeDown(self):
-        self.tryToSendAction(dbus.Int32("17"))
+        if self.player:
+            self.tryToSendAction(dbus.Int32("17"))
     
     def isPlaying(self):
         if self.player:
@@ -107,8 +98,7 @@ class OMXPlayerEngine(PlaybackEngine):
             raise RuntimeError('Error loading player dbus interface')
     
     def tryToSendAction(self, action):
-        if self.isPlaying():
-            try:
-                self.omxController().Action(action)
-            except:
-                print 'Error connecting with player'
+        try:
+            self.omxController().Action(action)
+        except:
+            print 'Error connecting with player'

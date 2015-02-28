@@ -1,4 +1,5 @@
 from youtupi.engine.OMXPlayerEngine import OMXPlayerEngine
+from youtupi.engine.VlcEngine import VlcEngine
 from youtupi.engine.MockEngine import MockEngine
 
 def which(program):
@@ -19,7 +20,11 @@ def which(program):
 
 def createEngine():
     if which("omxplayer"):
+        print 'Using OMX Player engine'
         return OMXPlayerEngine()
+    elif which("vlc"):
+        print 'Using VLC engine'
+        return VlcEngine()
     else:
         print 'No player detected, using mock player engine'
         return MockEngine()

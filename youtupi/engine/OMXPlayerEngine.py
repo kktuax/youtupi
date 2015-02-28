@@ -2,7 +2,6 @@ from youtupi.engine.PlaybackEngine import PlaybackEngine
 import os, subprocess, time, dbus
 
 TIMEOUT = 60
-DBUS_RETRY_LIMIT = 50
 SECONDS_FACTOR = 1000000
 
 '''
@@ -55,19 +54,20 @@ class OMXPlayerEngine(PlaybackEngine):
             print 'Unable to set position'
     
     def getPosition(self):
-        try:
-            if self.isPlaying():
+        if self.player:
+            try:
                 return int(self.omxProps().Position())/SECONDS_FACTOR
-        except:
-            print 'Unable to determine position'
+            except:
+                print 'Unable to determine position'
+                return 0
         return None
     
     def getDuration(self):
-        try:
-            if self.isPlaying():
+        if self.player:
+            try:
                 return int(self.omxProps().Duration())/SECONDS_FACTOR
-        except:
-            print 'Unable to determine duration'
+            except:
+                print 'Unable to determine duration'
         return None
     
     def volumeUp(self):
@@ -78,7 +78,15 @@ class OMXPlayerEngine(PlaybackEngine):
     
     def isPlaying(self):
         if self.player:
-            if self.player.poll() == None:
+            pos = self.getPosition()
+            dur = self.getDuration()
+            if pos and dur:
+                if pos < dur:
+                    print 'Still playing (Position ' + str(pos) + ', duration ' + str(dur) + ")"
+                    return True
+                else:
+                    print 'Finished Playing'
+            else:
                 return True
         return False
     
@@ -89,18 +97,14 @@ class OMXPlayerEngine(PlaybackEngine):
         return self.omxIface('org.mpris.MediaPlayer2.Player')
     
     def omxIface(self, ifaceName):
-        retry=0
-        while True:
-            try:
-                with open('/tmp/omxplayerdbus', 'r+') as f:
-                    omxplayerdbus = f.read().strip()
-                bus = dbus.bus.BusConnection(omxplayerdbus)
-                dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
-                return dbus.Interface(dbobject,ifaceName)
-            except:
-                retry+=1
-                if retry >= DBUS_RETRY_LIMIT:
-                    raise RuntimeError('Error loading player dbus interface')
+        try:
+            with open('/tmp/omxplayerdbus', 'r+') as f:
+                omxplayerdbus = f.read().strip()
+            bus = dbus.bus.BusConnection(omxplayerdbus)
+            dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
+            return dbus.Interface(dbobject,ifaceName)
+        except:
+            raise RuntimeError('Error loading player dbus interface')
     
     def tryToSendAction(self, action):
         if self.isPlaying():

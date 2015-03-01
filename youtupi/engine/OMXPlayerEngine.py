@@ -35,7 +35,7 @@ class OMXPlayerEngine(PlaybackEngine):
                 bus = dbus.bus.BusConnection(omxplayerdbus)
                 dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
                 self.props = dbus.Interface(dbobject,'org.freedesktop.DBus.Properties')
-                self.controller = dbus.Interface(self.dbobject,'org.mpris.MediaPlayer2.Player')
+                self.controller = dbus.Interface(dbobject,'org.mpris.MediaPlayer2.Player')
             except:
                 retry+=1
                 if retry >= DBUS_RETRY_LIMIT:

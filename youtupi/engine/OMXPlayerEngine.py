@@ -1,8 +1,8 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
 import os, subprocess, dbus
 
-TIMEOUT = 60
 SECONDS_FACTOR = 1000000
+DBUS_RETRY_LIMIT = 50
 
 '''
 @author: Max
@@ -17,6 +17,8 @@ class OMXPlayerEngine(PlaybackEngine):
         pass
 
     player = None
+    props = None
+    controller = None
         
     def play(self, video):
         if self.isPlaying():
@@ -25,11 +27,26 @@ class OMXPlayerEngine(PlaybackEngine):
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-    
+        retry=0
+        while True:
+            try:
+                with open('/tmp/omxplayerdbus', 'r+') as f:
+                    omxplayerdbus = f.read().strip()
+                bus = dbus.bus.BusConnection(omxplayerdbus)
+                dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
+                self.props = dbus.Interface(dbobject,'org.freedesktop.DBus.Properties')
+                self.controller = dbus.Interface(self.dbobject,'org.mpris.MediaPlayer2.Player')
+            except:
+                retry+=1
+                if retry >= DBUS_RETRY_LIMIT:
+                    raise RuntimeError('Error loading player dbus interface')
+        
     def stop(self):
         if self.player:
             self.tryToSendAction(dbus.Int32("15"))
         self.player = None
+        self.props = None
+        self.controller = None
     
     def togglePause(self):
         if self.player:
@@ -38,14 +55,14 @@ class OMXPlayerEngine(PlaybackEngine):
     def setPosition(self, seconds):
         if self.isPlaying():
             try:
-                self.omxController().SetPosition(dbus.ObjectPath("/not/used"), dbus.Int64(seconds*SECONDS_FACTOR))
+                self.controller.SetPosition(dbus.ObjectPath("/not/used"), dbus.Int64(seconds*SECONDS_FACTOR))
             except:
                 print 'Unable to set position'
     
     def getPosition(self):
         if self.player:
             try:
-                return int(self.omxProps().Position())/SECONDS_FACTOR
+                return int(self.props.Position())/SECONDS_FACTOR
             except:
                 print 'Unable to determine position'
                 return 0
@@ -54,7 +71,7 @@ class OMXPlayerEngine(PlaybackEngine):
     def getDuration(self):
         if self.player:
             try:
-                return int(self.omxProps().Duration())/SECONDS_FACTOR
+                return int(self.props.Duration())/SECONDS_FACTOR
             except:
                 print 'Unable to determine duration'
         return None
@@ -81,24 +98,8 @@ class OMXPlayerEngine(PlaybackEngine):
                 return True
         return False
     
-    def omxProps(self):
-        return self.omxIface('org.freedesktop.DBus.Properties')
-    
-    def omxController(self):
-        return self.omxIface('org.mpris.MediaPlayer2.Player')
-    
-    def omxIface(self, ifaceName):
-        try:
-            with open('/tmp/omxplayerdbus', 'r+') as f:
-                omxplayerdbus = f.read().strip()
-            bus = dbus.bus.BusConnection(omxplayerdbus)
-            dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
-            return dbus.Interface(dbobject,ifaceName)
-        except:
-            raise RuntimeError('Error loading player dbus interface')
-    
     def tryToSendAction(self, action):
         try:
-            self.omxController().Action(action)
+            self.controller.Action(action)
         except:
             print 'Error connecting with player'

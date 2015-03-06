@@ -38,21 +38,19 @@ class OMXPlayerEngine(PlaybackEngine):
                 self.props = dbus.Interface(dbobject,'org.freedesktop.DBus.Properties')
                 self.controller = dbus.Interface(dbobject,'org.mpris.MediaPlayer2.Player')
             except:
-                time.sleep(0.5)
+                time.sleep(0.1)
                 retry+=1
                 if retry >= DBUS_RETRY_LIMIT:
                     raise RuntimeError('Error loading player dbus interface')
         
     def stop(self):
-        if self.player:
-            self.tryToSendAction(dbus.Int32("15"))
+        self.tryToSendAction(dbus.Int32("15"))
         self.player = None
         self.props = None
         self.controller = None
     
     def togglePause(self):
-        if self.player:
-            self.tryToSendAction(dbus.Int32("16"))
+        self.tryToSendAction(dbus.Int32("16"))
     
     def setPosition(self, seconds):
         if self.isPlaying():
@@ -62,7 +60,7 @@ class OMXPlayerEngine(PlaybackEngine):
                 print 'Unable to set position'
     
     def getPosition(self):
-        if self.player:
+        if self.isProcessRunning():
             try:
                 return int(self.props.Position())/SECONDS_FACTOR
             except:
@@ -71,7 +69,7 @@ class OMXPlayerEngine(PlaybackEngine):
         return None
     
     def getDuration(self):
-        if self.player:
+        if self.isProcessRunning():
             try:
                 return int(self.props.Duration())/SECONDS_FACTOR
             except:
@@ -79,15 +77,13 @@ class OMXPlayerEngine(PlaybackEngine):
         return None
     
     def volumeUp(self):
-        if self.player:
-            self.tryToSendAction(dbus.Int32("18"))
+        self.tryToSendAction(dbus.Int32("18"))
     
     def volumeDown(self):
-        if self.player:
-            self.tryToSendAction(dbus.Int32("17"))
+        self.tryToSendAction(dbus.Int32("17"))
     
     def isPlaying(self):
-        if self.player:
+        if self.isProcessRunning():
             pos = self.getPosition()
             dur = self.getDuration()
             if pos and dur:
@@ -101,7 +97,14 @@ class OMXPlayerEngine(PlaybackEngine):
         return False
     
     def tryToSendAction(self, action):
-        try:
-            self.controller.Action(action)
-        except:
-            print 'Error connecting with player'
+        if self.isProcessRunning():
+            try:
+                self.controller.Action(action)
+            except:
+                print 'Error connecting with player'
+            
+    def isProcessRunning(self):
+        if self.player:
+            if self.player.poll() == None:
+                return True
+        return False

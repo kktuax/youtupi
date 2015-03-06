@@ -17,8 +17,6 @@ class OMXPlayerEngine(PlaybackEngine):
         pass
 
     player = None
-    props = None
-    controller = None
         
     def play(self, video):
         if self.isPlaying():
@@ -27,27 +25,10 @@ class OMXPlayerEngine(PlaybackEngine):
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-        time.sleep(0.5)
-        retry=0
-        while True:
-            try:
-                with open('/tmp/omxplayerdbus.pi', 'r+') as f:
-                    omxplayerdbus = f.read().strip()
-                bus = dbus.bus.BusConnection(omxplayerdbus)
-                dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
-                self.props = dbus.Interface(dbobject,'org.freedesktop.DBus.Properties')
-                self.controller = dbus.Interface(dbobject,'org.mpris.MediaPlayer2.Player')
-            except:
-                time.sleep(0.1)
-                retry+=1
-                if retry >= DBUS_RETRY_LIMIT:
-                    raise RuntimeError('Error loading player dbus interface')
         
     def stop(self):
         self.tryToSendAction(dbus.Int32("15"))
         self.player = None
-        self.props = None
-        self.controller = None
     
     def togglePause(self):
         self.tryToSendAction(dbus.Int32("16"))
@@ -55,14 +36,14 @@ class OMXPlayerEngine(PlaybackEngine):
     def setPosition(self, seconds):
         if self.isPlaying():
             try:
-                self.controller.SetPosition(dbus.ObjectPath("/not/used"), dbus.Int64(seconds*SECONDS_FACTOR))
+                self.controller().SetPosition(dbus.ObjectPath("/not/used"), dbus.Int64(seconds*SECONDS_FACTOR))
             except:
                 print 'Unable to set position'
     
     def getPosition(self):
         if self.isProcessRunning():
             try:
-                return int(self.props.Position())/SECONDS_FACTOR
+                return int(self.props().Position())/SECONDS_FACTOR
             except:
                 print 'Unable to determine position'
                 return 0
@@ -71,7 +52,7 @@ class OMXPlayerEngine(PlaybackEngine):
     def getDuration(self):
         if self.isProcessRunning():
             try:
-                return int(self.props.Duration())/SECONDS_FACTOR
+                return int(self.props().Duration())/SECONDS_FACTOR
             except:
                 print 'Unable to determine duration'
         return None
@@ -99,9 +80,40 @@ class OMXPlayerEngine(PlaybackEngine):
     def tryToSendAction(self, action):
         if self.isProcessRunning():
             try:
-                self.controller.Action(action)
+                self.controller().Action(action)
             except:
                 print 'Error connecting with player'
+    
+    def controller(self):
+        retry=0
+        while True:
+            try:
+                with open('/tmp/omxplayerdbus.pi', 'r+') as f:
+                    omxplayerdbus = f.read().strip()
+                bus = dbus.bus.BusConnection(omxplayerdbus)
+                dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
+                return dbus.Interface(dbobject,'org.mpris.MediaPlayer2.Player')
+            except:
+                time.sleep(0.1)
+                retry+=1
+                if retry >= DBUS_RETRY_LIMIT:
+                    raise RuntimeError('Error loading player dbus interface')
+    
+    def props(self):
+        retry=0
+        while True:
+            try:
+                with open('/tmp/omxplayerdbus.pi', 'r+') as f:
+                    omxplayerdbus = f.read().strip()
+                bus = dbus.bus.BusConnection(omxplayerdbus)
+                dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
+                return dbus.Interface(dbobject,'org.freedesktop.DBus.Properties')
+            except:
+                time.sleep(0.1)
+                retry+=1
+                if retry >= DBUS_RETRY_LIMIT:
+                    raise RuntimeError('Error loading player dbus interface')
+    
             
     def isProcessRunning(self):
         if self.player:

@@ -9,7 +9,7 @@ Installation
 ------------
 
     cd ~
-    curl https://raw.github.com/kktuax/youtupi/master/service/install.sh -o youtupi-install.sh
+    curl https://raw.githubusercontent.com/kktuax/youtupi/master/service/install.sh -o youtupi-install.sh
     chmod +x youtupi-install.sh 
     sudo ./youtupi-install.sh
 

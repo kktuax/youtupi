@@ -71,7 +71,7 @@ class VlcEngine(PlaybackEngine):
             if pos and dur:
                 if pos < dur:
                     print 'Still playing (Position ' + str(pos) + ', duration ' + str(dur) + ")"
-                    return True
+                    return self.player.is_playing()
                 else:
                     print 'Finished Playing'
             else:

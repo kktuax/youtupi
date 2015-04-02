@@ -1,5 +1,5 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
-import os, subprocess, dbus, time
+import os, signal, subprocess, dbus, time
 
 SECONDS_FACTOR = 1000000
 DBUS_RETRY_LIMIT = 50
@@ -29,7 +29,12 @@ class OMXPlayerEngine(PlaybackEngine):
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
         
     def stop(self):
-        self.tryToSendAction(dbus.Int32("15"))
+        if self.isProcessRunning():
+            try:
+                self.controller().Action(dbus.Int32("15"))
+            except:
+		print "Failed sending stop signal"
+                os.killpg(self.player.pid, signal.SIGTERM)
         self.player = None
     
     def togglePause(self):

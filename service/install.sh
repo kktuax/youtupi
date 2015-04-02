@@ -3,7 +3,12 @@
 YOUTUPI_HOME=/home/pi/youtupi
 YOUTUPI_USER=pi
 
-apt-get install omxplayer python-pip python-magic git
+if [ -d "$YOUTUPI_HOME" ]; then
+	rm -rf $YOUTUPI_HOME
+fi
+
+apt-get update
+apt-get install -y omxplayer python-pip python-magic git
 pip install web.py beautifulsoup4
 git clone git://github.com/kktuax/youtupi.git $YOUTUPI_HOME
 cd $YOUTUPI_HOME

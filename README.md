@@ -43,8 +43,6 @@ You can customize the download folder and some other parameters in the JSON conf
 
 ## Problems?
 
-Try updating...
-
-    sudo /etc/init.d/youtupi update
+Try installing again a newer version
 
 Still no luck? Raise [an issue](https://github.com/kktuax/youtupi/issues/new)

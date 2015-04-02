@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import web, json
+import web, json, threading
 from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
-from youtupi.playlist import prepareVideo, findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, controlPlayer, playList
+from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, resetPlaylist, playList
+from youtupi.engine.PlaybackEngineFactory import engine
+
+engineLock = threading.RLock()
 
 class redirect:
 	def GET(self, path):
@@ -35,21 +38,30 @@ class playlist:
 class control:
 	
 	def GET(self, action):
-		if action == "play":
-			playNextVideo()
-		else:			
-			controlPlayer(action)
-		web.seeother('/playlist')
+		with engineLock:
+			if action == "play":
+				playNextVideo()
+			elif action == "stop":
+				engine.stop()
+				resetPlaylist()
+			elif action == "pause":
+				engine.togglePause()
+			elif action == "volup":
+				engine.volumeUp()
+			elif action == "voldown":
+				engine.volumeDown()
+			web.seeother('/playlist')
 		
 	def POST(self, action):
-		if action == "play":
+		with engineLock:
 			data = json.load(StringIO(web.data()))
-			video = findVideoInPlaylist(data['id'])
-			if video:
-				video.played = False
-				prepareVideo(video)
-				playVideo(data['id'])
-		web.seeother('/playlist')
+			if action == "play":
+				video = findVideoInPlaylist(data['id'])
+				if video:
+					playVideo(data['id'])
+			if action == "position":
+				engine.setPosition(int(data['seconds']))
+			web.seeother('/playlist')
 
 if __name__ == "__main__":
 	urls = (

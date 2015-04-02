@@ -19,6 +19,9 @@ function fillVideoList(entries, listSelect, clickEvent){
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
+		if((i == 0) && (listSelect == "#playlist-list")){
+			adjustCurrentPositionSlider(video.duration, video.position);
+		}
 		thumbnail = "images/video.png";
 		if(video.thumbnail != undefined){
 			thumbnail = video.thumbnail;
@@ -32,6 +35,17 @@ function fillVideoList(entries, listSelect, clickEvent){
 		$(listSelect).append(itemval);
 	}
 	$(listSelect).listview("refresh");
+}
+
+function adjustCurrentPositionSlider(duration, position){
+	var positionPct = (position != undefined && duration != undefined) ? 100*position/duration : 0;
+	$("#position").val(positionPct);
+	if(duration != undefined){
+		if(duration !=  $("#position").data("duration")){
+			$("#position").data("duration", duration);
+		}
+	}
+	$("#position").slider("refresh");
 }
 
 function getDurationString(time){
@@ -101,6 +115,7 @@ function updateControls(playListLength){
 		$("#next-button").addClass("ui-disabled");
 		$("#pause-button").addClass("ui-disabled");
 		$("#stop-button").addClass("ui-disabled");
+		$("#player-button").addClass("ui-disabled");
 	}else{
 		$("#playlist-empty").hide();
 		$("#playlist-playing").show();
@@ -108,6 +123,7 @@ function updateControls(playListLength){
 			$("#next-button").removeClass("ui-disabled");
 		}
 		$("#pause-button").removeClass("ui-disabled");
+		$("#player-button").removeClass("ui-disabled");
 		$("#stop-button").removeClass("ui-disabled");
 	}
 }
@@ -232,6 +248,18 @@ $(document).delegate("#playlist", "pageinit", function() {
 	});
 	$("#stop-button").bind("click", function(event, ui) {
 		playerAction('stop');
+	});
+	$("#volup-button").bind("click", function(event, ui) {
+		playerAction('volup');
+	});
+	$("#voldown-button").bind("click", function(event, ui) {
+		playerAction('voldown');
+	});
+	$("#position").bind("slidestop", function(event, ui){
+		var seconds = $("#position").data("duration") * $("#position").val() / 100;
+		var data = $.toJSON({seconds : seconds});
+		var url = server + "/control/position";
+		$.post(url, data, loadPlayList, "json");
 	});
 	window.setInterval(function(){
 		$.getJSON(

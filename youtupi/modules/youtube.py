@@ -9,18 +9,21 @@ from youtupi.util import config, downloader, ensure_dir
 def getUrl(data):
 	if(data['type'] == "youtube"):
 		print 'Locating URL for: ' + data['id']
-		video = pafy.new(data['id'])
-		if data['format'] == "audio":
-			bestaudio = video.getbestaudio(preftype="m4a")
-			return bestaudio.url
-		best = video.getbest(preftype="mp4")
-		if data['format'] == "high":
+		try:
+			video = pafy.new(data['id'])
+			if data['format'] == "audio":
+				bestaudio = video.getbestaudio(preftype="m4a")
+				return bestaudio.url
+			best = video.getbest(preftype="mp4")
+			if data['format'] == "high":
+				return best.url
+			for stream in video.streams:
+				if stream is not best:
+					if stream.extension == 'mp4':
+						return stream.url
 			return best.url
-		for stream in video.streams:
-			if stream is not best:
-				if stream.extension == 'mp4':
-					return stream.url
-		return best.url
+		except:
+			print "Error fetching video URL"
 	return None
 
 class youtube_dl:

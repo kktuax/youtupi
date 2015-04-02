@@ -19,6 +19,8 @@ class OMXPlayerEngine(PlaybackEngine):
     player = None
         
     def play(self, video):
+	if not video.url:
+		raise RuntimeError("Video URL not found")
         if self.isPlaying():
             self.stop()
         playerArgs = ["omxplayer", "-o", "both"]

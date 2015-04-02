@@ -30,7 +30,10 @@ def removeVideo(videoId):
     if video:
         if video == currentVideo():
             playNextVideo()
-        videos.remove(video)
+	try:
+        	videos.remove(video)
+	except ValueError:
+		print "Video already deleted"
 
 def playList():
     return videos

@@ -75,6 +75,13 @@ function loadPlayList(entries){
 			},
 			close: true
 		};
+                var playNextBtn = {
+                        click: function () {
+                                var url = server + "/control/playNext";
+                                $.post(url, data, loadPlayList, "json");
+                        },
+                        close: true
+                };
 		var deleteBtn = {
 			click: function () {
 				var url = server + "/playlist";
@@ -82,7 +89,7 @@ function loadPlayList(entries){
 			},
 			close: true
 		};
-		var buttons = { 'Play': playBtn, 'Skip': deleteBtn };
+		var buttons = { 'Play': playBtn, 'Play Next': playNextBtn, 'Skip': deleteBtn };
 		for(operationKey in event.data.video.operations){
 			var operation = event.data.video.operations[operationKey];
 			var type = event.data.video.type;

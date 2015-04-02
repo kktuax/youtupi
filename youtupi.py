@@ -5,7 +5,7 @@ import web, json, threading
 from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
-from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, resetPlaylist, playList
+from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, playlistPosition, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
 
 engineLock = threading.RLock()
@@ -59,6 +59,10 @@ class control:
 				video = findVideoInPlaylist(data['id'])
 				if video:
 					playVideo(data['id'])
+                        if action == "playNext":
+                                video = findVideoInPlaylist(data['id'])
+                                if video:
+                                        playlistPosition(data['id'], 2)
 			if action == "position":
 				engine.setPosition(int(data['seconds']))
 			web.seeother('/playlist')

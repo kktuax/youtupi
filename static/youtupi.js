@@ -1,5 +1,12 @@
 var server = window.location.protocol + "//" + window.location.host;
 
+Storage.prototype.setObj = function(key, obj) {
+    return this.setItem(key, JSON.stringify(obj))
+}
+Storage.prototype.getObj = function(key) {
+    return JSON.parse(this.getItem(key))
+}
+
 $(document).bind('pageinit', function () {
     $.mobile.defaultPageTransition = 'none';
 });
@@ -75,13 +82,13 @@ function loadPlayList(entries){
 			},
 			close: true
 		};
-                var playNextBtn = {
-                        click: function () {
-                                var url = server + "/control/playNext";
-                                $.post(url, data, loadPlayList, "json");
-                        },
-                        close: true
-                };
+		var playNextBtn = {
+			click: function () {
+				var url = server + "/control/playNext";
+				$.post(url, data, loadPlayList, "json");
+			},
+			close: true
+		};
 		var deleteBtn = {
 			click: function () {
 				var url = server + "/playlist";
@@ -147,12 +154,60 @@ function loadVideo(video){
 	var url = server + "/playlist";
 	var data = $.toJSON(video);
 	$.post(url, data, function(entries){
-		$("#spinner").hide();
 		loadPlayList(entries);
 	}, "json").fail(function() {
-		$("#spinner").hide(); 
 		showNotification("Error loading video"); 
+	}).always(function() {
+		$("#spinner").hide(); 
+		if('on' == $('#save-history').val()){
+			saveVideoToHistory(video);
+		}
 	});
+}
+
+function saveVideoToHistory(video){
+	if(!supports_html5_storage()){
+		return;
+	}
+	var history = localStorage.getObj("history");
+	if(history == undefined){
+		history = {};
+	}
+	if(video.id in history){
+		var existingVideo = history[video.id];
+		existingVideo.playedTimes += 1;
+		existingVideo.lastPlayed = new Date();
+	}else{
+		video.playedTimes = 1;
+		video.lastPlayed = new Date();
+		history[video.id] = video;
+	}
+	var numberOfElements = Object.keys(history).length;
+	if(numberOfElements > $('#slider').val()){
+		var deleteKey;
+		var lastPlayed;
+		var playedTimes;
+		for (var vid in history) {
+			if (history.hasOwnProperty(vid)) {
+				var evideo = history[vid];
+				if(deleteKey == undefined){
+					deleteKey = vid;
+					lastPlayed = evideo.lastPlayed;
+					playedTimes = evideo.playedTimes;
+				}else{
+					if((playedTimes > evideo.playedTimes) || ((playedTimes == evideo.playedTimes) && (lastPlayed > evideo.lastPlayed))){
+						deleteKey = vid;
+						lastPlayed = evideo.lastPlayed;
+						playedTimes = evideo.playedTimes;
+					}
+				}
+			}
+		}
+		if(deleteKey != undefined){
+			delete history[deleteKey];
+		} 
+	}
+	localStorage.setObj("history", history);
 }
 
 function tabPlaylist(){
@@ -201,22 +256,43 @@ $(document).delegate("#search", "pageinit", function() {
 	if(addLocalStorageFor("#slider", "slider")){
 		$("#slider" ).slider("refresh");
 	}
+	if(addLocalStorageFor("#save-history", "save-history")){
+		$("#save-history" ).slider("refresh");
+	}
+	$("#clear-history-button").bind("click", function(event, ui) {
+		if(supports_html5_storage()){
+			localStorage.setObj("history", {});
+		}
+	});
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();
-		$("#results").listview("refresh");
-		var url = getSearchUrl();
-		if(url !== undefined){
-			$("#spinner-search").show();
-			$.getJSON(url, getSearchData(), function(response){
-				fillVideoList(processSearchResponse(response), "#results");
-			}).always(function() {
-				$("#spinner-search").hide();
-			});
+		$("#results").listview("refresh");		
+		if('youtupi:history' == $("#search-basic").val().trim()){
+			if(supports_html5_storage()){
+				var history = localStorage.getObj("history");
+				if(history != undefined){
+					fillVideoList($.map(history, function(value, index) {
+						return [value];
+					}), "#results");
+				}
+			}
+		}else{
+			var url = getSearchUrl();
+			if(url !== undefined){	
+				$("#spinner-search").show();
+				$.getJSON(url, getSearchData(), function(response){
+					fillVideoList(processSearchResponse(response), "#results");
+				}).always(function() {
+					$("#spinner-search").hide();
+				});
+			}
 		}
 	});
 	$("#engine").bind("change", function(event, ui) {
 		$("#search-basic").trigger("change");
 	});
+	$("#search-basic").val("youtupi:history");
+	$("#search-basic").trigger("change");
 });
 
 function getSearchData(){

@@ -1,6 +1,6 @@
 function getYoutubeQueryUrl(){
 	var url;
-	var query = $("#search-basic").val();
+	var query = $("#search-basic").val().trim();
 	if(query != ''){
 		if(query.substring(0, 2) == "u:"){
 			query = query.substring(2, query.length);

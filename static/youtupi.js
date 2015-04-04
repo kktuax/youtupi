@@ -273,6 +273,8 @@ $(document).delegate("#search", "pageinit", function() {
 				if(history != undefined){
 					fillVideoList($.map(history, function(value, index) {
 						return [value];
+					}).sort(function (a, b) {
+						return b.playedTimes - a.playedTimes;
 					}), "#results");
 				}
 			}

@@ -1,12 +1,5 @@
 var server = window.location.protocol + "//" + window.location.host;
 
-Storage.prototype.setObj = function(key, obj) {
-    return this.setItem(key, JSON.stringify(obj))
-}
-Storage.prototype.getObj = function(key) {
-    return JSON.parse(this.getItem(key))
-}
-
 $(document).bind('pageinit', function () {
     $.mobile.defaultPageTransition = 'none';
 });
@@ -42,11 +35,6 @@ function fillVideoList(entries, listSelect, clickEvent){
 		$(listSelect).append(itemval);
 	}
 	$(listSelect).listview("refresh");
-	if(entries.length > 0){
-		$("#results-end-controls").show();
-	}else{
-		$("#results-end-controls").hide();
-	}
 }
 
 function adjustCurrentPositionSlider(duration, position){
@@ -147,6 +135,18 @@ function updateControls(playListLength){
 	}
 }
 
+function updateSearchControls(resultsLength){
+	if(resultsLength == 0){
+		$("#results-empty").show();
+		$("#add-all-button").addClass("ui-disabled");
+		$("#add-all-random-button").addClass("ui-disabled");
+	}else{
+		$("#results-empty").hide();
+		$("#add-all-button").removeClass("ui-disabled");
+		$("#add-all-random-button").removeClass("ui-disabled");
+	}
+}
+
 function playerAction(paction){
 	$.getJSON(
 		server + "/control/" + paction, loadPlayList
@@ -219,29 +219,6 @@ function tabPlaylist(){
 	$(".link-playlist").first().trigger('click');
 }
 
-function supports_html5_storage() {
-	try {
-		return 'localStorage' in window && window['localStorage'] !== null;
-	} catch (e) {
-		return false;
-	}
-}
-
-function addLocalStorageFor(select, key){
-	if(supports_html5_storage()){
-		var oldValue = localStorage.getItem(key);
-		if(oldValue){
-			$(select).val(oldValue);
-		}
-		$(select).bind("change", function(event, ui) {
-			localStorage.setItem(key, $(select).val());
-		});
-		return true;
-	}else{
-		return false;
-	}
-}
-
 function showNotification(message){
 	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.96, "top": $(window).scrollTop() + 100 })
 	.appendTo( $.mobile.pageContainer )
@@ -294,6 +271,9 @@ $(document).delegate("#search", "pageinit", function() {
 					}).sort(function (a, b) {
 						return b.playedTimes - a.playedTimes;
 					}), "#results");
+					updateSearchControls(Object.keys(history).length);
+				}else{
+					updateSearchControls(0);
 				}
 			}
 		}else{
@@ -301,7 +281,9 @@ $(document).delegate("#search", "pageinit", function() {
 			if(url !== undefined){	
 				$("#spinner-search").show();
 				$.getJSON(url, getSearchData(), function(response){
-					fillVideoList(processSearchResponse(response), "#results");
+					var pResponse = processSearchResponse(response);
+					fillVideoList(pResponse, "#results");
+					updateSearchControls(pResponse.length);
 				}).always(function() {
 					$("#spinner-search").hide();
 				});

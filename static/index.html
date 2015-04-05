@@ -9,6 +9,7 @@
 		<script src="jquery.json-2.4.min.js"></script>
 		<script src="jquery.mobile-1.3.1.min.js"></script>
 		<script src="jquery.mobile.simpledialog2.min.js"></script>
+		<script src="util.storage.js"></script>
 		<script src="http://www.google.com/jsapi"></script>
 		<script src="youtupi.js"></script>
 		<script src="youtupi.youtube.js"></script>
@@ -91,9 +92,12 @@
 					<div id="spinner-search" class="spinner" style="display:none;">
 						<img src="images/spinner.gif" alt="Loading"/>
 					</div>
-					<div id="results-end-controls" data-role="controlgroup" data-type="horizontal"  style="display:none;">
-						<a href="#" data-role="button" data-icon="plus" id="add-all-button">Add all</a>
-						<a href="#" data-role="button" data-icon="refresh" id="add-all-random-button">Add all with random order</a>
+					<div id="results-empty">
+						<h3>No results found</h3>
+					</div>
+					<div id="results-end-controls" data-role="controlgroup" data-type="horizontal">
+						<a href="#" data-role="button" data-icon="plus" id="add-all-button" class="ui-disabled">Add all</a>
+						<a href="#" data-role="button" data-icon="refresh" id="add-all-random-button" class="ui-disabled">Add all with random order</a>
 					</div>
 				</div>
 				<div data-role="popup" data-overlay-theme="a" data-content-theme="c" id="settings" class="ui-content">

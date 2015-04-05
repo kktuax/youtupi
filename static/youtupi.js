@@ -42,6 +42,11 @@ function fillVideoList(entries, listSelect, clickEvent){
 		$(listSelect).append(itemval);
 	}
 	$(listSelect).listview("refresh");
+	if(entries.length > 0){
+		$("#results-end-controls").show();
+	}else{
+		$("#results-end-controls").hide();
+	}
 }
 
 function adjustCurrentPositionSlider(duration, position){
@@ -263,6 +268,19 @@ $(document).delegate("#search", "pageinit", function() {
 		if(supports_html5_storage()){
 			localStorage.setObj("history", {});
 		}
+	});
+	$("#add-all-button").bind("click", function(event, ui) {
+		$("#results").children().each(function () {
+			$(this).trigger('click');
+		});
+	});
+	$("#add-all-random-button").bind("click", function(event, ui) {
+		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) { 
+			j=Math.floor(Math.random()*(i+1)), temp=$x[i], $x[i]=$x[j], $x[j]=temp; 
+		}
+		$x.each(function(i, el) { 
+			$(el).trigger('click');
+		});	
 	});
 	$("#search-basic").bind("change", function(event, ui) {
 		$('#results').empty();

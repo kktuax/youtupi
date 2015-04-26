@@ -1,5 +1,5 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
-import os, signal, subprocess, dbus, time
+import os, signal, subprocess, dbus, time, codecs, magic
 import os.path
 
 SECONDS_FACTOR = 1000000
@@ -27,12 +27,13 @@ class OMXPlayerEngine(PlaybackEngine):
         playerArgs = ["omxplayer", "-o", "both"]
         playerArgs.append(video.url)
         subsfile = video.subs
-        if subsfile and os.path.isfile(subsfile): 
+        if subsfile and os.path.isfile(subsfile):
+            self.toUtf8File(subsfile) 
             playerArgs.append("--subtitles")
             playerArgs.append(subsfile)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
-        
+
     def stop(self):
         if self.isProcessRunning():
             try:
@@ -132,3 +133,26 @@ class OMXPlayerEngine(PlaybackEngine):
             if self.player.poll() == None:
                 return True
         return False
+    
+    def toUtf8File(self, srtFile):
+        if os.path.isfile(srtFile):
+            blob = open(srtFile, "r").read()
+            m = magic.open(magic.MAGIC_MIME_ENCODING)
+            m.load()
+            file_encoding = m.buffer(blob)
+            if file_encoding != 'utf-8':
+                base = os.path.splitext(srtFile)[0]
+                extension = os.path.splitext(srtFile)[1]
+                srtFileTmp = base + "-tmp." + extension
+                os.rename(srtFile, srtFileTmp)
+                try:
+                    file_stream = codecs.open(srtFileTmp, 'r', file_encoding)
+                    file_output = codecs.open(srtFile, 'w', 'utf-8')
+                    for l in file_stream:
+                        file_output.write(l)
+                    file_stream.close()
+                    file_output.close()
+                    os.remove(srtFileTmp)
+                except:
+                    print "Failed converting subtitle to utf8"
+                    os.rename(srtFileTmp, srtFile)

@@ -4,9 +4,8 @@
 import os.path
 from os.path import expanduser
 from StringIO import StringIO
-import heapq, datetime, web, json, codecs, magic
+import heapq, datetime, web, json
 from youtupi.util import config, ensure_dir		
-from periscope.periscope import Periscope
 
 def prepareVideo(video):
 	if(video.data['type'] == "youtube") and not video.url:
@@ -57,45 +56,10 @@ class search:
 			for local_video_file in find_files(expanduser(folder), search=search, count=count):
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
-				subtitleOperation = {'name': 'subtitle', 'text': 'Subtitles', 'successMessage': 'Subtitle downloaded'};
 				deleteOperation = {'name': 'delete', 'text': 'Delete', 'successMessage': 'File deleted'};
-				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation, deleteOperation]}
+				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [deleteOperation]}
 				local_videos.append(local_video)
 		return json.dumps(local_videos[0:count], indent=4)
-
-def downloadSubtitle(video):
-	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
-	ensure_dir.ensure_dir(dfolder)
-	p = Periscope(dfolder)
-	p.downloadSubtitle(video.vid, p.get_preferedLanguages())
-	toUtf8File(os.path.splitext(video.vid)[0] + ".srt")
-	
-def toUtf8File(srtFile):
-	if os.path.isfile(srtFile):
-		blob = open(srtFile, "r").read()
-		m = magic.open(magic.MAGIC_MIME_ENCODING)
-		m.load()
-		file_encoding = m.buffer(blob)
-		if file_encoding != 'utf-8':
-			base = os.path.splitext(srtFile)[0]
-			extension = os.path.splitext(srtFile)[1]
-			srtFileTmp = base + "-tmp." + extension
-			os.rename(srtFile, srtFileTmp)
-			file_stream = codecs.open(srtFileTmp, 'r', file_encoding)
-			file_output = codecs.open(srtFile, 'w', 'utf-8')
-			for l in file_stream:
-				file_output.write(l)
-			file_stream.close()
-			file_output.close()
-			os.remove(srtFileTmp)
-
-class subtitle_dl:
-	def POST(self):
-		data = json.load(StringIO(web.data()))
-		from youtupi.playlist import findVideoInPlaylist
-		video = findVideoInPlaylist(data['id'])
-		if video:
-			downloadSubtitle(video)
 
 class delete:
 	def POST(self):
@@ -107,7 +71,6 @@ class delete:
 
 urls = (
 	"-search", "search",
-	'-subtitle', "subtitle_dl",
 	'-delete', "delete"
 )
 

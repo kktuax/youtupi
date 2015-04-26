@@ -51,12 +51,15 @@ class search:
 		count = int(user_data.count)
 		kat_videos = list()
 		if search:
-			results = Search(search).list()
-			for result in results:
-				name = result.name
-				desc = "Size: " + result.size + " (in " + result.files + " file/s), seeds: " + result.seed
-				kat_video = {'id': result.magnet_link, 'description': desc, 'title': name, 'type': 'kat'}
-				kat_videos.append(kat_video)
+			try:
+				results = Search(search).list()
+				for result in results:
+					name = result.name
+					desc = "Size: " + result.size + " (in " + result.files + " file/s), seeds: " + result.seed
+					kat_video = {'id': result.magnet_link, 'description': desc, 'title': name, 'type': 'kat'}
+					kat_videos.append(kat_video)
+			except ValueError:
+				print "No results found"
 		return json.dumps(kat_videos[0:count], indent=4)
 
 urls = (

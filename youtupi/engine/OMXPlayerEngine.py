@@ -30,7 +30,7 @@ class OMXPlayerEngine(PlaybackEngine):
         if subsfile and os.path.isfile(subsfile):
             self.toUtf8File(subsfile) 
             playerArgs.append("--subtitles")
-            playerArgs.append('"' + subsfile + '"')
+            playerArgs.append(subsfile)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
 

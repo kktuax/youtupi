@@ -1,6 +1,6 @@
 import threading
 from youtupi.video import Video
-from youtupi.modules.videoUrl import prepareVideo
+from youtupi.modules.videoUrl import prepareVideo, closeVideo
 from youtupi.engine.PlaybackEngineFactory import engine
 
 TIMEOUT = 60
@@ -8,6 +8,10 @@ TIMEOUT = 60
 videos = list()
 
 def resetPlaylist():
+    cvideo = currentVideo()
+    if cvideo:
+        closeVideo(cvideo)
+    engine.stop()
     global videos
     videos = list()
             
@@ -68,7 +72,6 @@ def playNextVideo():
         playVideo(nextVideo[0].vid)
         removeOldVideosFromPlaylist()
     else:
-        engine.stop()
         resetPlaylist()
 
 def addVideo(data):
@@ -82,6 +85,9 @@ def playVideo(videoId):
         if svideo == currentVideo():
             engine.setPosition(0)
         else:
+            cvideo = currentVideo()
+            if cvideo:
+                closeVideo(cvideo)
             svideo.played = True
             removeOldVideosFromPlaylist()
             if svideo != videos[0]:

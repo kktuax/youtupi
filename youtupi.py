@@ -5,6 +5,7 @@ import web, json, threading
 from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
+from youtupi.modules.kat import module_kat
 from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, playlistPosition, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
 
@@ -42,7 +43,6 @@ class control:
 			if action == "play":
 				playNextVideo()
 			elif action == "stop":
-				engine.stop()
 				resetPlaylist()
 			elif action == "pause":
 				engine.togglePause()
@@ -79,6 +79,7 @@ if __name__ == "__main__":
 		'/control/(.*)', 'control',
 		'/local', module_local,
 		'/youtube', module_youtube,
+		'/kat', module_kat,
 		'/', 'index'
 	)
 	app = web.application(urls, globals())

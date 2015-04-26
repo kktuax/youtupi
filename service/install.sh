@@ -10,6 +10,8 @@ fi
 apt-get update
 apt-get install -y omxplayer python-pip python-magic git
 pip install web.py beautifulsoup4
+pip install --upgrade subliminal KickassAPI
+
 git clone git://github.com/kktuax/youtupi.git $YOUTUPI_HOME
 cd $YOUTUPI_HOME
 git submodule init

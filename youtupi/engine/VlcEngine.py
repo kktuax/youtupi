@@ -1,5 +1,6 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
 from vlc.generated import vlc
+import os
 
 SECONDS_FACTOR = 1000
 
@@ -26,6 +27,10 @@ class VlcEngine(PlaybackEngine):
             self.player = vlc.MediaPlayer(video.url)
         else:
             self.player.set_media(vlc.Instance().media_new(video.url))
+        subsfile = video.subs
+        if subsfile and os.path.isfile(subsfile):
+            print "Loading subtitles: " + subsfile
+            self.player.video_set_subtitle_file(subsfile)
         self.player.play()
     
     def stop(self):

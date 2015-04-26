@@ -114,12 +114,31 @@
 						</select>
 						<label for="slider">Show # results:</label>
 						<input type="range" name="slider" id="slider" value="25" min="10" max="50"  />
-						<label for="save-history">Store loaded items in history:</label>
-						<select name="save-history" id="save-history" data-role="slider">
-							<option value="off">Off</option>
-							<option value="on" selected="selected">On</option>
-						</select>
-						<a href="#" data-role="button" data-icon="delete" title="Clear History" id="clear-history-button">Clear history</a>
+						<fieldset class="ui-grid-a">
+							<div class="ui-block-a">
+								<label for="save-history">Store loaded items in history:</label>
+								<select name="save-history" id="save-history" data-role="slider">
+									<option value="off">Off</option>
+									<option value="on" selected="selected">On</option>
+								</select>
+							</div>
+							<div class="ui-block-b">
+								<a href="#" data-role="button" data-icon="delete" title="Clear History" id="clear-history-button">Clear history</a>
+							</div>
+						</fieldset>
+						<fieldset class="ui-grid-a">
+							<div class="ui-block-a">
+								<label for="fetch-subtitles">Fetch video subtitles:</label>
+								<select name="fetch-subtitles" id="fetch-subtitles" data-role="slider">
+									<option value="off" selected="selected">Off</option>
+									<option value="on">On</option>
+								</select>
+							</div>
+							<div class="ui-block-b">
+								<label for="subtitles-lang">Subtitles language:</label>
+     							<input type="text" name="subtitles-lang" id="subtitles-lang" value="eng">
+							</div>
+						</fieldset>
 					</div>
 				</div>
 			</div>

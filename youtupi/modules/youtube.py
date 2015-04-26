@@ -6,6 +6,10 @@ from pafy import pafy
 from youtupi.video import Video
 from youtupi.util import config, downloader, ensure_dir
 
+def prepareVideo(video):
+	if(video.data['type'] == "youtube") and not video.url:
+		video.url = getUrl(video.data)
+
 def getUrl(data):
 	if(data['type'] == "youtube"):
 		print 'Locating URL for: ' + data['id']

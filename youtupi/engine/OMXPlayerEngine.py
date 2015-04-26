@@ -1,5 +1,6 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
 import os, signal, subprocess, dbus, time
+import os.path
 
 SECONDS_FACTOR = 1000000
 DBUS_RETRY_LIMIT = 50
@@ -19,12 +20,16 @@ class OMXPlayerEngine(PlaybackEngine):
     player = None
         
     def play(self, video):
-	if not video.url:
-		raise RuntimeError("Video URL not found")
+        if not video.url:
+            raise RuntimeError("Video URL not found")
         if self.isPlaying():
             self.stop()
         playerArgs = ["omxplayer", "-o", "both"]
         playerArgs.append(video.url)
+        subsfile = video.subs
+        if subsfile and os.path.isfile(subsfile): 
+            playerArgs.append("--subtitles")
+            playerArgs.append(subsfile)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
         
@@ -33,7 +38,7 @@ class OMXPlayerEngine(PlaybackEngine):
             try:
                 self.controller().Action(dbus.Int32("15"))
             except:
-		print "Failed sending stop signal"
+                print "Failed sending stop signal"
                 os.killpg(self.player.pid, signal.SIGTERM)
         self.player = None
     

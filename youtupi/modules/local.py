@@ -8,6 +8,10 @@ import heapq, datetime, web, json, codecs, magic
 from youtupi.util import config, ensure_dir		
 from periscope.periscope import Periscope
 
+def prepareVideo(video):
+	if(video.data['type'] == "youtube") and not video.url:
+		video.url = getUrl(video.data)
+
 def getUrl(data):
 	if(data['type'] == "local"):
 		return data['id']

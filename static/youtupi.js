@@ -156,8 +156,12 @@ function playerAction(paction){
 function loadVideo(video){
 	tabPlaylist();
 	$("#spinner").show();
+	video.format = undefined;
+	video.subs = undefined;
 	if(video.type == "youtube"){
 		video.format = $("#quality").val();
+	}else if('on' == $('#fetch-subtitles').val()){
+		video.subs = $('#subtitles-lang').val().trim();
 	}
 	var url = server + "/playlist";
 	var data = $.toJSON(video);
@@ -249,6 +253,10 @@ $(document).delegate("#search", "pageinit", function() {
 			localStorage.setObj("history", {});
 		}
 	});
+	if(addLocalStorageFor("#fetch-subtitles", "fetch-subtitles")){
+		$("#fetch-subtitles" ).slider("refresh");
+	}
+	addLocalStorageFor("#subtitles-lang", "subtitles-lang");
 	$("#add-all-button").bind("click", function(event, ui) {
 		$("#results").children().each(function () {
 			$(this).trigger('click');

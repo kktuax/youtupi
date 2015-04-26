@@ -156,9 +156,6 @@ function playerAction(paction){
 function loadVideo(video){
 	tabPlaylist();
 	$("#spinner").show();
-	if(video.type == "youtube"){
-		video.format = $("#quality").val();
-	}
 	var url = server + "/playlist";
 	var data = $.toJSON(video);
 	$.post(url, data, function(entries){

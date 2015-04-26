@@ -31,6 +31,7 @@ function getYoutubeResponseVideos(response){
 		}
 		video.type = "youtube";
 		video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
+		video.format = $("#quality").val();
 		videos.push(video);
 	}
 	return videos;

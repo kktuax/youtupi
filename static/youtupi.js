@@ -30,7 +30,7 @@ function fillVideoList(entries, listSelect, clickEvent){
 		if(duration){
 			duration = " [" + duration + "]";
 		}
-		var itemval = $('<li><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
+		var itemval = $('<li data-video-id="' + video.id + '"><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
 		itemval.bind('click', {video: video}, clickEvent);
 		$(listSelect).append(itemval);
 	}
@@ -342,6 +342,23 @@ $(document).delegate("#playlist", "pageinit", function() {
 	});
 	$("#voldown-button").bind("click", function(event, ui) {
 		playerAction('voldown');
+	});
+	$("#playlist-list").sortable();
+	$("#playlist-list").disableSelection();
+	$("#playlist-list").bind("sortstop", function(event, ui) {
+		$('#playlist-list').listview('refresh');
+		if($("#playlist-list").children().length > 1){
+			var draggedVideoId = ui.item.data("video-id");
+			var draggedPosition = $("#playlist-list").children().index(ui.item);
+			if(draggedPosition > 0){
+				var data = $.toJSON({id : draggedVideoId, order: draggedPosition + 1});
+				var url = server + "/control/order";
+				$.post(url, data, loadPlayList, "json");
+			}else if(draggedPosition == 0){
+				var url = server + "/control/play";
+				$.post(url, $.toJSON({id : draggedVideoId}), loadPlayList, "json");
+			}
+		}
 	});
 	$("#position").bind("slidestop", function(event, ui){
 		var seconds = $("#position").data("duration") * $("#position").val() / 100;

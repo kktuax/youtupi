@@ -59,10 +59,14 @@ class control:
 				video = findVideoInPlaylist(data['id'])
 				if video:
 					playVideo(data['id'])
-                        if action == "playNext":
-                                video = findVideoInPlaylist(data['id'])
-                                if video:
-                                        playlistPosition(data['id'], 2)
+			if action == "playNext":
+				video = findVideoInPlaylist(data['id'])
+				if video:
+					playlistPosition(data['id'], 2)
+			if action == "order":
+				video = findVideoInPlaylist(data['id'])
+				if video:
+					playlistPosition(data['id'], data['order'])
 			if action == "position":
 				engine.setPosition(int(data['seconds']))
 			web.seeother('/playlist')

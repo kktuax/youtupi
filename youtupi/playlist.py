@@ -30,26 +30,26 @@ def removeVideo(videoId):
     if video:
         if video == currentVideo():
             playNextVideo()
-	try:
-        	videos.remove(video)
-	except ValueError:
-		print "Video already deleted"
+    try:
+        videos.remove(video)
+    except ValueError:
+        print "Video already deleted"
 
 def playlistPosition(videoId, position):
     video = findVideoInPlaylist(videoId)
     if (len(videos) > 1) and video:
-	isPlaying = None
+        isPlaying = None
         if video == currentVideo():
-		isPlaying = True
-	pos = int(position) - 1 
-	curPos = videos.index(video)
-	if pos != curPos:
-	        print "Changing video " + videoId + " position to: " + str(pos) + " (was " + str(curPos) + ")"
-                videos.remove(video)
-		videos.insert(pos, video)
-		if isPlaying:
-			video.played=False
-			playNextVideo()
+            isPlaying = True
+    pos = int(position) - 1 
+    curPos = videos.index(video)
+    if pos != curPos:
+        print "Changing video " + videoId + " position to: " + str(pos) + " (was " + str(curPos) + ")"
+        videos.remove(video)
+        videos.insert(pos, video)
+        if isPlaying:
+            video.played=False
+            playNextVideo()
 
 def playList():
     return videos

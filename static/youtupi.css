@@ -1,5 +1,14 @@
 #settings-popup {
-    width: 80%;
-    left: 10%;
-    right: 10%
+    width: 90%;
+    left: 5%;
+    right: 5%
+}
+.ui-popup .ui-slider-track, .ui-popup .ui-slider-switch {
+    margin: 0;
+}
+.ui-btn-inner {
+    text-overflow: clip;
+}
+.ui-popup .ui-controlgroup, .ui-popup fieldset.ui-controlgroup {
+    text-align: center;
 }

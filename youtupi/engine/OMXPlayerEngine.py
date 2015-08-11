@@ -70,6 +70,18 @@ class OMXPlayerEngine(PlaybackEngine):
     def volumeDown(self):
         self.tryToSendAction(dbus.Int32("17"))
     
+    def seekBackSmall(self):
+        self.tryToSendAction(dbus.Int32("19"))
+    
+    def seekForwardSmall(self):
+        self.tryToSendAction(dbus.Int32("20"))
+    
+    def seekBackLarge(self):
+        self.tryToSendAction(dbus.Int32("21"))
+    
+    def seekForwardLarge(self):
+        self.tryToSendAction(dbus.Int32("22"))
+    
     def isPlaying(self):
         if self.isProcessRunning():
             pos = self.getPosition()

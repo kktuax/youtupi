@@ -51,6 +51,14 @@ class control:
 				engine.volumeUp()
 			elif action == "voldown":
 				engine.volumeDown()
+			elif action == "seekbacksmall":
+				engine.seekBackSmall()
+			elif action == "seekforwardsmall":
+				engine.seekForwardSmall()
+			elif action == "seekbacklarge":
+				engine.seekBackLarge()
+			elif action == "seekforwardlarge":
+				engine.seekForwardLarge()
 			web.seeother('/playlist')
 
 	def POST(self, action):

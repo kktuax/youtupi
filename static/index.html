@@ -28,18 +28,12 @@
 			</div>
 			<div data-role="content">
 				<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
-					<div data-role="collapsible" data-iconpos="right" data-collapsed="true">
-						<h3>Player Control</h3>
+					<div data-role="collapsible" data-iconpos="right" data-collapsed="false">
+						<h3>Playlist Control</h3>
 						<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
 							<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
 							<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
 							<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
-						</div>
-						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" data-icon="plus" title="Volume up" id="volup-button" class="active-on-playing ui-disabled">Vol. Up</a>
-							<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button" class="active-on-playing ui-disabled">Vol. Down</a>
-							<a href="#" data-role="button" title="Previous Audio Track" id="prevaudiotrack-button" class="active-on-playing ui-disabled">Prev Audio Track</a>
-							<a href="#" data-role="button" title="Next Audio Track" id="nextaudiotrack-button" class="active-on-playing ui-disabled">Next Audio Track</a>
 						</div>
 						<div data-role="fieldcontain">
 							<label for="playlist-reorder">Drag and drop reorder:</label>
@@ -47,6 +41,15 @@
 								<option value="off" selected="selected">Off</option>
 								<option value="on">On</option>
 							</select>
+						</div>
+					</div>
+					<div data-role="collapsible" data-iconpos="right" data-collapsed="true">
+						<h3>Track Control</h3>
+						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
+							<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button" class="active-on-playing ui-disabled">Vol Down</a>
+							<a href="#" data-role="button" data-icon="plus" data-iconpos="right" title="Volume up" id="volup-button" class="active-on-playing ui-disabled">Vol Up</a>
+							<a href="#" data-role="button" data-icon="arrow-l" title="Previous Audio Track" id="prevaudiotrack-button" class="active-on-playing ui-disabled">Prev Audio Track</a>
+							<a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" id="nextaudiotrack-button" class="active-on-playing ui-disabled">Next Audio Track</a>
 						</div>
 						<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
 							<a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button" class="active-on-playing ui-disabled">&lt;&lt;</a>

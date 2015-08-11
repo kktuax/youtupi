@@ -46,3 +46,21 @@ class PlaybackEngine(object):
     @abstractmethod
     def volumeDown(self):
         pass 
+        
+    @abstractmethod
+    def seekBackSmall(self):
+        pass
+    
+    @abstractmethod
+    def seekForwardSmall(self):
+        pass 
+        
+    @abstractmethod
+    def seekBackLarge(self):
+        pass
+    
+    @abstractmethod
+    def seekForwardLarge(self):
+        pass 
+        
+        

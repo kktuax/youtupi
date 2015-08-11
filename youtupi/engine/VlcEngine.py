@@ -66,6 +66,22 @@ class VlcEngine(PlaybackEngine):
             curvol = self.player.audio_get_volume()
             self.player.audio_set_volume(curvol - 5)
     
+    def seekBackSmall(self):
+        if self.player:
+            self.setPosition(max(self.getPosition() - 30, 0))
+
+    def seekForwardSmall(self):
+        if self.player:
+            self.setPosition(min(self.getPosition() + 30, self.getDuration()))
+        
+    def seekBackLarge(self):
+        if self.player:
+            self.setPosition(max(self.getPosition() - 600, 0))
+    
+    def seekForwardLarge(self):
+        if self.player:
+            self.setPosition(min(self.getPosition() + 600, self.getDuration()))
+
     def isPlaying(self):
         if self.player:
             pos = self.getPosition()

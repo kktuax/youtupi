@@ -334,6 +334,9 @@ $(document).delegate("#playlist", "pageinit", function() {
 	$("#pause-button").bind("click", function(event, ui) {
 		playerAction('pause');
 	});
+	$("#pause-button2").bind("click", function(event, ui) {
+		playerAction('pause');
+	});
 	$("#stop-button").bind("click", function(event, ui) {
 		playerAction('stop');
 	});
@@ -342,6 +345,18 @@ $(document).delegate("#playlist", "pageinit", function() {
 	});
 	$("#voldown-button").bind("click", function(event, ui) {
 		playerAction('voldown');
+	});
+	$("#seekbacksmall-button").bind("click", function(event, ui) {
+		playerAction('seekbacksmall');
+	});
+	$("#seekforwardsmall-button").bind("click", function(event, ui) {
+		playerAction('seekforwardsmall');
+	});
+	$("#seekbacklarge-button").bind("click", function(event, ui) {
+		playerAction('seekbacklarge');
+	});
+	$("#seekforwardlarge-button").bind("click", function(event, ui) {
+		playerAction('seekforwardlarge');
 	});
 	$("#playlist-list").sortable();
 	$("#playlist-list").disableSelection();

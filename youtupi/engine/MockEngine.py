@@ -51,6 +51,18 @@ class MockEngine(PlaybackEngine):
     def volumeDown(self):
         print 'Volume down requested'
     
+    def seekBackSmall(self):
+	print 'seekBackSmall requested'
+    
+    def seekForwardSmall(self):
+	print 'seekForwardSmall requested'
+        
+    def seekBackLarge(self):
+	print 'seekBackLarge requested'
+    
+    def seekForwardLarge(self):
+	print 'seekForwardLarge requested'
+
     def isPlaying(self):
         if self.player:
             if self.player.poll() == None:

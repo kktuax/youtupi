@@ -34,8 +34,12 @@
 							<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
 							<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
 							<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
+						</div>
+						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
 							<a href="#" data-role="button" data-icon="plus" title="Volume up" id="volup-button" class="active-on-playing ui-disabled">Vol. Up</a>
 							<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button" class="active-on-playing ui-disabled">Vol. Down</a>
+							<a href="#" data-role="button" title="Previous Audio Track" id="prevaudiotrack-button" class="active-on-playing ui-disabled">Prev Audio Track</a>
+							<a href="#" data-role="button" title="Next Audio Track" id="nextaudiotrack-button" class="active-on-playing ui-disabled">Next Audio Track</a>
 						</div>
 						<div data-role="fieldcontain">
 							<label for="playlist-reorder">Drag and drop reorder:</label>
@@ -45,11 +49,11 @@
 							</select>
 						</div>
 						<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button">&lt;&lt;</a>
-							<a href="#" data-role="button" title="seek back 30s" id="seekbacksmall-button">&lt;</a>
-							<a href="#" data-role="button" title="Pause/Resume" id="pause-button2">||</a>
-							<a href="#" data-role="button" title="seek forward 30s" id="seekforwardsmall-button">&gt;</a>
-							<a href="#" data-role="button" title="seek forward 10m" id="seekforwardlarge-button">&gt;&gt;</a>
+							<a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button" class="active-on-playing ui-disabled">&lt;&lt;</a>
+							<a href="#" data-role="button" title="seek back 30s" id="seekbacksmall-button" class="active-on-playing ui-disabled">&lt;</a>
+							<a href="#" data-role="button" title="Pause/Resume" id="pause-button2" class="active-on-playing ui-disabled">||</a>
+							<a href="#" data-role="button" title="seek forward 30s" id="seekforwardsmall-button" class="active-on-playing ui-disabled">&gt;</a>
+							<a href="#" data-role="button" title="seek forward 10m" id="seekforwardlarge-button" class="active-on-playing ui-disabled">&gt;&gt;</a>
 						</div>
 						<div>
 							<label for="position">Video position:</label>

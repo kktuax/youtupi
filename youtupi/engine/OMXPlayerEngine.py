@@ -82,6 +82,12 @@ class OMXPlayerEngine(PlaybackEngine):
     def seekForwardLarge(self):
         self.tryToSendAction(dbus.Int32("22"))
     
+    def prevAudioTrack(self):
+        self.tryToSendAction(dbus.Int32("6"))
+    
+    def nextAudioTrack(self):
+        self.tryToSendAction(dbus.Int32("7"))
+    
     def isPlaying(self):
         if self.isProcessRunning():
             pos = self.getPosition()

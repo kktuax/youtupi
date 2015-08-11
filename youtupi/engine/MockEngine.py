@@ -63,6 +63,12 @@ class MockEngine(PlaybackEngine):
     def seekForwardLarge(self):
 	print 'seekForwardLarge requested'
 
+    def prevAudioTrack(self):
+	print 'Previous Audio Track requested'
+    
+    def seekForwardLarge(self):
+	print 'Next Audio Track requested'
+
     def isPlaying(self):
         if self.player:
             if self.player.poll() == None:

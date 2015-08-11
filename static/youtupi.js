@@ -358,6 +358,12 @@ $(document).delegate("#playlist", "pageinit", function() {
 	$("#seekforwardlarge-button").bind("click", function(event, ui) {
 		playerAction('seekforwardlarge');
 	});
+	$("#prevaudiotrack-button").bind("click", function(event, ui) {
+		playerAction('prevaudiotrack');
+	});
+	$("#nextaudiotrack-button").bind("click", function(event, ui) {
+		playerAction('nextaudiotrack');
+	});
 	$("#playlist-list").sortable();
 	$("#playlist-list").disableSelection();
 	$("#playlist-list").bind("sortstop", function(event, ui) {

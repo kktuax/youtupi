@@ -63,4 +63,12 @@ class PlaybackEngine(object):
     def seekForwardLarge(self):
         pass 
         
+    @abstractmethod
+    def prevAudioTrack(self):
+        pass
+    
+    @abstractmethod
+    def nextAudioTrack(self):
+        pass 
+        
         

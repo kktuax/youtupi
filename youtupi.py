@@ -58,6 +58,10 @@ class control:
 				engine.seekBackLarge()
 			elif action == "seekforwardlarge":
 				engine.seekForwardLarge()
+			elif action == "prevaudiotrack":
+				engine.prevAudioTrack()
+			elif action == "nextaudiotrack":
+				engine.nextAudioTrack()
 			web.seeother('/playlist')
 		
 	def POST(self, action):

@@ -28,7 +28,7 @@ case "$1" in
     update)
 		$0 stop
         echo "Updating YouTuPi"
-		bash $YOUTUPI_HOME/update.sh
+		bash $YOUTUPI_HOME/service/update.sh
         $0 start
     ;;
     *)

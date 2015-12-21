@@ -135,7 +135,7 @@ function updateControls(playListLength){
 	}
 }
 
-function updateSearchControls(resultsLength){
+function updateSearchControls(resultsLength, nextPageAvailable){
 	if(resultsLength == 0){
 		$("#results-empty").show();
 		$("#add-all-button").addClass("ui-disabled");
@@ -144,6 +144,11 @@ function updateSearchControls(resultsLength){
 		$("#results-empty").hide();
 		$("#add-all-button").removeClass("ui-disabled");
 		$("#add-all-random-button").removeClass("ui-disabled");
+	}
+	if(nextPageAvailable){
+		$("#next-page-button").removeClass("ui-disabled");
+	}else{
+		$("#next-page-button").addClass("ui-disabled");
 	}
 }
 
@@ -267,9 +272,20 @@ $(document).delegate("#search", "pageinit", function() {
 			$(el).trigger('click');
 		});	
 	});
-	$("#search-basic").bind("change", function(event, ui) {
+	$("#search-basic").bind("change", function(event, params) {
 		$('#results').empty();
-		$("#results").listview("refresh");		
+		$("#results").listview("refresh");
+		var resetPage = true;
+		if(params != undefined){
+			if(params.incrementingingPage != undefined){
+				if(params.incrementingingPage){
+					resetPage = !params.incrementingingPage;
+				}
+			}
+		}
+		if(resetPage){
+			resetPageNumber();
+		}
 		if('youtupi:history' == $("#search-basic").val().trim()){
 			if(supports_html5_storage()){
 				var history = localStorage.getObj("history");
@@ -279,9 +295,9 @@ $(document).delegate("#search", "pageinit", function() {
 					}).sort(function (a, b) {
 						return b.playedTimes - a.playedTimes;
 					}), "#results");
-					updateSearchControls(Object.keys(history).length);
+					updateSearchControls(Object.keys(history).length, false);
 				}else{
-					updateSearchControls(0);
+					updateSearchControls(0, false);
 				}
 			}
 		}else{
@@ -291,12 +307,20 @@ $(document).delegate("#search", "pageinit", function() {
 				$.getJSON(url, getSearchData(), function(response){
 					var pResponse = processSearchResponse(response);
 					fillVideoList(pResponse, "#results");
-					updateSearchControls(pResponse.length);
+					updateSearchControls(pResponse.length, isNextPageAvailable(response));
 				}).always(function() {
 					$("#spinner-search").hide();
 				});
+			}else{
+				updateSearchControls(0, false);
 			}
 		}
+	});
+	$("#next-page-button").bind("click", function(event, ui) {
+		incrementPageNumber();
+		$("#search-basic").trigger("change", {
+			"incrementingingPage" : true
+		});
 	});
 	$("#engine").bind("change", function(event, ui) {
 		$("#search-basic").trigger("change");
@@ -304,6 +328,17 @@ $(document).delegate("#search", "pageinit", function() {
 	$("#search-basic").val("youtupi:history");
 	$("#search-basic").trigger("change");
 });
+
+function resetPageNumber(){
+	$("#pageNumber").val("1");
+}
+
+function incrementPageNumber(){
+	var el = $("#pageNumber");
+	var pageNumber = parseInt(el.val());
+	pageNumber = pageNumber + 1;
+	el.val(pageNumber.toString());
+}
 
 function getSearchData(){
 	var engine = $("#engine").val();
@@ -329,6 +364,15 @@ function processSearchResponse(response){
 		return getYoutubeResponseVideos(response);
 	}else{
 		return response;
+	}
+}
+
+function isNextPageAvailable(response){
+	var engine = $("#engine").val();
+	if(engine == "youtube"){
+		return getYoutubeNextPage(response);
+	}else{
+		return false;
 	}
 }
 

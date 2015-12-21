@@ -1,11 +1,16 @@
 function getYoutubeQueryUrl(){
 	var query = $("#search-basic").val().trim();
 	if(query == ''){
-		return '';
+		return undefined;
 	}
 	var url = 'https://www.googleapis.com/youtube/v3/';
 	var key = '&key=AIzaSyAdAR3PofKiUSGFsfQ03FBEpVkVa1WA0J4';
 	var maxResults = '&maxResults='+$('#slider').val();
+	var pageNumber = parseInt($("#pageNumber").val());
+	if(pageNumber > 1){
+		var pageToken = $("#next-page-button").data("nextPageToken");
+		maxResults += "&pageToken=" + pageToken; 
+	}
 	var listLookup = 'list:';
 	var listsLookup = 'lists:';
 	if(query.indexOf(listLookup) > -1){
@@ -34,6 +39,14 @@ function getYoutubeResponseVideos(response){
 	return videos;
 }
 
+function getYoutubeNextPage(response){
+	if(response.nextPageToken != undefined){
+		$("#next-page-button").data("nextPageToken", response.nextPageToken);
+		return true;
+	}
+	return false;
+}
+
 function createYoutubePlaylist(entry){
 	if(typeof entry.id != 'undefined'){
 		if(entry.id.kind != 'youtube#playlist'){
@@ -46,13 +59,13 @@ function createYoutubePlaylist(entry){
 	video.id = entry.id.playlistId;
 	video.title = entry.snippet.title;
 	video.description = entry.snippet.description;
-	video.thumbnail = thumbnailFromSnippet(entry.snippet);
+	video.thumbnail = thumbnailFromYoutubeSnippet(entry.snippet);
 	video.type = "youtube:playlist";
 	video.operations = [];
 	return video;
 }
 
-function thumbnailFromSnippet(snippet){
+function thumbnailFromYoutubeSnippet(snippet){
 	if(typeof snippet.thumbnails != 'undefined'){
 		if(typeof snippet.thumbnails.high != 'undefined'){
 			return snippet.thumbnails.high.url;
@@ -78,7 +91,7 @@ function createYoutubeVideo(entry){
 	video.description = entry.snippet.description;
 	video.title = entry.snippet.title;
 	video.duration = entry.duration;
-	video.thumbnail = thumbnailFromSnippet(entry.snippet);
+	video.thumbnail = thumbnailFromYoutubeSnippet(entry.snippet);
 	video.type = "youtube";
 	video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
 	return video;

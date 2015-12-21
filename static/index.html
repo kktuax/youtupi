@@ -97,6 +97,7 @@
 						<h3>No results found</h3>
 					</div>
 					<div id="results-end-controls" data-role="controlgroup" data-type="horizontal">
+						<a href="#" data-role="button" data-icon="arrow-r" id="next-page-button" class="ui-disabled">Next page</a>
 						<a href="#" data-role="button" data-icon="plus" id="add-all-button" class="ui-disabled">Add all</a>
 						<a href="#" data-role="button" data-icon="refresh" id="add-all-random-button" class="ui-disabled">Add all with random order</a>
 					</div>
@@ -113,6 +114,7 @@
 						</select>
 						<label for="slider">Show # results:</label>
 						<input type="range" name="slider" id="slider" value="25" min="10" max="50"  />
+						<input type="hidden" name="pageNumber" id="pageNumber" value="1"  />
 						<label for="save-history">Store loaded items in history:</label>
 						<select name="save-history" id="save-history" data-role="slider">
 							<option value="off">Off</option>

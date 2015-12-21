@@ -154,23 +154,28 @@ function playerAction(paction){
 }
 
 function loadVideo(video){
-	tabPlaylist();
-	$("#spinner").show();
-	if(video.type == "youtube"){
-		video.format = $("#quality").val();
-	}
-	var url = server + "/playlist";
-	var data = $.toJSON(video);
-	$.post(url, data, function(entries){
-		loadPlayList(entries);
-	}, "json").fail(function() {
-		showNotification("Error loading video"); 
-	}).always(function() {
-		$("#spinner").hide(); 
-		if('on' == $('#save-history').val()){
-			saveVideoToHistory(video);
+	if(video.type == "youtube:playlist"){
+		$("#search-basic").val("list:" + video.id);
+		$("#search-basic").trigger("change");
+	}else{
+		tabPlaylist();
+		$("#spinner").show();
+		if(video.type == "youtube"){
+			video.format = $("#quality").val();
 		}
-	});
+		var url = server + "/playlist";
+		var data = $.toJSON(video);
+		$.post(url, data, function(entries){
+			loadPlayList(entries);
+		}, "json").fail(function() {
+			showNotification("Error loading video"); 
+		}).always(function() {
+			$("#spinner").hide(); 
+			if('on' == $('#save-history').val()){
+				saveVideoToHistory(video);
+			}
+		});
+	}
 }
 
 function saveVideoToHistory(video){

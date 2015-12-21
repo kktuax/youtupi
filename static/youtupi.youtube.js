@@ -1,8 +1,21 @@
 function getYoutubeQueryUrl(){
-	var url;
 	var query = $("#search-basic").val().trim();
-	if(query != ''){
-		url = 'https://www.googleapis.com/youtube/v3/search?order=relevance&part=snippet&q='+query+'&type=video&maxResults='+$('#slider').val()+'&key=AIzaSyAdAR3PofKiUSGFsfQ03FBEpVkVa1WA0J4';
+	if(query == ''){
+		return '';
+	}
+	var url = 'https://www.googleapis.com/youtube/v3/';
+	var key = '&key=AIzaSyAdAR3PofKiUSGFsfQ03FBEpVkVa1WA0J4';
+	var maxResults = '&maxResults='+$('#slider').val();
+	var listLookup = 'list:';
+	var listsLookup = 'lists:';
+	if(query.indexOf(listLookup) > -1){
+		var lid = query.split(listLookup);
+		url += 'playlistItems?part=snippet&playlistId='+lid[1]+'&type=video' + maxResults + key;
+	} else if(query.indexOf(listsLookup) > -1){
+		var lid = query.split(listsLookup);
+		url += 'search?order=relevance&part=snippet&q='+lid[1]+'&type=playlist' + maxResults + key;
+	} else {
+		url += 'search?order=relevance&part=snippet&q='+query+'&type=video' + maxResults + key;
 	}
 	return url;
 }
@@ -12,26 +25,61 @@ function getYoutubeResponseVideos(response){
 	var entries = response.items || [];
 	for (var i = 0; i < entries.length; i++) {
 		var entry = entries[i];
-		if(typeof entry.video != 'undefined'){
-			entry = entry.video;
+		var video = createYoutubePlaylist(entry);
+		if(video === null){
+			video = createYoutubeVideo(entry);
 		}
-		var video = {}
-		video.id = entry.id.videoId;
-		video.description = entry.snippet.description;
-		video.title = entry.snippet.title;
-		video.duration = entry.duration;
-		if(typeof entry.snippet.thumbnails != 'undefined'){
-			if(typeof entry.snippet.thumbnails.high != 'undefined'){
-				video.thumbnail = entry.snippet.thumbnails.high.url;
-			}else if(typeof entry.snippet.thumbnails.medium != 'undefined'){
-				video.thumbnail = entry.snippet.thumbnails.medium.url;
-			}else{
-				video.thumbnail = entry.snippet.thumbnails.default.url;
-			}
-		}
-		video.type = "youtube";
-		video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
 		videos.push(video);
 	}
 	return videos;
+}
+
+function createYoutubePlaylist(entry){
+	if(typeof entry.id != 'undefined'){
+		if(entry.id.kind != 'youtube#playlist'){
+			return null;
+		}
+	}else{
+		return null;
+	}
+	var video = {}
+	video.id = entry.id.playlistId;
+	video.title = entry.snippet.title;
+	video.description = entry.snippet.description;
+	video.thumbnail = thumbnailFromSnippet(entry.snippet);
+	video.type = "youtube:playlist";
+	video.operations = [];
+	return video;
+}
+
+function thumbnailFromSnippet(snippet){
+	if(typeof snippet.thumbnails != 'undefined'){
+		if(typeof snippet.thumbnails.high != 'undefined'){
+			return snippet.thumbnails.high.url;
+		}else if(typeof snippet.thumbnails.medium != 'undefined'){
+			return snippet.thumbnails.medium.url;
+		}else{
+			return snippet.thumbnails.default.url;
+		}
+	}
+	return null;
+}
+
+function createYoutubeVideo(entry){
+	if(typeof entry.video != 'undefined'){
+		entry = entry.video;
+	}
+	var video = {}
+	if(typeof entry.id.videoId != 'undefined'){
+		video.id = entry.id.videoId;
+	} else {
+		video.id = entry.snippet.resourceId.videoId;
+	}
+	video.description = entry.snippet.description;
+	video.title = entry.snippet.title;
+	video.duration = entry.duration;
+	video.thumbnail = thumbnailFromSnippet(entry.snippet);
+	video.type = "youtube";
+	video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
+	return video;
 }

@@ -4,9 +4,10 @@ angular.module('youtube', [])
 
   var nextPageToken = null;
 
-  var getYoutubeQueryUrl = function (query, maxResults, pageNumber){
+  var getYoutubeQueryUrl = function (query, pageSize, pageNumber){
   	var url = 'https://www.googleapis.com/youtube/v3/';
   	var key = '&key=AIzaSyAdAR3PofKiUSGFsfQ03FBEpVkVa1WA0J4';
+    var maxResults = '&maxResults=' + pageSize;
   	if(pageNumber > 1){
   		maxResults += "&pageToken=" + nextPageToken;
   	}
@@ -14,18 +15,19 @@ angular.module('youtube', [])
   	var listsLookup = 'lists:';
   	if(query.indexOf(listLookup) > -1){
   		var lid = query.split(listLookup);
-  		url += 'playlistItems?part=snippet&playlistId='+lid[1]+'&type=video' + maxResults + key;
+  		url += 'playlistItems?part=snippet&playlistId='+encodeURIComponent(lid[1])+'&type=video' + maxResults + key;
   	} else if(query.indexOf(listsLookup) > -1){
   		var lid = query.split(listsLookup);
-  		url += 'search?order=relevance&part=snippet&q='+lid[1]+'&type=playlist' + maxResults + key;
+  		url += 'search?order=relevance&part=snippet&q='+encodeURIComponent(lid[1])+'&type=playlist' + maxResults + key;
   	} else {
-  		url += 'search?order=relevance&part=snippet&q='+query+'&type=video' + maxResults + key;
+  		url += 'search?order=relevance&part=snippet&q='+encodeURIComponent(query)+'&type=video' + maxResults + key;
   	}
   	return url;
   };
 
   var getYoutubeResponseVideos = function (response){
   	var videos = [];
+    response = response.data;
   	var entries = response.items || [];
   	for (var i = 0; i < entries.length; i++) {
   		var entry = entries[i];
@@ -33,7 +35,9 @@ angular.module('youtube', [])
   		if(video === null){
   			video = createYoutubeVideo(entry);
   		}
-  		videos.push(video);
+      if(video !== null){
+        videos.push(video);
+      }
   	}
   	return videos;
   };
@@ -84,8 +88,11 @@ angular.module('youtube', [])
   	var video = {}
   	if(typeof entry.id.videoId != 'undefined'){
   		video.id = entry.id.videoId;
+    } else if(typeof entry.snippet.resourceId != 'undefined'){
+      video.id = entry.snippet.resourceId.videoId;
   	} else {
-  		video.id = entry.snippet.resourceId.videoId;
+      console.debug("Unkown video id");
+  		return null;
   	}
   	video.description = entry.snippet.description;
   	video.title = entry.snippet.title;
@@ -104,12 +111,11 @@ angular.module('youtube', [])
     engineName: 'youtube',
     multiPageSupport: true,
     search: function(query, maxResults, pageNumber, videosCallback) {
-      if((!query) || (!isInt(pageNumber)) || (!isInt(pageNumber))){
-        console.debug('Invalid arguments requested');
+      if((!query) || (!isInt(maxResults)) || (!isInt(pageNumber))){
         videosCallback([]);
       }else{
         var url = getYoutubeQueryUrl(query, maxResults, pageNumber);
-        $http.jsonp(url).then(function (response) {
+        $http.get(url).then(function (response) {
           getYoutubeNextPage(response);
           var videos = getYoutubeResponseVideos(response);
           videosCallback(videos);

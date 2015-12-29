@@ -1,0 +1,44 @@
+<ion-view view-title="Settings">
+	<ion-content>
+		<ion-list>
+			<label class="item item-input">
+				<div class="input-label">Server IP</div>
+				<input type="text" ng-model="settings.ip">
+			</label>
+			<label class="item item-input item-select">
+				<div class="input-label">Search engine</div>
+				<select ng-model="settings.engine">
+					<option value="youtube">Youtube</option>
+					<option value="local">Local files</option>
+				</select>
+			</label>
+			<ion-toggle ng-model="settings.searchPlaylists">Search in playlists</ion-toggle>
+			<label class="item item-input item-select">
+				<div class="input-label">Video quality</div>
+				<select ng-model="settings.quality">
+					<option>Low quality</option>
+					<option>High quality</option>
+					<option>Audio only</option>
+				</select>
+			</label>
+			<label class="item item-input item-stacked-label">
+				<span class="input-label">Number of results</span>
+				<input type="text" ng-model="settings.numberOfResults">
+				<div class="range">
+					<span>0</span>
+					<input type="range" name="volume" min="0" max="50" ng-model="settings.numberOfResults">
+					<span>50</span>
+				</div>
+			</label>
+			<ion-toggle ng-model="settings.enableHistory">Store loaded items in history</ion-toggle>
+		</ion-list>
+		<ion-list>
+			<button class="button button-full button-assertive icon-left ion-refresh" ng-click="reset()">
+				Restore defaults
+			</button>
+			<button class="button button-full button-energized icon-left ion-trash-a">
+				Clear history
+			</button>
+		</ion-list>
+	</ion-content>
+</ion-view>

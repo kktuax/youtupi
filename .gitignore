@@ -38,3 +38,9 @@ nosetests.xml
 .pydevproject
 *.swp
 .settings
+
+node_modules/
+platforms/
+plugins/
+resources/
+www/lib

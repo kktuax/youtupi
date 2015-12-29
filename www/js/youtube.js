@@ -5,9 +5,6 @@ angular.module('youtube', [])
   var nextPageToken = null;
 
   var getYoutubeQueryUrl = function (query, maxResults, pageNumber){
-  	if(query == ''){
-  		return undefined;
-  	}
   	var url = 'https://www.googleapis.com/youtube/v3/';
   	var key = '&key=AIzaSyAdAR3PofKiUSGFsfQ03FBEpVkVa1WA0J4';
   	if(pageNumber > 1){
@@ -99,19 +96,28 @@ angular.module('youtube', [])
   	return video;
   };
 
+  var isInt = function (value) {
+    return !isNaN(value) && parseInt(Number(value)) == value && !isNaN(parseInt(value, 10));
+  };
+
   return {
     engineName: 'youtube',
     multiPageSupport: true,
     search: function(query, maxResults, pageNumber, videosCallback) {
-      var url = getYoutubeQueryUrl(query, maxResults, pageNumber);
-      $http.jsonp(url).then(function (response) {
-        getYoutubeNextPage(response);
-        var videos = getYoutubeResponseVideos(response);
-        videosCallback(videos);
-      }, function(reason) {
+      if((!query) || (!isInt(pageNumber)) || (!isInt(pageNumber))){
+        console.debug('Invalid arguments requested');
         videosCallback([]);
-        console.debug('Failed: ' + reason);
-      });
+      }else{
+        var url = getYoutubeQueryUrl(query, maxResults, pageNumber);
+        $http.jsonp(url).then(function (response) {
+          getYoutubeNextPage(response);
+          var videos = getYoutubeResponseVideos(response);
+          videosCallback(videos);
+        }, function(reason) {
+          videosCallback([]);
+          console.debug('Failed: ' + reason);
+        });
+      }
     }
   };
 }]);

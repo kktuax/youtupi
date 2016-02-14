@@ -19,7 +19,7 @@ function fillVideoList(entries, listSelect, clickEvent){
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
-		if((i == 0) && (listSelect == "#playlist-list")){
+		if((i == 0) && (listSelect == "#playlist-current")){
 			adjustCurrentPositionSlider(video.duration, video.position);
 		}
 		thumbnail = "images/video.png";
@@ -66,7 +66,7 @@ function getDurationString(time){
  * */
 function loadPlayList(entries){
 	updateControls(entries.length);
-	fillVideoList(entries, "#playlist-list", function(event) {
+	var playlist_entry_handler = function(event) {
 		var data = $.toJSON(event.data.video);
 		var playBtn = {
 			click: function () { 
@@ -112,7 +112,9 @@ function loadPlayList(entries){
 			headerClose: true,
 			buttons : buttons
 		});
-	});
+	};
+	fillVideoList(entries.slice(0,1), "#playlist-current", playlist_entry_handler);
+	fillVideoList(entries.slice(1), "#playlist-list", playlist_entry_handler);
 }
 
 function updateControls(playListLength){
@@ -154,7 +156,7 @@ function playerAction(paction){
 }
 
 function loadVideo(video){
-	tabPlaylist();
+	//tabPlaylist();
 	$("#spinner").show();
 	if(video.type == "youtube"){
 		video.format = $("#quality").val();
@@ -163,6 +165,7 @@ function loadVideo(video){
 	var data = $.toJSON(video);
 	$.post(url, data, function(entries){
 		loadPlayList(entries);
+		showNotification("Video queued"); 
 	}, "json").fail(function() {
 		showNotification("Error loading video"); 
 	}).always(function() {
@@ -223,7 +226,7 @@ function tabPlaylist(){
 }
 
 function showNotification(message){
-	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.96, "top": $(window).scrollTop() + 100 })
+	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.8, "top": 50, "padding": "0.3em 1em" })
 	.appendTo( $.mobile.pageContainer )
 	.delay( 1500 )
 	.fadeOut( 400, function(){
@@ -364,21 +367,23 @@ $(document).delegate("#playlist", "pageinit", function() {
 	$("#nextaudiotrack-button").bind("click", function(event, ui) {
 		playerAction('nextaudiotrack');
 	});
-	$("#playlist-list").sortable();
+	$("#playlist-list").sortable({
+		delay: 250
+	});
 	$("#playlist-list").disableSelection();
 	$("#playlist-list").bind("sortstop", function(event, ui) {
 		$('#playlist-list').listview('refresh');
 		if($("#playlist-list").children().length > 1){
 			var draggedVideoId = ui.item.data("video-id");
 			var draggedPosition = $("#playlist-list").children().index(ui.item);
-			if(draggedPosition > 0){
-				var data = $.toJSON({id : draggedVideoId, order: draggedPosition + 1});
+			//if(draggedPosition > 0){
+				var data = $.toJSON({id : draggedVideoId, order: draggedPosition + 2});
 				var url = server + "/control/order";
 				$.post(url, data, loadPlayList, "json");
-			}else if(draggedPosition == 0){
-				var url = server + "/control/play";
-				$.post(url, $.toJSON({id : draggedVideoId}), loadPlayList, "json");
-			}
+			//}else if(draggedPosition == 0){
+			//	var url = server + "/control/play";
+			//	$.post(url, $.toJSON({id : draggedVideoId}), loadPlayList, "json");
+			//}
 		}
 	});
 	$("#position").bind("slidestop", function(event, ui){

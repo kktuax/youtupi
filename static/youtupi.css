@@ -12,3 +12,31 @@
 .ui-popup .ui-controlgroup, .ui-popup fieldset.ui-controlgroup {
     text-align: center;
 }
+#seek-controls .ui-controlgroup-controls {
+    width: 100%;
+}
+#seek-controls .ui-btn {
+    width: 19.3%;
+}
+.slider-container {
+	height: 26px;
+}
+.ui-controlgroup, .slider-container {
+    display:inline-block;
+    width: 100%;
+    max-width: 26em;
+}
+#volume-controls .ui-controlgroup-controls, #audiotrack-controls .ui-controlgroup-controls {
+    width: 100%;
+    max-width: 25em;
+}
+#volume-controls .ui-btn, #audiotrack-controls .ui-btn {
+    width: 49%;
+}
+
+.ui-slider-track {
+	margin: 0 1em 0 1em;
+}
+.ui-body {
+	text-align: center;
+}

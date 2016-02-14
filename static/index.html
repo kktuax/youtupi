@@ -31,13 +31,35 @@
 					<a href="#" data-role="button" data-icon="forward" id="next-button" class="ui-disabled">Next</a>
 					<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="ui-disabled">||</a>
 					<a href="#" data-role="button" data-icon="delete" id="stop-button" class="ui-disabled">Stop</a>
-					<a href="#playerControl" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup" id="player-button" class="ui-disabled">Player</a>
+					<!--a href="#playerControl" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup" id="player-button" class="ui-disabled">Player</a-->
 				</div>
 				<div id="playlist-empty">
 					<h3>No entries in the playlist</h3>
 				</div>
 				<div id="playlist-playing" style="display:none;">
 					<h3>Now Playing</h3>
+					<div class="ui-body ui-body-c ui-corner-all ui-mini">
+						<ul id="playlist-current" data-inset="true" data-role="listview"></ul>
+						<div class="slider-container">
+							<!--label for="position">Video position:</label-->
+							<input type="range" name="position" id="position" value="0" min="0" max="100" step="3" data-highlight="true" class="ui-hidden-accessible">
+						</div>
+						<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
+                                                        <a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button">&lt;&lt;</a>
+                                                        <a href="#" data-role="button" title="seek back 30s" id="seekbacksmall-button">&lt;</a>
+							<a href="#" data-role="button" title="Pause/Resume" id="pause-button2">||</a>
+                                                        <a href="#" data-role="button" title="seek forward 30s" id="seekforwardsmall-button">&gt;</a>
+                                                        <a href="#" data-role="button" title="seek forward 10m" id="seekforwardlarge-button">&gt;&gt;</a>
+						</div>
+						<div id="volume-controls" data-role="controlgroup" data-type="horizontal" >
+							<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button">Volume down</a>
+							<a href="#" data-role="button" data-icon="plus" data-iconpos="right" title="Volume up" id="volup-button">Volume up</a>
+						</div>
+						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
+                                                        <a href="#" data-role="button" data-icon="arrow-l" title="Previous Audio Track" id="prevaudiotrack-button">Prev Audio Track</a>
+                                                        <a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" id="nextaudiotrack-button">Next Audio Track</a>
+						</div>
+					</div>
 					<div>
 						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>
 					</div>
@@ -45,6 +67,7 @@
 				<div id="spinner" class="spinner" style="display:none;">
 					<img id="img-spinner" src="images/spinner.gif" alt="Loading"/>
 				</div>
+<!--
 				<div data-role="popup" data-overlay-theme="a" data-content-theme="c" id="playerControl" class="ui-content">
 				 	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
 					<h3>Player Control</h3>
@@ -70,6 +93,7 @@
 						</div>
 					</div>
 				</div>
+-->
 			</div>
 		</div>
 		<div data-role="page" id="search">

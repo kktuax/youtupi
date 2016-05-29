@@ -7,6 +7,7 @@ from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
 from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, playlistPosition, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
+from youtupi.util import config
 
 engineLock = threading.RLock()
 
@@ -71,6 +72,11 @@ class control:
 				engine.setPosition(int(data['seconds']))
 			web.seeother('/playlist')
 
+class MyApplication(web.application):
+    def run(self, port=8080, *middleware):
+        func = self.wsgifunc(*middleware)
+        return web.httpserver.runsimple(func, ('0.0.0.0', port))
+
 if __name__ == "__main__":
 	urls = (
 		'/(.*)/', 'redirect',
@@ -81,5 +87,6 @@ if __name__ == "__main__":
 		'/youtube', module_youtube,
 		'/', 'index'
 	)
-	app = web.application(urls, globals())
-	app.run()
+	app = MyApplication(urls, globals())
+	port = config.conf.get('port', 8080)
+	app.run(port=port)

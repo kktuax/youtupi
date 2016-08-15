@@ -30,17 +30,19 @@
 				<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
 					<div data-role="collapsible" data-iconpos="right" data-collapsed="false">
 						<h3>Playlist Control</h3>
-						<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
-							<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
-							<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
-						</div>
-						<div data-role="fieldcontain">
-							<label for="playlist-reorder">Drag and drop reorder:</label>
-							<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
-								<option value="off" selected="selected">Off</option>
-								<option value="on">On</option>
-							</select>
+						<div class="ui-grid-a">
+							<div class="ui-block-a" id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
+								<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
+								<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
+								<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
+							</div>
+							<div class="ui-block-b">
+								<label for="playlist-reorder">Drag and drop reorder:</label>
+								<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
+									<option value="off" selected="selected">Off</option>
+									<option value="on">On</option>
+								</select>
+							</div>
 						</div>
 					</div>
 					<div data-role="collapsible" data-iconpos="right" data-collapsed="true">
@@ -51,16 +53,17 @@
 							<a href="#" data-role="button" data-icon="arrow-l" title="Previous Audio Track" id="prevaudiotrack-button" class="active-on-playing ui-disabled">Prev Audio Track</a>
 							<a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" id="nextaudiotrack-button" class="active-on-playing ui-disabled">Next Audio Track</a>
 						</div>
-						<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button" class="active-on-playing ui-disabled">&lt;&lt;</a>
-							<a href="#" data-role="button" title="seek back 30s" id="seekbacksmall-button" class="active-on-playing ui-disabled">&lt;</a>
-							<a href="#" data-role="button" title="Pause/Resume" id="pause-button2" class="active-on-playing ui-disabled">||</a>
-							<a href="#" data-role="button" title="seek forward 30s" id="seekforwardsmall-button" class="active-on-playing ui-disabled">&gt;</a>
-							<a href="#" data-role="button" title="seek forward 10m" id="seekforwardlarge-button" class="active-on-playing ui-disabled">&gt;&gt;</a>
-						</div>
-						<div>
-							<label for="position">Video position:</label>
-							<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
+						<div class="ui-grid-a">
+							<div class="ui-block-a" id="seek-controls" data-role="controlgroup" data-type="horizontal" >
+									<a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button" class="active-on-playing ui-disabled">&lt;&lt;</a>
+									<a href="#" data-role="button" title="seek back 30s" id="seekbacksmall-button" class="active-on-playing ui-disabled">&lt;</a>
+									<a href="#" data-role="button" title="Pause/Resume" id="pause-button2" class="active-on-playing ui-disabled">||</a>
+									<a href="#" data-role="button" title="seek forward 30s" id="seekforwardsmall-button" class="active-on-playing ui-disabled">&gt;</a>
+									<a href="#" data-role="button" title="seek forward 10m" id="seekforwardlarge-button" class="active-on-playing ui-disabled">&gt;&gt;</a>
+							</div>
+							<div class="ui-block-b">
+									<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
+							</div>
 						</div>
 					</div>
 				</div>

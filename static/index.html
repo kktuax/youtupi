@@ -28,9 +28,9 @@
 			</div>
 			<div data-role="content">
 				<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
-					<a href="#" data-role="button" data-icon="forward" id="next-button" class="ui-disabled">Next</a>
-					<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="ui-disabled">||</a>
-					<a href="#" data-role="button" data-icon="delete" id="stop-button" class="ui-disabled">Stop</a>
+					<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
+					<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
+					<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
 					<!--a href="#playerControl" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup" id="player-button" class="ui-disabled">Player</a-->
 				</div>
 				<div id="playlist-empty">
@@ -59,6 +59,13 @@
                                                         <a href="#" data-role="button" data-icon="arrow-l" title="Previous Audio Track" id="prevaudiotrack-button">Prev Audio Track</a>
                                                         <a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" id="nextaudiotrack-button">Next Audio Track</a>
 						</div>
+					</div>
+					<div>
+						<label for="playlist-reorder">Drag and drop reorder:</label>
+						<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
+							<option value="off" selected="selected">Off</option>
+							<option value="on">On</option>
+						</select>
 					</div>
 					<div>
 						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>

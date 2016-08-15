@@ -34,6 +34,7 @@ You can customize the download folder and some other parameters in the JSON conf
 <!-- -->
 
     {
+        "port": 8888,
         "local-folders": [
             "~/Media", "~/Downloads"
         ],

@@ -4,17 +4,17 @@ $(document).bind('pageinit', function () {
     $.mobile.defaultPageTransition = 'none';
 });
 
-/** 
+/**
  * Refresh listview with array of videos
  * @param {entries} array of videos
- * @param {listSelect} selector of listview to update 
+ * @param {listSelect} selector of listview to update
  * @param {function} event on video click, by default adds to playlist
  * */
 function fillVideoList(entries, listSelect, clickEvent){
-	if(typeof clickEvent === 'undefined') { 
+	if(typeof clickEvent === 'undefined') {
 		clickEvent = function(event){
 			loadVideo(event.data.video);
-		}; 
+		};
 	}
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
@@ -61,7 +61,7 @@ function getDurationString(time){
 	return duration;
 }
 
-/** 
+/**
  * Load playlist items with play video on click event
  * */
 function loadPlayList(entries){
@@ -69,7 +69,7 @@ function loadPlayList(entries){
 	var playlist_entry_handler = function(event) {
 		var data = $.toJSON(event.data.video);
 		var playBtn = {
-			click: function () { 
+			click: function () {
 				var url = server + "/control/play";
 				$.post(url, data, loadPlayList, "json");
 			},
@@ -94,13 +94,13 @@ function loadPlayList(entries){
 			var operation = event.data.video.operations[operationKey];
 			var type = event.data.video.type;
 			var buttonClick = function(e, type, operation, data){
-				var successFunction = function(){ 
-					showNotification(operation.successMessage); 
+				var successFunction = function(){
+					showNotification(operation.successMessage);
 				}
 				var url = server + "/" + type + "-" + operation.name;
 				$.post(url, data).done(successFunction, "json");
 			}
-			buttons[operation.text] = { 
+			buttons[operation.text] = {
 				click: buttonClick,
 				args: new Array(type, operation, data),
 				close: true
@@ -121,28 +121,28 @@ function updateControls(playListLength){
 	if(playListLength == 0){
 		$("#playlist-empty").show();
 		$("#playlist-playing").hide();
-		$("#next-button").addClass("ui-disabled");
-		$("#pause-button").addClass("ui-disabled");
-		$("#stop-button").addClass("ui-disabled");
-		$("#player-button").addClass("ui-disabled");
+    $(".active-on-playing").addClass("ui-disabled");
 	}else{
 		$("#playlist-empty").hide();
 		$("#playlist-playing").show();
-		if(playListLength > 1){
-			$("#next-button").removeClass("ui-disabled");
+    $(".active-on-playing").removeClass("ui-disabled");
+		if(playListLength <= 1){
+			$("#next-button").addClass("ui-disabled");
 		}
-		$("#pause-button").removeClass("ui-disabled");
-		$("#player-button").removeClass("ui-disabled");
-		$("#stop-button").removeClass("ui-disabled");
 	}
 }
 
-function updateSearchControls(resultsLength, nextPageAvailable){
+function updateSearchControls(results, nextPageAvailable){
+  resultsLength = results.length
+  $("#add-all-button").unbind("click");
 	if(resultsLength == 0){
 		$("#results-empty").show();
 		$("#add-all-button").addClass("ui-disabled");
 		$("#add-all-random-button").addClass("ui-disabled");
 	}else{
+    $("#add-all-button").bind("click", function(event, ui) {
+      loadVideos(results);
+    });
 		$("#results-empty").hide();
 		$("#add-all-button").removeClass("ui-disabled");
 		$("#add-all-random-button").removeClass("ui-disabled");
@@ -158,6 +158,32 @@ function playerAction(paction){
 	$.getJSON(
 		server + "/control/" + paction, loadPlayList
 	);
+}
+
+function loadVideos(videos){
+	tabPlaylist();
+	$("#spinner").show();
+  for (var i = 0; i < videos.length; i++) {
+    video = videos[i];
+    if(video.type == "youtube"){
+      video.format = $("#quality").val();
+    }
+  }
+  var url = server + "/playlist";
+	$.post(url, $.toJSON(videos), function(entries){
+		loadPlayList(entries);
+	}, "json").fail(function() {
+		showNotification("Error loading videos");
+  }).done(function() {
+    if('on' == $('#save-history').val()){
+      for (var i = 0; i < videos.length; i++) {
+        video = videos[i];
+        saveVideoToHistory(video);
+      }
+		}
+	}).always(function() {
+		$("#spinner").hide();
+	});
 }
 
 function loadVideo(video){
@@ -176,12 +202,13 @@ function loadVideo(video){
 			loadPlayList(entries);
 			showNotification("Video queued"); 
 		}, "json").fail(function() {
-			showNotification("Error loading video"); 
-		}).always(function() {
-			$("#spinner").hide(); 
-			if('on' == $('#save-history').val()){
+			showNotification("Error loading video");
+    }).done(function() {
+      if('on' == $('#save-history').val()){
 				saveVideoToHistory(video);
 			}
+		}).always(function() {
+			$("#spinner").hide();
 		});
 	}
 }
@@ -226,7 +253,7 @@ function saveVideoToHistory(video){
 		}
 		if(deleteKey != undefined){
 			delete history[deleteKey];
-		} 
+		}
 	}
 	localStorage.setObj("history", history);
 }
@@ -262,18 +289,13 @@ $(document).delegate("#search", "pageinit", function() {
 			localStorage.setObj("history", {});
 		}
 	});
-	$("#add-all-button").bind("click", function(event, ui) {
-		$("#results").children().each(function () {
-			$(this).trigger('click');
-		});
-	});
-	$("#add-all-random-button").bind("click", function(event, ui) {
-		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) { 
-			j=Math.floor(Math.random()*(i+1)), temp=$x[i], $x[i]=$x[j], $x[j]=temp; 
+  $("#add-all-random-button").bind("click", function(event, ui) {
+		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) {
+			j=Math.floor(Math.random()*(i+1)), temp=$x[i], $x[i]=$x[j], $x[j]=temp;
 		}
-		$x.each(function(i, el) { 
+		$x.each(function(i, el) {
 			$(el).trigger('click');
-		});	
+		});
 	});
 	$("#search-basic").bind("change", function(event, params) {
 		$('#results').empty();
@@ -298,24 +320,25 @@ $(document).delegate("#search", "pageinit", function() {
 					}).sort(function (a, b) {
 						return b.playedTimes - a.playedTimes;
 					}), "#results");
-					updateSearchControls(Object.keys(history).length, false);
+          var videos = Object.keys(history).map(function(k){return history[k]});
+					updateSearchControls(videos, false);
 				}else{
-					updateSearchControls(0, false);
+					updateSearchControls([], false);
 				}
 			}
 		}else{
 			var url = getSearchUrl();
-			if(url !== undefined){	
+			if(url !== undefined){
 				$("#spinner-search").show();
 				$.getJSON(url, getSearchData(), function(response){
 					var pResponse = processSearchResponse(response);
 					fillVideoList(pResponse, "#results");
-					updateSearchControls(pResponse.length, isNextPageAvailable(response));
+					updateSearchControls(pResponse, isNextPageAvailable(response));
 				}).always(function() {
 					$("#spinner-search").hide();
 				});
 			}else{
-				updateSearchControls(0, false);
+				updateSearchControls([], false);
 			}
 		}
 	});
@@ -416,10 +439,17 @@ $(document).delegate("#playlist", "pageinit", function() {
 	$("#nextaudiotrack-button").bind("click", function(event, ui) {
 		playerAction('nextaudiotrack');
 	});
-	$("#playlist-list").sortable({
-		delay: 250
-	});
-	$("#playlist-list").disableSelection();
+	$("#playlist-list").sortable();
+	$('#playlist-reorder').change(function() {
+	        if('on' == $(this).val()){
+	                $("#playlist-list").sortable("enable");
+	                $("#playlist-list").disableSelection();
+                }else{
+                        $("#playlist-list").sortable('disable');
+                        $("#playlist-list").enableSelection();
+                }
+        });
+        $("#playlist-reorder").trigger("change");
 	$("#playlist-list").bind("sortstop", function(event, ui) {
 		$('#playlist-list').listview('refresh');
 		if($("#playlist-list").children().length > 1){

@@ -6,8 +6,9 @@ from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
 import youtupi.playlist
-from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, playlistPosition, resetPlaylist, playList
+from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideos, playlistPosition, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
+from youtupi.util import config
 
 engineLock = threading.RLock()
 
@@ -25,19 +26,19 @@ class playlist:
 		for video in playList():
 			playlistVideos.append(video.data)
 		return json.dumps(playlistVideos, indent=4)
-	
+
 	def POST(self):
 		data = json.load(StringIO(web.data()))
-		addVideo(data)
+		addVideos(data)
 		web.seeother('/playlist')
-		
+
 	def DELETE(self):
 		data = json.load(StringIO(web.data()))
 		removeVideo(data['id'])
 		web.seeother('/playlist')
 
 class control:
-	
+
 	def GET(self, action):
 		with engineLock:
 			if action == "play":
@@ -64,7 +65,7 @@ class control:
 			elif action == "nextaudiotrack":
 				engine.nextAudioTrack()
 			web.seeother('/playlist')
-		
+
 	def POST(self, action):
 		with engineLock:
 			data = json.load(StringIO(web.data()))
@@ -84,6 +85,11 @@ class control:
 				engine.setPosition(int(data['seconds']))
 			web.seeother('/playlist')
 
+class MyApplication(web.application):
+    def run(self, port=8080, *middleware):
+        func = self.wsgifunc(*middleware)
+        return web.httpserver.runsimple(func, ('0.0.0.0', port))
+
 if __name__ == "__main__":
 	youtupi.playlist.initMPD('localhost', 6600)
 	urls = (
@@ -95,5 +101,6 @@ if __name__ == "__main__":
 		'/youtube', module_youtube,
 		'/', 'index'
 	)
-	app = web.application(urls, globals())
-	app.run()
+	app = MyApplication(urls, globals())
+	port = config.conf.get('port', 8080)
+	app.run(port=port)

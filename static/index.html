@@ -27,52 +27,40 @@
 				</div>
 			</div>
 			<div data-role="content">
-				<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
-					<a href="#" data-role="button" data-icon="forward" id="next-button" class="ui-disabled">Next</a>
-					<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="ui-disabled">||</a>
-					<a href="#" data-role="button" data-icon="delete" id="stop-button" class="ui-disabled">Stop</a>
-					<a href="#playerControl" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup" id="player-button" class="ui-disabled">Player</a>
+				<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
+					<div data-role="collapsible" data-iconpos="right" data-collapsed="true">
+						<h3>Player Control</h3>
+						<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
+							<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
+							<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
+							<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
+							<a href="#" data-role="button" data-icon="plus" title="Volume up" id="volup-button" class="active-on-playing ui-disabled">Vol. Up</a>
+							<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button" class="active-on-playing ui-disabled">Vol. Down</a>
+						</div>
+						<div data-role="fieldcontain">
+							<label for="playlist-reorder">Drag and drop reorder:</label>
+							<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
+								<option value="off" selected="selected">Off</option>
+								<option value="on">On</option>
+							</select>
+						</div>
+						<div>
+							<label for="position">Video position:</label>
+							<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
+						</div>
+					</div>
 				</div>
 				<div id="playlist-empty">
 					<h3>No entries in the playlist</h3>
 				</div>
 				<div id="playlist-playing" style="display:none;">
-					<div class="ui-grid-a">
-						<div class="ui-block-a"><h3>Now Playing</h3></div>
-						<div class="ui-block-b">
-							<div data-role="fieldcontain">
-								<label for="playlist-reorder">Reorder:</label>
-								<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
-									<option value="off" selected="selected">Off</option>
-									<option value="on">On</option>
-								</select>
-							</div>
-						</div>
-					</div>
+					<h3>Now Playing</h3>
 					<div>
 						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>
 					</div>
 				</div>
 				<div id="spinner" class="spinner" style="display:none;">
 					<img id="img-spinner" src="images/spinner.gif" alt="Loading"/>
-				</div>
-				<div data-role="popup" data-overlay-theme="a" data-content-theme="c" id="playerControl" class="ui-content">
-				 	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
-					<h3>Player Control</h3>
-					<div class="ui-body ui-body-c">
-						<fieldset class="ui-grid-a">
-							<div class="ui-block-a">
-								<a href="#" data-role="button" data-icon="plus" title="Volume up" id="volup-button">Volume up</a>
-							</div>
-							<div class="ui-block-b">
-								<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button">Volume down</a>
-							</div>
-						</fieldset>
-						<div>
-							<label for="position">Video position:</label>
-							<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>

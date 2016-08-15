@@ -119,19 +119,14 @@ function updateControls(playListLength){
 	if(playListLength == 0){
 		$("#playlist-empty").show();
 		$("#playlist-playing").hide();
-		$("#next-button").addClass("ui-disabled");
-		$("#pause-button").addClass("ui-disabled");
-		$("#stop-button").addClass("ui-disabled");
-		$("#player-button").addClass("ui-disabled");
+    $(".active-on-playing").addClass("ui-disabled");
 	}else{
 		$("#playlist-empty").hide();
 		$("#playlist-playing").show();
-		if(playListLength > 1){
-			$("#next-button").removeClass("ui-disabled");
+    $(".active-on-playing").removeClass("ui-disabled");
+		if(playListLength <= 1){
+			$("#next-button").addClass("ui-disabled");
 		}
-		$("#pause-button").removeClass("ui-disabled");
-		$("#player-button").removeClass("ui-disabled");
-		$("#stop-button").removeClass("ui-disabled");
 	}
 }
 

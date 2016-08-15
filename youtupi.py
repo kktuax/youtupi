@@ -5,7 +5,7 @@ import web, json, threading
 from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
-from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, playlistPosition, resetPlaylist, playList
+from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideos, playlistPosition, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
 from youtupi.util import config
 
@@ -25,19 +25,19 @@ class playlist:
 		for video in playList():
 			playlistVideos.append(video.data)
 		return json.dumps(playlistVideos, indent=4)
-	
+
 	def POST(self):
 		data = json.load(StringIO(web.data()))
-		addVideo(data)
+		addVideos(data)
 		web.seeother('/playlist')
-		
+
 	def DELETE(self):
 		data = json.load(StringIO(web.data()))
 		removeVideo(data['id'])
 		web.seeother('/playlist')
 
 class control:
-	
+
 	def GET(self, action):
 		with engineLock:
 			if action == "play":
@@ -52,7 +52,7 @@ class control:
 			elif action == "voldown":
 				engine.volumeDown()
 			web.seeother('/playlist')
-		
+
 	def POST(self, action):
 		with engineLock:
 			data = json.load(StringIO(web.data()))

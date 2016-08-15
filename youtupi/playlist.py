@@ -10,7 +10,7 @@ videos = list()
 def resetPlaylist():
     global videos
     videos = list()
-            
+
 def currentVideo():
     viewedVideos = filter(lambda video:video.played==True, videos)
     lastPlayedVideo = viewedVideos[-1:]
@@ -41,7 +41,7 @@ def playlistPosition(videoId, position):
         isPlaying = None
         if video == currentVideo():
             isPlaying = True
-    pos = int(position) - 1 
+    pos = int(position) - 1
     curPos = videos.index(video)
     if pos != curPos:
         print "Changing video " + videoId + " position to: " + str(pos) + " (was " + str(curPos) + ")"
@@ -71,9 +71,13 @@ def playNextVideo():
         engine.stop()
         resetPlaylist()
 
-def addVideo(data):
-    video = Video(data['id'], data)
-    videos.append(video)
+def addVideos(data):
+    if type(data) is list:
+        for vData in data:
+            addVideos(vData)
+    else:
+        video = Video(data['id'], data)
+        videos.append(video)
 
 def playVideo(videoId):
     svideo = findVideoInPlaylist(videoId)

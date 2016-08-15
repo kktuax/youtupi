@@ -5,7 +5,7 @@ import os.path
 from os.path import expanduser
 from StringIO import StringIO
 import heapq, datetime, web, json, codecs, magic
-from youtupi.util import config, ensure_dir		
+from youtupi.util import config, ensure_dir
 from periscope.periscope import Periscope
 
 def getUrl(data):
@@ -13,8 +13,8 @@ def getUrl(data):
 		return data['id']
 	else:
 		return None
-	
-def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mkv")):
+
+def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mp3", ".mkv")):
 	if not search:
 		return find_newest_files(rootfolder, count=count, extension=extension)
 	files = set()
@@ -41,7 +41,7 @@ def isFileInKeyWords(filename, search):
 	return True
 
 class search:
-	
+
 	def GET(self):
 		user_data = web.input()
 		search = user_data.search
@@ -65,7 +65,7 @@ def downloadSubtitle(video):
 	p = Periscope(dfolder)
 	p.downloadSubtitle(video.vid, p.get_preferedLanguages())
 	toUtf8File(os.path.splitext(video.vid)[0] + ".srt")
-	
+
 def toUtf8File(srtFile):
 	if os.path.isfile(srtFile):
 		blob = open(srtFile, "r").read()

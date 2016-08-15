@@ -291,7 +291,7 @@ $(document).delegate("#search", "pageinit", function() {
 			localStorage.setObj("history", {});
 		}
 	});
-	$("#add-all-random-button").bind("click", function(event, ui) {
+  $("#add-all-random-button").bind("click", function(event, ui) {
 		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) {
 			j=Math.floor(Math.random()*(i+1)), temp=$x[i], $x[i]=$x[j], $x[j]=temp;
 		}
@@ -420,8 +420,17 @@ $(document).delegate("#playlist", "pageinit", function() {
 	$("#voldown-button").bind("click", function(event, ui) {
 		playerAction('voldown');
 	});
-	$("#playlist-list").sortable();
-	$("#playlist-list").disableSelection();
+  $("#playlist-list").sortable();
+  $('#playlist-reorder').change(function() {
+    if('on' == $(this).val()){
+      $("#playlist-list").sortable("enable");
+    	$("#playlist-list").disableSelection();
+    }else{
+      $("#playlist-list").sortable('disable');
+      $("#playlist-list").enableSelection();
+    }
+  });
+  $("#playlist-reorder").trigger("change");
 	$("#playlist-list").bind("sortstop", function(event, ui) {
 		$('#playlist-list').listview('refresh');
 		if($("#playlist-list").children().length > 1){

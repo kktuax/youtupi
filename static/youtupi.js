@@ -115,47 +115,27 @@ function loadPlayList(entries){
 	});
 }
 
-function updateControls(playListLength){
-	if(playListLength == 0){
-		$("#playlist-empty").show();
-		$("#playlist-playing").hide();
-    $(".active-on-playing").addClass("ui-disabled");
-	}else{
-		$("#playlist-empty").hide();
-		$("#playlist-playing").show();
-    $(".active-on-playing").removeClass("ui-disabled");
-		if(playListLength <= 1){
-			$("#next-button").addClass("ui-disabled");
-		}
-	}
-}
-
-function updateSearchControls(results, nextPageAvailable){
-  resultsLength = results.length
-  $("#add-all-button").unbind("click");
-	if(resultsLength == 0){
-		$("#results-empty").show();
-		$("#add-all-button").addClass("ui-disabled");
-		$("#add-all-random-button").addClass("ui-disabled");
-	}else{
-    $("#add-all-button").bind("click", function(event, ui) {
-      loadVideos(results);
-    });
-		$("#results-empty").hide();
-		$("#add-all-button").removeClass("ui-disabled");
-		$("#add-all-random-button").removeClass("ui-disabled");
-	}
-	if(nextPageAvailable){
-		$("#next-page-button").removeClass("ui-disabled");
-	}else{
-		$("#next-page-button").addClass("ui-disabled");
-	}
-}
-
 function playerAction(paction){
 	$.getJSON(
 		server + "/control/" + paction, loadPlayList
 	);
+}
+
+function jumpToPosition(seconds){
+  var data = $.toJSON({seconds : seconds});
+  var url = server + "/control/position";
+  $.post(url, data, loadPlayList, "json");
+}
+
+function changePlaylistPosition(videoId, newPosition){
+  if(newPosition > 0){
+    var data = $.toJSON({id : videoId, order: newPosition + 1});
+    var url = server + "/control/order";
+    $.post(url, data, loadPlayList, "json");
+  }else if(newPosition == 0){
+    var url = server + "/control/play";
+    $.post(url, $.toJSON({id : videoId}), loadPlayList, "json");
+  }
 }
 
 function loadVideos(videos){
@@ -208,6 +188,29 @@ function loadVideo(video){
 			$("#spinner").hide();
 		});
 	}
+}
+
+function getVideosFromHistory(){
+  if(!supports_html5_storage()){
+    return [];
+  }
+  var history = localStorage.getObj("history");
+  if(history != undefined){
+    fillVideoList($.map(history, function(value, index) {
+      return [value];
+    }).sort(function (a, b) {
+      return b.playedTimes - a.playedTimes;
+    }), "#results");
+    return Object.keys(history).map(function(k){return history[k]});
+  }else{
+    return [];
+  }
+}
+
+function clearHistory(){
+  if(supports_html5_storage()){
+    localStorage.setObj("history", {});
+  }
 }
 
 function saveVideoToHistory(video){
@@ -269,31 +272,7 @@ function showNotification(message){
 }
 
 $(document).delegate("#search", "pageinit", function() {
-	if(addLocalStorageFor("#engine", "engine")){
-		$("#engine").selectmenu("refresh");
-	}
-	if(addLocalStorageFor("#quality", "quality")){
-		$("#quality").selectmenu("refresh");
-	}
-	if(addLocalStorageFor("#slider", "slider")){
-		$("#slider" ).slider("refresh");
-	}
-	if(addLocalStorageFor("#save-history", "save-history")){
-		$("#save-history" ).slider("refresh");
-	}
-	$("#clear-history-button").bind("click", function(event, ui) {
-		if(supports_html5_storage()){
-			localStorage.setObj("history", {});
-		}
-	});
-  $("#add-all-random-button").bind("click", function(event, ui) {
-		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) {
-			j=Math.floor(Math.random()*(i+1)), temp=$x[i], $x[i]=$x[j], $x[j]=temp;
-		}
-		$x.each(function(i, el) {
-			$(el).trigger('click');
-		});
-	});
+  initSearchControls();
 	$("#search-basic").bind("change", function(event, params) {
 		$('#results').empty();
 		$("#results").listview("refresh");
@@ -309,20 +288,7 @@ $(document).delegate("#search", "pageinit", function() {
 			resetPageNumber();
 		}
 		if('youtupi:history' == $("#search-basic").val().trim()){
-			if(supports_html5_storage()){
-				var history = localStorage.getObj("history");
-				if(history != undefined){
-					fillVideoList($.map(history, function(value, index) {
-						return [value];
-					}).sort(function (a, b) {
-						return b.playedTimes - a.playedTimes;
-					}), "#results");
-          var videos = Object.keys(history).map(function(k){return history[k]});
-					updateSearchControls(videos, false);
-				}else{
-					updateSearchControls([], false);
-				}
-			}
+      updateSearchControls(getVideosFromHistory(), false);
 		}else{
 			var url = getSearchUrl();
 			if(url !== undefined){
@@ -400,44 +366,7 @@ function isNextPageAvailable(response){
 }
 
 $(document).delegate("#playlist", "pageinit", function() {
-  $(".active-on-playing").each(function() {
-    var action = $(this).data("player-action");
-    $(this).bind("click", function(event, ui) {
-  		playerAction(action);
-  	});
-  });
-	$("#playlist-list").sortable();
-  $('#playlist-reorder').change(function() {
-    if('on' == $(this).val()){
-      $("#playlist-list").sortable("enable");
-    	$("#playlist-list").disableSelection();
-    }else{
-      $("#playlist-list").sortable('disable');
-      $("#playlist-list").enableSelection();
-    }
-  });
-  $("#playlist-reorder").trigger("change");
-	$("#playlist-list").bind("sortstop", function(event, ui) {
-		$('#playlist-list').listview('refresh');
-		if($("#playlist-list").children().length > 1){
-			var draggedVideoId = ui.item.data("video-id");
-			var draggedPosition = $("#playlist-list").children().index(ui.item);
-			if(draggedPosition > 0){
-				var data = $.toJSON({id : draggedVideoId, order: draggedPosition + 1});
-				var url = server + "/control/order";
-				$.post(url, data, loadPlayList, "json");
-			}else if(draggedPosition == 0){
-				var url = server + "/control/play";
-				$.post(url, $.toJSON({id : draggedVideoId}), loadPlayList, "json");
-			}
-		}
-	});
-	$("#position").bind("slidestop", function(event, ui){
-		var seconds = $("#position").data("duration") * $("#position").val() / 100;
-		var data = $.toJSON({seconds : seconds});
-		var url = server + "/control/position";
-		$.post(url, data, loadPlayList, "json");
-	});
+  initControls();
 	window.setInterval(function(){
 		$.getJSON(
 			server + "/playlist", loadPlayList

@@ -400,42 +400,12 @@ function isNextPageAvailable(response){
 }
 
 $(document).delegate("#playlist", "pageinit", function() {
-	$("#next-button").bind("click", function(event, ui) {
-		playerAction('play');
-	});
-	$("#pause-button").bind("click", function(event, ui) {
-		playerAction('pause');
-	});
-	$("#pause-button2").bind("click", function(event, ui) {
-		playerAction('pause');
-	});
-	$("#stop-button").bind("click", function(event, ui) {
-		playerAction('stop');
-	});
-	$("#volup-button").bind("click", function(event, ui) {
-		playerAction('volup');
-	});
-	$("#voldown-button").bind("click", function(event, ui) {
-		playerAction('voldown');
-	});
-	$("#seekbacksmall-button").bind("click", function(event, ui) {
-		playerAction('seekbacksmall');
-	});
-	$("#seekforwardsmall-button").bind("click", function(event, ui) {
-		playerAction('seekforwardsmall');
-	});
-	$("#seekbacklarge-button").bind("click", function(event, ui) {
-		playerAction('seekbacklarge');
-	});
-	$("#seekforwardlarge-button").bind("click", function(event, ui) {
-		playerAction('seekforwardlarge');
-	});
-	$("#prevaudiotrack-button").bind("click", function(event, ui) {
-		playerAction('prevaudiotrack');
-	});
-	$("#nextaudiotrack-button").bind("click", function(event, ui) {
-		playerAction('nextaudiotrack');
-	});
+  $(".active-on-playing").each(function() {
+    var action = $(this).data("player-action");
+    $(this).bind("click", function(event, ui) {
+  		playerAction(action);
+  	});
+  });
 	$("#playlist-list").sortable();
   $('#playlist-reorder').change(function() {
     if('on' == $(this).val()){

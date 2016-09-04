@@ -30,6 +30,10 @@ function fillVideoList(entries, listSelect, clickEvent){
 		if(duration){
 			duration = " [" + duration + "]";
 		}
+		if(video.title == undefined) {
+		        video.title = "Loading data for " + video.id;
+		        video.description = "";
+                }
 		var itemval = $('<li data-video-id="' + video.id + '"><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
 		itemval.bind('click', {video: video}, clickEvent);
 		$(listSelect).append(itemval);

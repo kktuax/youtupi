@@ -32,6 +32,7 @@ def getUrl(data):
                                 return best.url
                         except Exception as e:
                                 print "Error fetching video URL ", e
+                                data['title'] = e.message
                                 return "error"
                 return None
 	
@@ -74,6 +75,7 @@ def updateVideoData(data):
                                 print data
                         except Exception as e:
                                 print "Error fetching video data ", e
+                                data['title'] = e.message
                 return data
 
 class youtube_dl:

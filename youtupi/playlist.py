@@ -1,6 +1,7 @@
 import threading
 from youtupi.video import Video
 from youtupi.modules.videoUrl import prepareVideo
+from youtupi.modules.youtube import updateVideoData, resolveYoutubePlaylist
 from youtupi.engine.PlaybackEngineFactory import engine
 import mpd
 
@@ -112,11 +113,22 @@ def playNextVideo():
         resetPlaylist()
         afterPlay()
 
+def updateData(data):
+    data.update(updateVideoData(data))
+    
+def addYoutubePlaylist(data):
+    for video in resolveYoutubePlaylist(data):
+        addVideos(video)
+
 def addVideos(data):
     if type(data) is list:
         for vData in data:
             addVideos(vData)
+    elif len(data['id']) > 12:
+        threading.Thread(target=addYoutubePlaylist, args=(data,)).start()
     else:
+        if data['type'] == 'youtube' and not data.has_key('title'):
+            threading.Thread(target=updateData, args=(data,)).start()
         video = Video(data['id'], data)
         videos.append(video)
 

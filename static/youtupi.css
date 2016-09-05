@@ -42,3 +42,15 @@
 .ui-body {
 	text-align: center;
 }
+
+.ui-header {
+    position: fixed;
+    width: 100%;
+    top:0;
+    left:0;
+    z-index:999;
+}
+
+.ui-content {
+    margin-top: 72px;
+}

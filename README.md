@@ -5,11 +5,26 @@ YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in you
  * Local for available media in the filesystem
  * Youtube support thanks to [pafy](https://github.com/np1/pafy) 
 
+This is an augmented fork of [kktuax' YouTuPi web app](https://github.com/kktuax/youtupi). We're cherrypicking each other's commits from time to time :)
+
+Differences to kktuax' original:
+ * Different UI.
+   * Player View does not hide in a submenu.
+   * Tabs are fixed on top of screen and do not scroll out of view.
+ * MPD autopause while playing video.
+ * Does find .ogm files in local searches.
+ * REST interface prepared for third-party clients.
+   * Minimal information needed, Youtube ID suffices.
+   * Youtube Playlist IDs are also possible.
+   * My girlfriend is writing an android app that allows sending a video or playlist from the youtube app's share menu to YouTuPi.
+ * Errors like "This video is not available in your country" are displayed in playlist view.
+
 Installation
 ------------
 
     cd ~
-    curl https://raw.githubusercontent.com/kktuax/youtupi/master/service/install.sh -o youtupi-install.sh
+    curl https://raw.githubusercontent.com/orithena/youtupi/master/service/install.sh -o youtupi-install.sh
+    cat youtupi-install.sh         # well, you need to check whether this shell script from the net is clean.
     chmod +x youtupi-install.sh 
     sudo ./youtupi-install.sh
 
@@ -48,4 +63,4 @@ Try updating, or installing again a newer version
 
     sudo /etc/init.d/youtupi update
 
-Still no luck? Raise [an issue](https://github.com/kktuax/youtupi/issues/new)
+Still no luck? Raise [an issue](https://github.com/orithena/youtupi/issues/new)

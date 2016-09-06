@@ -43,7 +43,7 @@
 	text-align: center;
 }
 
-.ui-header {
+#playlist > .ui-header {
     position: fixed;
     width: 100%;
     top:0;
@@ -51,6 +51,6 @@
     z-index:999;
 }
 
-.ui-content {
+#playlist > .ui-content {
     margin-top: 72px;
 }

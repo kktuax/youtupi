@@ -1,8 +1,11 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
-import os, signal, subprocess, dbus, time
+import os, signal, subprocess, dbus, time, textwrap, codecs
+
+from betterprint import pprint
 
 SECONDS_FACTOR = 1000000
 DBUS_RETRY_LIMIT = 50
+TITLE_DISPLAY_SRT = "/run/shm/youtupi.srt"
 
 '''
 @author: Max
@@ -17,13 +20,32 @@ class OMXPlayerEngine(PlaybackEngine):
         pass
 
     player = None
+    
+    def subtitleBlock(self, id, text):
+        id = max(id, 1)
+        r = "\n%d\n00:00:%02d,000 --> 00:00:%02d,000\n%s\n" % (id, (id-1)*5, id*5, "\n".join(textwrap.wrap(text, 42)[:3]))
+        return r
+    
+    def prepareSubtitles(self, fname, video):
+        try:
+            id = 1
+            with codecs.open(fname, 'w', 'utf-8') as f:
+                if 'title' in video.data:
+                    f.write(self.subtitleBlock(id, video.data['title']))
+                    id += 1
+                if 'description' in video.data:
+                    f.write(self.subtitleBlock(id, video.data['description']))
+                    id += 1
+        except Exception as e: 
+            pprint(e)
         
     def play(self, video):
 	if not video.url:
 		raise RuntimeError("Video URL not found")
         if self.isPlaying():
             self.stop()
-        playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "-1800"]
+        self.prepareSubtitles(TITLE_DISPLAY_SRT, video)
+        playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "-1800", "--subtitles", TITLE_DISPLAY_SRT]
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)

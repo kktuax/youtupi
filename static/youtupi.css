@@ -8,6 +8,9 @@
 .ui-popup .ui-slider-track, .ui-popup .ui-slider-switch {
     margin: 0;
 }
+.ui-popup input[type="number"] + .ui-slider-track {
+    margin: 0 0 0 68px;
+}
 .ui-btn-inner {
     text-overflow: clip;
 }

@@ -1,4 +1,5 @@
 var server = window.location.protocol + "//" + window.location.host;
+var oldvolumesliderposition = 0;
 
 $(document).bind('pageinit', function () {
     $.mobile.defaultPageTransition = 'none';
@@ -164,6 +165,14 @@ function playerAction(paction){
 	);
 }
 
+function setServerParam(param, value){
+        var jsonobj = {};
+        jsonobj[param] = value;
+	$.post(
+		server + "/control/" + param, $.toJSON(jsonobj), function(){}, "json"
+	);
+}
+
 function loadVideos(videos){
 	tabPlaylist();
 	$("#spinner").show();
@@ -283,10 +292,13 @@ $(document).delegate("#search", "pageinit", function() {
 		$("#quality").selectmenu("refresh");
 	}
 	if(addLocalStorageFor("#slider", "slider")){
-		$("#slider" ).slider("refresh");
+		$("#slider").slider("refresh");
 	}
 	if(addLocalStorageFor("#save-history", "save-history")){
-		$("#save-history" ).slider("refresh");
+		$("#save-history").slider("refresh");
+	}
+	if(addLocalStorageFor("#volume", "volume")){
+		$("#volume").slider("refresh");
 	}
 	$("#clear-history-button").bind("click", function(event, ui) {
 		if(supports_html5_storage()){
@@ -357,6 +369,13 @@ $(document).delegate("#search", "pageinit", function() {
 	});
 	$("#search-basic").val("youtupi:history");
 	$("#search-basic").trigger("change");
+	$("#volume").bind("change", function(event, ui) {
+	        var newposition = $("#volume").val();
+	        if( oldvolumesliderposition != newposition ) {
+        		setServerParam('volume', newposition);
+        		oldvolumesliderposition = newposition;
+                }
+	});
 });
 
 function resetPageNumber(){
@@ -442,6 +461,9 @@ $(document).delegate("#playlist", "pageinit", function() {
 	});
 	$("#nextaudiotrack-button").bind("click", function(event, ui) {
 		playerAction('nextaudiotrack');
+	});
+	$("#volume").bind("change", function(event, ui) {
+		playerAction('');
 	});
 	$("#playlist-list").sortable();
 	$('#playlist-reorder').change(function() {

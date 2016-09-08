@@ -56,6 +56,10 @@ class VlcEngine(PlaybackEngine):
                 return durmillis/SECONDS_FACTOR
         return None
 
+    def setBaseVolume(self):
+        # not implemented yet
+        pass
+
     def volumeUp(self):
         if self.player:
             curvol = self.player.audio_get_volume()

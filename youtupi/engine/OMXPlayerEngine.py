@@ -40,12 +40,14 @@ class OMXPlayerEngine(PlaybackEngine):
             pprint(e)
         
     def play(self, video):
-	if not video.url:
-		raise RuntimeError("Video URL not found")
+        if not video.url:
+            raise RuntimeError("Video URL not found")
         if self.isPlaying():
             self.stop()
-        self.prepareSubtitles(TITLE_DISPLAY_SRT, video)
-        playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "-1800", "--subtitles", TITLE_DISPLAY_SRT]
+        playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "-1800"]
+        if video.data:
+            self.prepareSubtitles(TITLE_DISPLAY_SRT, video)
+            playerArgs.extend(("--subtitles", TITLE_DISPLAY_SRT))
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)

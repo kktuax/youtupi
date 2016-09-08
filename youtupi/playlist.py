@@ -124,7 +124,7 @@ def addVideos(data):
     if type(data) is list:
         for vData in data:
             addVideos(vData)
-    elif len(data['id']) > 12:
+    elif data['type'] == "youtube" and len(data['id']) > 12:
         threading.Thread(target=addYoutubePlaylist, args=(data,)).start()
     else:
         if data['type'] == 'youtube' and not data.has_key('title'):

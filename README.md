@@ -8,7 +8,7 @@ YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in you
 This is an augmented fork of [kktuax' YouTuPi web app](https://github.com/kktuax/youtupi). We're cherrypicking each other's commits from time to time :)
 
 Differences to kktuax' original:
- * Different UI.
+ * Slight UI changes:
    * Player View does not hide in a submenu.
    * Tabs are fixed on top of screen and do not scroll out of view.
  * MPD autopause while playing video.
@@ -18,6 +18,15 @@ Differences to kktuax' original:
    * Youtube Playlist IDs are also possible.
    * My girlfriend is writing an android app that allows sending a video or playlist from the youtube app's share menu to YouTuPi.
  * Errors like "This video is not available in your country" are displayed in playlist view.
+
+Screenshots
+-----------
+
+![Player View](https://cloud.githubusercontent.com/assets/2767109/18413068/799c9754-779e-11e6-8b27-5141d20c0071.png)
+![Search Youtube](https://cloud.githubusercontent.com/assets/2767109/18413069/7e71871c-779e-11e6-9eb2-79928385b35d.png)
+![Search Local Files](https://cloud.githubusercontent.com/assets/2767109/18413070/84eda3e6-779e-11e6-904e-2ad9b17f24b9.png)
+![Settings View](https://cloud.githubusercontent.com/assets/2767109/18413065/6cc8f004-779e-11e6-8c7b-0dcab3ac3df9.png)
+
 
 Installation
 ------------

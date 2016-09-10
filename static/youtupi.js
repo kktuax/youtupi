@@ -39,7 +39,9 @@ function fillVideoList(entries, listSelect, clickEvent){
 		itemval.bind('click', {video: video}, clickEvent);
 		$(listSelect).append(itemval);
 	}
-	$(listSelect).listview("refresh");
+	try {
+        	$(listSelect).listview("refresh");
+        } catch(err) {}
 }
 
 function adjustCurrentPositionSlider(duration, position){
@@ -50,7 +52,9 @@ function adjustCurrentPositionSlider(duration, position){
 			$("#position").data("duration", duration);
 		}
 	}
-	$("#position").slider("refresh");
+	try {
+        	$("#position").slider("refresh");
+        } catch(err) {}
 }
 
 function getDurationString(time){
@@ -277,7 +281,7 @@ function tabPlaylist(){
 }
 
 function showNotification(message){
-	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.8, "top": 50, "padding": "0.3em 1em" })
+	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h2>"+message+"</h2></div>").css({ "display": "block", "opacity": 0.8, "top": 60, "left":"50\%", "transform":"translateX(-50\%)", "z-index":"499", "padding": "0.3em 1em", "position":"fixed" })
 	.appendTo( $.mobile.pageContainer )
 	.delay( 1500 )
 	.fadeOut( 400, function(){

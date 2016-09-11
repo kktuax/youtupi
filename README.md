@@ -1,11 +1,17 @@
 YouTuPi
 =======
 
-YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in your [Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. It provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the [raspbian](http://www.raspbian.org/) media player). It has two modules:
- * Local for available media in the filesystem
- * Youtube support thanks to [pafy](https://github.com/np1/pafy) 
+YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in your 
+[Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. It 
+provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the 
+[raspbian](http://www.raspbian.org/) media player). It has three modules:
 
-This is an augmented fork of [kktuax' YouTuPi web app](https://github.com/kktuax/youtupi). We're cherrypicking each other's commits from time to time :)
+ * Local file search and browse for available media in the filesystem
+ * Youtube support thanks to [pafy](https://github.com/np1/pafy) 
+ * Paste video URL from anywhere
+
+This is an augmented fork of [kktuax' YouTuPi web app](https://github.com/kktuax/youtupi). 
+We're cherrypicking each other's commits from time to time :)
 
 Differences to kktuax' original:
  * Slight UI changes:
@@ -13,10 +19,11 @@ Differences to kktuax' original:
    * Tabs are fixed on top of screen and do not scroll out of view.
  * MPD autopause while playing video.
  * Does find .ogm files in local searches.
+ * Is able to browse the folder structure.
+ * Can submit arbitrary pasted video URLs to omxplayer.
  * REST interface prepared for third-party clients.
    * Minimal information needed, Youtube ID suffices.
    * Youtube Playlist IDs are also possible.
-   * My girlfriend is writing an android app that allows sending a video or playlist from the youtube app's share menu to YouTuPi.
  * Errors like "This video is not available in your country" are displayed in playlist view.
 
 Screenshots

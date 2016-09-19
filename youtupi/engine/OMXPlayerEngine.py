@@ -1,5 +1,5 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
-import os, signal, subprocess, dbus, time, textwrap, codecs
+import os, signal, subprocess, dbus, time, textwrap, codecs, getpass
 
 from betterprint import pprint
 
@@ -141,7 +141,7 @@ class OMXPlayerEngine(PlaybackEngine):
         retry=0
         while True:
             try:
-                with open('/tmp/omxplayerdbus.pi', 'r+') as f:
+                with open('/tmp/omxplayerdbus.'+getpass.getuser(), 'r+') as f:
                     omxplayerdbus = f.read().strip()
                 bus = dbus.bus.BusConnection(omxplayerdbus)
                 dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)
@@ -156,7 +156,7 @@ class OMXPlayerEngine(PlaybackEngine):
         retry=0
         while True:
             try:
-                with open('/tmp/omxplayerdbus.pi', 'r+') as f:
+                with open('/tmp/omxplayerdbus.'+getpass.getuser(), 'r+') as f:
                     omxplayerdbus = f.read().strip()
                 bus = dbus.bus.BusConnection(omxplayerdbus)
                 dbobject = bus.get_object('org.mpris.MediaPlayer2.omxplayer','/org/mpris/MediaPlayer2', introspect=False)

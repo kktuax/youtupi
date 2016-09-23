@@ -69,13 +69,11 @@ Note: If you want to run youtupi under a different user than `pi` or from a diff
 Scripted installation
 ---------------------
 
-    ```bash
     cd ~
     curl https://raw.githubusercontent.com/orithena/youtupi/master/service/install.sh -o youtupi-install.sh
     cat youtupi-install.sh         # well, you need to check whether this shell script from the net is clean.
     chmod +x youtupi-install.sh 
     sudo ./youtupi-install.sh
-    ```
 
 Note: If you want to run youtupi under a different user than `pi` or from a different directory than `/home/pi/youtupi/`, you'll need to modify `youtupi-install.sh` after downloading and `/etc/init.d/youtupi` after installing.
 

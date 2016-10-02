@@ -23,6 +23,8 @@ def getUrl(data):
                                         bestaudio = video.getbestaudio(preftype="m4a")
                                         return bestaudio.url
                                 best = video.getbest(preftype="mp4")
+                                print "\n".join(["Type: %s  Resolution: %s  Audio: %s  Video: %s" % (x._info['ext'], x.resolution, x._info['acodec'], x._info['vcodec']) for x in video._allstreams])
+                                print "Chosen: ", "Type: %s  Resolution: %s  Audio: %s  Video: %s" % (best._info['ext'], best.resolution, best._info['acodec'], best._info['vcodec'])
                                 if data['format'] == "high":
                                         return best.url
                                 for stream in video.streams:
@@ -63,6 +65,8 @@ def updateVideoData(data):
                                         bestaudio = video.getbestaudio(preftype="m4a")
                                         return bestaudio.url
                                 best = video.getbest(preftype="mp4")
+                                print "\n".join(["Type: %s  Resolution: %s  Audio: %s  Video: %s" % (x._info['ext'], x.resolution, x._info['acodec'], x._info['vcodec']) for x in video._allstreams])
+                                print "Chosen: ", "Type: %s  Resolution: %s  Audio: %s  Video: %s" % (best._info['ext'], best.resolution, best._info['acodec'], best._info['vcodec'])
                                 if data['format'] == "high":
                                         data['url'] = best.url
                                 else:

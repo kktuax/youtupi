@@ -35,8 +35,39 @@ Screenshots
 ![Settings View](https://cloud.githubusercontent.com/assets/2767109/18413065/6cc8f004-779e-11e6-8c7b-0dcab3ac3df9.png)
 
 
-Installation
-------------
+Manual installation
+-------------------
+
+1. Install dependencies:
+
+    ```bash
+    sudo apt-get update
+    sudo apt-get install omxplayer python-pip python-magic python-dbus git
+    sudo pip install web.py beautifulsoup4 youtube_dl mpd
+    ```
+
+2. Clone repository:
+
+    ```bash
+    YOUTUPI_HOME=/home/pi/youtupi
+    git clone git://github.com/orithena/youtupi.git $YOUTUPI_HOME
+    cd $YOUTUPI_HOME
+    git submodule init
+    git submodule update
+    ```
+
+3. Register service:
+
+    ```bash
+    sudo cp $YOUTUPI_HOME/service/youtupi /etc/init.d/
+    sudo update-rc.d youtupi defaults
+    ```
+
+Note: If you want to run youtupi under a different user than `pi` or from a different directory, you'll need to modify `/etc/init.d/youtupi` before starting it.
+
+
+Scripted installation
+---------------------
 
     cd ~
     curl https://raw.githubusercontent.com/orithena/youtupi/master/service/install.sh -o youtupi-install.sh
@@ -44,17 +75,35 @@ Installation
     chmod +x youtupi-install.sh 
     sudo ./youtupi-install.sh
 
+Note: If you want to run youtupi under a different user than `pi` or from a different directory than `/home/pi/youtupi/`, you'll need to modify `youtupi-install.sh` after downloading and `/etc/init.d/youtupi` after installing.
+
 Use YouTuPi
 -----------
 
  * Start youtupi
- 
+
     ```
     sudo /etc/init.d/youtupi start
     ```
-    
+
  * Grab your Tablet/Phone/PC and go to: http://192.168.1.2:8080 (replace 192.168.1.2 with your Raspberry Pi address).
  * Enjoy!
+
+Debug YouTuPi
+-------------
+
+ * Don't start the service (or stop it), then cd into `/home/pi/youtupi` and run it from the command line:
+
+    ```
+    sudo /etc/init.d/youtupi stop
+    cd /home/pi/youtupi
+    python youtupi.py
+    ```
+
+ * Grab your Tablet/Phone/PC and go to: http://192.168.1.2:8080 (replace 192.168.1.2 with your Raspberry Pi address).
+
+This'll give you all the debug messages on the command line. Add more by adding print/pprint statements to the code.
+
 
 # Configuration file
 

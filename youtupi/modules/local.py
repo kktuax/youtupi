@@ -14,7 +14,7 @@ def getUrl(data):
 	else:
 		return None
 
-def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm")):
+def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm", ".mov", ".MOV")):
 	if not search:
 		return find_newest_files(rootfolder, count=count, extension=extension)
 	files = set()
@@ -25,7 +25,7 @@ def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi
 					files.add(os.path.join(dirname, filename))
 	return sorted(files)[0:count]
 	
-def find_files_and_folders(rootfolder, path, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm")):
+def find_files_and_folders(rootfolder, path, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm", ".mov", ".MOV")):
 	while path.startswith("/"):
 		path = path[1:]
 	folder = os.path.join(rootfolder, path)
@@ -39,7 +39,7 @@ def find_files_and_folders(rootfolder, path, extension=(".avi", ".mp4", ".mp3", 
 				files.add(os.path.join(item))
 	return sorted(dirs), sorted(files)
 		
-def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv", ".ogm")):
+def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv", ".ogm", ".mov", ".MOV")):
 	return heapq.nlargest(count,
 		(os.path.join(dirname, filename)
 		for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True)

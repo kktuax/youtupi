@@ -9,7 +9,7 @@ fi
 
 apt-get update
 apt-get install -y omxplayer python-pip python-magic python-dbus git
-pip install web.py beautifulsoup4 youtube_dl mpd
+pip install web.py beautifulsoup4 youtube_dl python-mpd betterprint
 git clone git://github.com/orithena/youtupi.git $YOUTUPI_HOME
 cd $YOUTUPI_HOME
 git submodule init

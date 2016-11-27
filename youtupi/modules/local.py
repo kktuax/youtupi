@@ -48,9 +48,10 @@ class search:
 		count = int(user_data.count)
 		local_videos = list()
 		folders = config.conf.get('local-folders', ['~'])
+		extensions = config.conf.get('local-search-extensions', [".avi", ".mp4", ".mp3", ".ogg", ".mkv", ".flv"])
 		print 'Searching "' + search + '" in folders: ' + ', '.join(folders)
 		for folder in folders:
-			for local_video_file in find_files(expanduser(folder), search=search, count=count):
+			for local_video_file in find_files(expanduser(folder), search=search, count=count, extension=tuple(extensions)):
 				date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
 				name = os.path.basename(local_video_file)
 				subtitleOperation = {'name': 'subtitle', 'text': 'Subtitles', 'successMessage': 'Subtitle downloaded'};

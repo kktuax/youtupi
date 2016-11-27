@@ -4,7 +4,8 @@ from StringIO import StringIO
 from os.path import expanduser
 from pafy import pafy
 from youtupi.video import Video
-from youtupi.util import config, downloader, ensure_dir
+from youtupi.util import config, downloader
+from youtupi.util.ensure_dir import  ensure_dir
 
 def getUrl(data):
 	if(data['type'] == "youtube"):
@@ -27,7 +28,7 @@ def getUrl(data):
 	return None
 
 class youtube_dl:
-    
+
     def POST(self):
 		data = json.load(StringIO(web.data()))
 		video = pafy.new(data['id'])

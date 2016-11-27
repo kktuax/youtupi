@@ -19,7 +19,7 @@ function fillVideoList(entries, listSelect, clickEvent){
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
-		if((i == 0) && (listSelect == "#playlist-current")){
+		if(i == 0){
 			adjustCurrentPositionSlider(video.duration, video.position);
 		}
 		thumbnail = "images/video.png";
@@ -113,8 +113,7 @@ function loadPlayList(entries){
 			buttons : buttons
 		});
 	};
-	fillVideoList(entries.slice(0,1), "#playlist-current", playlist_entry_handler);
-	fillVideoList(entries.slice(1), "#playlist-list", playlist_entry_handler);
+	fillVideoList(entries, "#playlist-list", playlist_entry_handler);
 }
 
 function jumpToPosition(seconds){

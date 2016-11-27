@@ -6,7 +6,7 @@ from StringIO import StringIO
 from youtupi.modules.local import module_local
 from youtupi.modules.youtube import module_youtube
 import youtupi.playlist
-from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideo, playlistPosition, resetPlaylist, playList
+from youtupi.playlist import findVideoInPlaylist, removeVideo, playNextVideo, playVideo, addVideos, playlistPosition, resetPlaylist, playList
 from youtupi.engine.PlaybackEngineFactory import engine
 from youtupi.util import config
 

@@ -1,4 +1,5 @@
 var server = window.location.protocol + "//" + window.location.host;
+var oldvolumesliderposition = 0;
 
 $(document).bind('pageinit', function () {
     $.mobile.defaultPageTransition = 'none';
@@ -13,9 +14,15 @@ $(document).bind('pageinit', function () {
 function fillVideoList(entries, listSelect, clickEvent){
 	if(typeof clickEvent === 'undefined') {
 		clickEvent = function(event){
-			loadVideo(event.data.video);
+		        if(event.data.video.type == "local-dir") {
+		                $("#search-basic").val(event.data.video.id);
+                        	$("#search-basic").trigger("change");
+		        } else {
+        			loadVideo(event.data.video);
+                        }
 		};
 	}
+
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
@@ -23,6 +30,12 @@ function fillVideoList(entries, listSelect, clickEvent){
 			adjustCurrentPositionSlider(video.duration, video.position);
 		}
 		thumbnail = "images/video.png";
+		if(video.type == "local-dir") {
+		        thumbnail = "images/folder_open.png";
+		        if(video.title == "..") {
+        		        thumbnail = "images/folder.png";
+                        }
+		}
 		if(video.thumbnail != undefined){
 			thumbnail = video.thumbnail;
 		}
@@ -30,11 +43,17 @@ function fillVideoList(entries, listSelect, clickEvent){
 		if(duration){
 			duration = " [" + duration + "]";
 		}
+		if(video.title == undefined) {
+		        video.title = "Loading data for " + video.id;
+		        video.description = "";
+                }
 		var itemval = $('<li data-video-id="' + video.id + '"><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
 		itemval.bind('click', {video: video}, clickEvent);
 		$(listSelect).append(itemval);
 	}
-	$(listSelect).listview("refresh");
+	try {
+        	$(listSelect).listview("refresh");
+        } catch(err) {}
 }
 
 function adjustCurrentPositionSlider(duration, position){
@@ -45,7 +64,9 @@ function adjustCurrentPositionSlider(duration, position){
 			$("#position").data("duration", duration);
 		}
 	}
-	$("#position").slider("refresh");
+	try {
+        	$("#position").slider("refresh");
+        } catch(err) {}
 }
 
 function getDurationString(time){
@@ -65,6 +86,7 @@ function getDurationString(time){
  * Load playlist items with play video on click event
  * */
 function loadPlayList(entries){
+  $('#spinner').css('opacity', 0);
 	updateControls(entries.length);
 	var playlist_entry_handler = function(event) {
 		var data = $.toJSON(event.data.video);
@@ -133,9 +155,17 @@ function changePlaylistPosition(videoId, newPosition){
   }
 }
 
+function setServerParam(param, value){
+        var jsonobj = {};
+        jsonobj[param] = value;
+	$.post(
+		server + "/control/" + param, $.toJSON(jsonobj), function(){}, "json"
+	);
+}
+
 function loadVideos(videos){
 	tabPlaylist();
-	$("#spinner").show();
+	$("#spinner").css('opacity', 1);
   for (var i = 0; i < videos.length; i++) {
     video = videos[i];
     if(video.type == "youtube"){
@@ -155,7 +185,7 @@ function loadVideos(videos){
       }
 		}
 	}).always(function() {
-		$("#spinner").hide();
+		$("#spinner").css('opacity', 0);
 	});
 }
 
@@ -165,7 +195,7 @@ function loadVideo(video){
 		$("#search-basic").trigger("change");
 	}else{
 		//tabPlaylist();
-		$("#spinner").show();
+		$("#spinner").css('opacity', 1);
 		if(video.type == "youtube"){
 			video.format = $("#quality").val();
 		}
@@ -181,7 +211,7 @@ function loadVideo(video){
 				saveVideoToHistory(video);
 			}
 		}).always(function() {
-			$("#spinner").hide();
+			$("#spinner").css('opacity', 0);
 		});
 	}
 }
@@ -259,7 +289,7 @@ function tabPlaylist(){
 }
 
 function showNotification(message){
-	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.8, "top": 50, "padding": "0.3em 1em" })
+	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h2>"+message+"</h2></div>").css({ "display": "block", "opacity": 0.8, "top": 60, "left":"50\%", "transform":"translateX(-50\%)", "z-index":"499", "padding": "0.3em 1em", "position":"fixed" })
 	.appendTo( $.mobile.pageContainer )
 	.delay( 1500 )
 	.fadeOut( 400, function(){
@@ -308,10 +338,24 @@ $(document).delegate("#search", "pageinit", function() {
 		});
 	});
 	$("#engine").bind("change", function(event, ui) {
-		$("#search-basic").trigger("change");
+	        if( $("#engine").val() == "local-dir") {
+	                $("#search-basic").val("/");
+	        }
+	        $("#search-basic").trigger("change");
 	});
-	$("#search-basic").val("youtupi:history");
+        if( $("#engine").val() == "local-dir") {
+                $("#search-basic").val("/");
+        } else {
+        	$("#search-basic").val("youtupi:history");
+        }
 	$("#search-basic").trigger("change");
+	$("#volume").bind("change", function(event, ui) {
+	        var newposition = $("#volume").val();
+	        if( oldvolumesliderposition != newposition ) {
+        		setServerParam('volume', newposition);
+        		oldvolumesliderposition = newposition;
+                }
+	});
 });
 
 function resetPageNumber(){
@@ -338,6 +382,9 @@ function getSearchUrl(){
 	var engine = $("#engine").val();
 	if(engine == "youtube"){
 		return getYoutubeQueryUrl();
+	}else
+	if(engine == "local-dir"){
+		return server + "/local-browse";
 	}else{
 		return server + "/" + engine + "-search";
 	}
@@ -364,6 +411,7 @@ function isNextPageAvailable(response){
 $(document).delegate("#playlist", "pageinit", function() {
   initControls();
 	window.setInterval(function(){
+	  $('#spinner').css('opacity', 1);
 		$.getJSON(
 			server + "/playlist", loadPlayList
 		);

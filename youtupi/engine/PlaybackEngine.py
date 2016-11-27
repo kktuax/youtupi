@@ -71,4 +71,8 @@ class PlaybackEngine(object):
     def nextAudioTrack(self):
         pass 
         
+    @abstractmethod
+    def setBaseVolume(self, vol):
+        pass 
+        
         

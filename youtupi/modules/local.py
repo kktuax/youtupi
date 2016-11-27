@@ -14,7 +14,7 @@ def getUrl(data):
 	else:
 		return None
 
-def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mp3", ".mkv")):
+def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm", ".mov", ".MOV")):
 	if not search:
 		return find_newest_files(rootfolder, count=count, extension=extension)
 	files = set()
@@ -24,8 +24,22 @@ def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi
 				if isFileInKeyWords(filename, search):
 					files.add(os.path.join(dirname, filename))
 	return sorted(files)[0:count]
-
-def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv")):
+	
+def find_files_and_folders(rootfolder, path, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm", ".mov", ".MOV")):
+	while path.startswith("/"):
+		path = path[1:]
+	folder = os.path.join(rootfolder, path)
+	dirs = set()
+	files = set()
+	for item, f in [ (os.path.join(folder,f),f) for f in os.listdir(folder) ]:
+		if os.path.isdir(item):
+			dirs.add(f)
+		elif os.path.isfile(item):
+			if item.endswith(extension):
+				files.add(os.path.join(item))
+	return sorted(dirs), sorted(files)
+		
+def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv", ".ogm", ".mov", ".MOV")):
 	return heapq.nlargest(count,
 		(os.path.join(dirname, filename)
 		for dirname, dirnames, filenames in os.walk(rootfolder, followlinks=True)
@@ -59,6 +73,39 @@ class search:
 				local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation, deleteOperation]}
 				local_videos.append(local_video)
 		return json.dumps(local_videos[0:count], indent=4)
+
+class browse:
+
+	def GET(self):
+		user_data = web.input()
+		search = user_data.search.strip()
+		count = int(user_data.count)
+		local_dirs = list()
+		local_videos = list()
+		rootfolders = config.conf.get('local-folders', ['~'])
+		print 'Browsing "' + search + '" in folders: ' + ', '.join(rootfolders)
+		for rootfolder in rootfolders:
+			rootfoldername = os.path.basename(rootfolder)
+			if search == "/":
+				name = rootfoldername
+				local_browse_folder = {'id': "/%s" % rootfoldername, 'description': "", 'title': name, 'type': 'local-dir', 'operations' : []}
+				local_dirs.append(local_browse_folder)
+			elif search.startswith("/%s" % rootfoldername):
+				local_dirs.append({'id': os.path.dirname(search), 'description': "Go back", 'title': "..", 'type': 'local-dir', 'operations' : []})
+				prefix = search[(len(rootfoldername)+1):]
+				dirs, files = find_files_and_folders(expanduser(rootfolder), prefix)
+				for local_dir in dirs:
+					name = os.path.basename(local_dir)
+					local_browse_folder = {'id': os.path.join(search,local_dir), 'description': "Folder", 'title': name, 'type': 'local-dir', 'operations' : []}
+					local_dirs.append(local_browse_folder)
+				for local_video_file in files:
+					date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()
+					name = os.path.basename(local_video_file)
+					subtitleOperation = {'name': 'subtitle', 'text': 'Subtitles', 'successMessage': 'Subtitle downloaded'};
+					deleteOperation = {'name': 'delete', 'text': 'Delete', 'successMessage': 'File deleted'};
+					local_video = {'id': local_video_file, 'description': date, 'title': name, 'type': 'local', 'operations' : [subtitleOperation, deleteOperation]}
+					local_videos.append(local_video)
+		return json.dumps(local_dirs + local_videos, indent=4)
 
 def downloadSubtitle(video):
 	dfolder = expanduser(config.conf.get('download-folder', "~/Downloads"))
@@ -104,6 +151,7 @@ class delete:
 
 urls = (
 	"-search", "search",
+	"-browse", "browse",
 	'-subtitle', "subtitle_dl",
 	'-delete', "delete"
 )

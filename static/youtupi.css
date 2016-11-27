@@ -3,3 +3,68 @@
     left: 5%;
     right: 5%
 }
+.ui-popup .ui-slider-track, .ui-popup .ui-slider-switch {
+    margin: 0;
+}
+.ui-popup input[type="number"] + .ui-slider-track {
+    margin: 0 0 0 68px;
+}
+.ui-btn-inner {
+    text-overflow: clip;
+}
+.ui-popup .ui-controlgroup, .ui-popup fieldset.ui-controlgroup {
+    text-align: center;
+}
+#seek-controls .ui-controlgroup-controls {
+    width: 100%;
+}
+#seek-controls .ui-btn {
+    width: 19.3%;
+}
+.slider-container {
+	height: 26px;
+}
+.ui-controlgroup, .slider-container {
+    display:inline-block;
+    width: 100%;
+    max-width: 26em;
+}
+#volume-controls .ui-controlgroup-controls, #audiotrack-controls .ui-controlgroup-controls {
+    width: 100%;
+    max-width: 25em;
+}
+#volume-controls .ui-btn, #audiotrack-controls .ui-btn {
+    width: 49%;
+}
+
+.ui-slider-track {
+	margin: 0 1em 0 1em;
+}
+.ui-body {
+	text-align: center;
+}
+
+#playlist > .ui-header, #search > .ui-header {
+    position: fixed;
+    width: 100%;
+    top:0;
+    left:0;
+    z-index:999;
+}
+
+#playlist > .ui-content, #search > .ui-content {
+    margin-top: 72px;
+}
+
+.spinnercontainer {
+    display: block;
+    height: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #9999bb;
+    text-shadow: white 1px 1px;
+}
+
+.spinner {
+    transition: opacity 1s ease-out;
+}

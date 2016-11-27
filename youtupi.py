@@ -29,7 +29,10 @@ class playlist:
 		return json.dumps(playlistVideos, indent=4)
 
 	def POST(self):
-		data = json.load(StringIO(web.data()))
+	        d = web.data()
+	        s = StringIO(d)
+	        print d
+		data = json.load(s)
 		addVideos(data)
 		web.seeother('/playlist')
 
@@ -65,11 +68,13 @@ class control:
 				engine.prevAudioTrack()
 			elif action == "nextaudiotrack":
 				engine.nextAudioTrack()
-			web.seeother('/playlist')
 
 	def POST(self, action):
 		with engineLock:
 			data = json.load(StringIO(web.data()))
+			if action == "volume":
+			        engine.setBaseVolume(int(data['volume']))
+                                return
 			if action == "play":
 				video = findVideoInPlaylist(data['id'])
 				if video:
@@ -84,7 +89,6 @@ class control:
 					playlistPosition(data['id'], data['order'])
 			if action == "position":
 				engine.setPosition(int(data['seconds']))
-			web.seeother('/playlist')
 
 class MyApplication(web.application):
     def run(self, port=8080, *middleware):

@@ -11,6 +11,9 @@ function initControls(){
     	});
   	});
   });
+  $("#playlist-list").sortable({
+		delay: 250
+	});
   initReorderControl();
   $("#position").bind("slidestop", function(event, ui){
 		var seconds = $("#position").data("duration") * $("#position").val() / 100;

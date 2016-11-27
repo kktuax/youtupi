@@ -19,7 +19,7 @@ function fillVideoList(entries, listSelect, clickEvent){
 	$(listSelect).empty();
 	for (var i = 0; i < entries.length; i++) {
 		var video = entries[i];
-		if((i == 0) && (listSelect == "#playlist-list")){
+		if((i == 0) && (listSelect == "#playlist-current")){
 			adjustCurrentPositionSlider(video.duration, video.position);
 		}
 		thumbnail = "images/video.png";
@@ -66,7 +66,7 @@ function getDurationString(time){
  * */
 function loadPlayList(entries){
 	updateControls(entries.length);
-	fillVideoList(entries, "#playlist-list", function(event) {
+	var playlist_entry_handler = function(event) {
 		var data = $.toJSON(event.data.video);
 		var playBtn = {
 			click: function () {
@@ -112,7 +112,9 @@ function loadPlayList(entries){
 			headerClose: true,
 			buttons : buttons
 		});
-	});
+	};
+	fillVideoList(entries.slice(0,1), "#playlist-current", playlist_entry_handler);
+	fillVideoList(entries.slice(1), "#playlist-list", playlist_entry_handler);
 }
 
 function jumpToPosition(seconds){
@@ -163,7 +165,7 @@ function loadVideo(video){
 		$("#search-basic").val("list:" + video.id);
 		$("#search-basic").trigger("change");
 	}else{
-		tabPlaylist();
+		//tabPlaylist();
 		$("#spinner").show();
 		if(video.type == "youtube"){
 			video.format = $("#quality").val();
@@ -172,6 +174,7 @@ function loadVideo(video){
 		var data = $.toJSON(video);
 		$.post(url, data, function(entries){
 			loadPlayList(entries);
+			showNotification("Video queued");
 		}, "json").fail(function() {
 			showNotification("Error loading video");
     }).done(function() {
@@ -257,7 +260,7 @@ function tabPlaylist(){
 }
 
 function showNotification(message){
-	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.96, "top": $(window).scrollTop() + 100 })
+	$("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h1>"+message+"</h1></div>").css({ "display": "block", "opacity": 0.8, "top": 50, "padding": "0.3em 1em" })
 	.appendTo( $.mobile.pageContainer )
 	.delay( 1500 )
 	.fadeOut( 400, function(){

@@ -38,3 +38,8 @@ nosetests.xml
 .pydevproject
 *.swp
 .settings
+
+# joe
+*~
+
+youtupi.conf

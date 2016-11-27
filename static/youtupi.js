@@ -115,12 +115,6 @@ function loadPlayList(entries){
 	});
 }
 
-function playerAction(paction){
-	$.getJSON(
-		server + "/control/" + paction, loadPlayList
-	);
-}
-
 function jumpToPosition(seconds){
   var data = $.toJSON({seconds : seconds});
   var url = server + "/control/position";

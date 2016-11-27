@@ -1,8 +1,14 @@
 function initControls(){
   $(".active-on-playing").each(function() {
-    var action = $(this).data("player-action");
+    var btn = $(this);
+    var action = btn.data("player-action");
     $(this).bind("click", function(event, ui) {
-  		playerAction(action);
+      btn.addClass("ui-disabled");
+      $.getJSON(
+        server + "/control/" + action, loadPlayList
+      ).always(function() {
+    		btn.removeClass("ui-disabled");
+    	});
   	});
   });
   initReorderControl();

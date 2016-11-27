@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>YouTuPi</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="jquery.mobile-1.3.1.min.css" />
 		<link rel="stylesheet" href="jquery.mobile.simpledialog.min.css" />
 		<link rel="stylesheet" href="youtupi.css" />
@@ -28,55 +28,35 @@
 				</div>
 			</div>
 			<div data-role="content">
-<<<<<<< HEAD
-				<div data-role="collapsible-set" data-theme="c" data-content-theme="d">
-					<div data-role="collapsible" data-iconpos="right" data-collapsed="false">
-						<h3>Playlist Control</h3>
-						<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" data-icon="forward" data-player-action="play" id="next-button" class="active-on-playing ui-disabled">Next</a>
-							<a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a>
-							<a href="#" data-role="button" data-icon="delete" data-player-action="stop" class="active-on-playing ui-disabled">Stop</a>
-						</div>
-						<div>
-							<label for="playlist-reorder">Drag and drop reorder:</label>
-							<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
-								<option value="off" selected="selected">Off</option>
-								<option value="on">On</option>
-							</select>
-						</div>
-					</div>
-					<div data-role="collapsible" data-iconpos="right" data-collapsed="true">
-						<h3>Track Control</h3>
-						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" data-icon="minus" title="Volume down" data-player-action="voldown" class="active-on-playing ui-disabled">Vol Down</a>
-							<a href="#" data-role="button" data-icon="plus" data-iconpos="right" title="Volume up" data-player-action="volup" class="active-on-playing ui-disabled">Vol Up</a>
-							<a href="#" data-role="button" data-icon="arrow-l" title="Prev Audio Track" data-player-action="prevaudiotrack" class="active-on-playing ui-disabled">Prev Audio Track</a>
-							<a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" data-player-action="nextaudiotrack" class="active-on-playing ui-disabled">Next Audio Track</a>
-						</div>
-						<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
-								<a href="#" data-role="button" title="seek back 10m" data-player-action="seekbacklarge" class="active-on-playing ui-disabled">&lt;&lt;</a>
-								<a href="#" data-role="button" title="seek back 30s" data-player-action="seekbacksmall" class="active-on-playing ui-disabled">&lt;</a>
-								<a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a>
-								<a href="#" data-role="button" title="seek forward 30s" data-player-action="seekforwardsmall" class="active-on-playing ui-disabled">&gt;</a>
-								<a href="#" data-role="button" title="seek forward 10m" data-player-action="seekforwardlarge" class="active-on-playing ui-disabled">&gt;&gt;</a>
-						</div>
-						<div>
-								<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
-						</div>
-					</div>
-=======
-				<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
-					<a href="#" data-role="button" data-icon="forward" id="next-button" class="active-on-playing ui-disabled">Next</a>
-					<a href="#" data-role="button" title="Pause/Resume" id="pause-button" class="active-on-playing ui-disabled">||</a>
-					<a href="#" data-role="button" data-icon="delete" id="stop-button" class="active-on-playing ui-disabled">Stop</a>
-					<!--a href="#playerControl" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup" id="player-button" class="ui-disabled">Player</a-->
->>>>>>> orithena/master
-				</div>
+			<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
+				<a href="#" data-role="button" data-icon="forward" data-player-action="play" id="next-button" class="active-on-playing ui-disabled">Next</a>
+				<a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a>
+				<a href="#" data-role="button" data-icon="delete" data-player-action="stop" class="active-on-playing ui-disabled">Stop</a>
+			</div>
 				<div id="playlist-empty" style="display:none">
 					<h3>No entries in the playlist</h3>
 				</div>
 				<div id="playlist-playing" style="display:none;">
+					<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
+						<a href="#" data-role="button" data-icon="minus" title="Volume down" data-player-action="voldown" class="active-on-playing ui-disabled">Vol Down</a>
+						<a href="#" data-role="button" data-icon="plus" data-iconpos="right" title="Volume up" data-player-action="volup" class="active-on-playing ui-disabled">Vol Up</a>
+						<a href="#" data-role="button" data-icon="arrow-l" title="Prev Audio Track" data-player-action="prevaudiotrack" class="active-on-playing ui-disabled">Prev Audio Track</a>
+						<a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" data-player-action="nextaudiotrack" class="active-on-playing ui-disabled">Next Audio Track</a>
+					</div>
+					<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
+							<a href="#" data-role="button" title="seek back 10m" data-player-action="seekbacklarge" class="active-on-playing ui-disabled">&lt;&lt;</a>
+							<a href="#" data-role="button" title="seek back 30s" data-player-action="seekbacksmall" class="active-on-playing ui-disabled">&lt;</a>
+							<a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a>
+							<a href="#" data-role="button" title="seek forward 30s" data-player-action="seekforwardsmall" class="active-on-playing ui-disabled">&gt;</a>
+							<a href="#" data-role="button" title="seek forward 10m" data-player-action="seekforwardlarge" class="active-on-playing ui-disabled">&gt;&gt;</a>
+					</div>
+					<div>
+							<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
+					</div>
 					<h3>Now Playing</h3>
+					<div>
+						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>
+					</div>
 					<div>
 						<label for="playlist-reorder">Drag and drop reorder:</label>
 						<select name="playlist-reorder" id="playlist-reorder" data-role="slider">
@@ -84,45 +64,12 @@
 							<option value="on">On</option>
 						</select>
 					</div>
-					<div>
-						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>
-					</div>
 				</div>
 				<div id="spinnercontainer" class="spinnercontainer">
 					<div id="spinner" class="spinner" style="opacity: 1;">
 						<img id="img-spinner" src="images/spinner.gif" alt="Loading"/> ...refreshing playlist...
 					</div>
 				</div>
-<<<<<<< HEAD
-=======
-<!--
-				<div data-role="popup" data-overlay-theme="a" data-content-theme="c" id="playerControl" class="ui-content">
-				 	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
-					<h3>Player Control</h3>
-					<div class="ui-body ui-body-c">
-						<div id="volume-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" data-icon="minus" title="Volume down" id="voldown-button">Volume down</a>
-							<a href="#" data-role="button" data-icon="plus" data-iconpos="right" title="Volume up" id="volup-button">Volume up</a>
-						</div>
-						<div>
-							<label for="position">Video position:</label>
-							<input type="range" name="position" id="position" value="0" min="0" max="100" step="3" data-highlight="true" class="ui-hidden-accessible">
-						</div>
-						<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
-                                                        <a href="#" data-role="button" title="seek back 10m" id="seekbacklarge-button">&lt;&lt;</a>
-                                                        <a href="#" data-role="button" title="seek back 30s" id="seekbacksmall-button">&lt;</a>
-							<a href="#" data-role="button" title="Pause/Resume" id="pause-button2">||</a>
-                                                        <a href="#" data-role="button" title="seek forward 30s" id="seekforwardsmall-button">&gt;</a>
-                                                        <a href="#" data-role="button" title="seek forward 10m" id="seekforwardlarge-button">&gt;&gt;</a>
-						</div>
-						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" >
-                                                        <a href="#" data-role="button" data-icon="arrow-l" title="Previous Audio Track" id="prevaudiotrack-button">Prev Audio Track</a>
-                                                        <a href="#" data-role="button" data-icon="arrow-r" data-iconpos="right" title="Next Audio Track" id="nextaudiotrack-button">Next Audio Track</a>
-						</div>
-					</div>
-				</div>
--->
->>>>>>> orithena/master
 			</div>
 		</div>
 		<div data-role="page" id="search">

@@ -2,50 +2,10 @@ import threading
 from youtupi.video import Video
 from youtupi.modules.videoUrl import prepareVideo
 from youtupi.engine.PlaybackEngineFactory import engine
-import mpd
 
 TIMEOUT = 60
 
 videos = list()
-
-mpd_old_status = None
-mpc = mpd.MPDClient()
-mpd_host = None
-mpd_port = None
-
-def initMPD(host, port):
-    global mpd_host, mpd_port, mpd_old_status
-    mpd_old_status = None
-    mpd_host, mpd_port = host, port;
-
-def afterPlay():
-    # is being called after playlist is done
-    global mpd_host, mpd_port, mpd_old_status
-    if mpd_old_status is not None:
-        try:
-            mpc.connect(mpd_host, mpd_port)
-            status = mpc.status()['state']
-            if status == 'pause':
-                mpc.play()
-                mpd_old_status = None
-            mpc.disconnect()
-        except:
-            pass
-
-def beforePlay():
-    # is being called once per track in playlist
-    global mpd_host, mpd_port, mpd_old_status
-    if mpd_old_status is None:
-        try:
-            mpc.connect(mpd_host, mpd_port)
-            status = mpc.status()['state']
-            if status == 'play':
-                mpc.pause()
-                mpd_old_status = status
-            mpc.disconnect()
-        except:
-            pass
-    
 
 def resetPlaylist():
     global videos
@@ -110,7 +70,6 @@ def playNextVideo():
     else:
         engine.stop()
         resetPlaylist()
-        afterPlay()
 
 def addVideos(data):
     if type(data) is list:
@@ -144,7 +103,6 @@ def autoPlay():
     removeOldVideosFromPlaylist()
     if videos:
         if not engine.isPlaying():
-            beforePlay()
             playNextVideo()
         else:
             svideo = currentVideo()

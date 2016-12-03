@@ -45,6 +45,10 @@ class MockEngine(PlaybackEngine):
             return SECONDS_SLEEP
         return None
 
+    def setBaseVolume(self, volume):
+        print 'Requested volume ' + str(volume)
+        pass
+
     def volumeUp(self):
         print 'Volume up requested'
 

@@ -73,8 +73,9 @@ class control:
 		with engineLock:
 			data = json.load(StringIO(web.data()))
 			if action == "volume":
-			        engine.setBaseVolume(int(data['volume']))
-                                return
+				print "setting volume to " + data['volume']
+				volume = int(data['volume'])
+				engine.setBaseVolume(volume)
 			if action == "play":
 				video = findVideoInPlaylist(data['id'])
 				if video:

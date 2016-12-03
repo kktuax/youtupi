@@ -12,7 +12,9 @@ $(document).bind('pageinit', function () {
 * @param {function} event on video click, by default adds to playlist
 * */
 function fillVideoList(entries, listSelect, clickEvent){
+  var playlistList = true;
   if(typeof clickEvent === 'undefined') {
+    playlistList = false;
     clickEvent = function(event){
       if(event.data.video.type == "local-dir") {
         $("#search-basic").val(event.data.video.id);
@@ -26,8 +28,12 @@ function fillVideoList(entries, listSelect, clickEvent){
   $(listSelect).empty();
   for (var i = 0; i < entries.length; i++) {
     var video = entries[i];
-    if(i == 0){
-      adjustCurrentPositionSlider(video.duration, video.position);
+    if(playlistList){
+      if(i == 0){
+        adjustCurrentPositionSlider(video.duration, video.position);
+      }else if(i == 1){
+        $(listSelect).append($('<li data-role="list-divider"></li>'));
+      }
     }
     thumbnail = "images/video.png";
     if(video.type == "local-dir") {
@@ -47,7 +53,9 @@ function fillVideoList(entries, listSelect, clickEvent){
       video.title = "Loading data for " + video.id;
       video.description = "";
     }
-    var itemval = $('<li data-video-id="' + video.id + '"><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
+    var theme = playlistList && i == 0 ? 'b' : 'a';
+    var icon = playlistList && i > 0 ? 'gear' : 'carat-r';
+    var itemval = $('<li data-video-id="' + video.id + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
     itemval.bind('click', {video: video}, clickEvent);
     $(listSelect).append(itemval);
   }

@@ -30,19 +30,21 @@
 			<div data-role="content">
 				<div class="ui-grid-a">
 					<div class="ui-block-a">
-						<div id="playlist-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-player-action="play" id="next-button" class="ui-btn ui-corner-all ui-icon-forward ui-btn-icon-top active-on-playing ui-disabled">Next</a>
-							<a href="#" data-player-action="stop" id="stop-button" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-top active-on-playing ui-disabled">Stop</a>
+						<div id="playlist-controls" data-role="navbar" data-iconpos="top">
+							<ul>
+							<li><a href="#" data-player-action="play" id="next-button" data-icon="forward" class="active-on-playing ui-disabled">Next</a></li>
+							<li><a href="#" data-player-action="stop" id="stop-button" data-icon="delete" class="active-on-playing ui-disabled">Stop</a></li>
+							</ul>
 						</div>
 					</div>
 					<div class="ui-block-b">
-						<div id="volume-controls" data-role="controlgroup" data-type="horizontal" data-mini="true" >
-							<a href="#" data-player-action="voldown" title="Volume down" class="ui-btn ui-corner-all ui-icon-minus ui-btn-icon-left active-on-playing ui-disabled">Vol</a>
-							<a href="#" data-player-action="volup" title="Volume up" class="ui-btn ui-corner-all ui-icon-plus ui-btn-icon-right active-on-playing ui-disabled">Vol</a>
-						</div>
-						<div id="audiotrack-controls" data-role="controlgroup" data-type="horizontal" data-mini="true" >
-							<a href="#" data-player-action="prevaudiotrack" title="Prev Audio Track" class="ui-btn ui-corner-all ui-icon-arrow-l ui-btn-icon-left active-on-playing ui-disabled">Audio</a>
-							<a href="#" data-player-action="nextaudiotrack" title="Next Audio Track" class="ui-btn ui-corner-all ui-icon-arrow-r ui-btn-icon-right active-on-playing ui-disabled">Audio</a>
+						<div id="volume-controls" data-role="navbar" data-iconpos="top">
+							<ul>
+							<li><a href="#" data-player-action="voldown" title="Volume down" data-icon="minus" class="active-on-playing ui-disabled">Vol. Down</a></li>
+							<li><a href="#" data-player-action="volup" title="Volume up" data-icon="plus" class="active-on-playing ui-disabled">Vol. Up</a></li>
+							<li><a href="#" data-player-action="prevaudiotrack" title="Prev Audio Track" data-icon="arrow-l" class="active-on-playing ui-disabled">Audio Prev</a></li>
+							<li><a href="#" data-player-action="nextaudiotrack" title="Next Audio Track" data-icon="arrow-r" class="active-on-playing ui-disabled">Audio Next</a></li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -51,15 +53,17 @@
 				</div>
 				<div id="playlist-playing" style="display:none;">
 					<h3>Now Playing</h3>
-					<div id="seek-controls" data-role="controlgroup" data-type="horizontal" >
-							<a href="#" data-role="button" title="seek back 10m" data-player-action="seekbacklarge" class="active-on-playing ui-disabled">&lt;&lt;</a>
-							<a href="#" data-role="button" title="seek back 30s" data-player-action="seekbacksmall" class="active-on-playing ui-disabled">&lt;</a>
-							<a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a>
-							<a href="#" data-role="button" title="seek forward 30s" data-player-action="seekforwardsmall" class="active-on-playing ui-disabled">&gt;</a>
-							<a href="#" data-role="button" title="seek forward 10m" data-player-action="seekforwardlarge" class="active-on-playing ui-disabled">&gt;&gt;</a>
-					</div>
-					<div>
-							<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
+					<div id="seek-controls" data-role="navbar" class="ui-body-b">
+						<ul>
+							<li><a href="#" data-role="button" title="seek back 10m" data-player-action="seekbacklarge" class="active-on-playing ui-disabled">&lt;&lt;</a></li>
+							<li><a href="#" data-role="button" title="seek back 30s" data-player-action="seekbacksmall" class="active-on-playing ui-disabled">&lt;</a></li>
+							<li><a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a></li>
+							<li><a href="#" data-role="button" title="seek forward 30s" data-player-action="seekforwardsmall" class="active-on-playing ui-disabled">&gt;</a></li>
+							<li><a href="#" data-role="button" title="seek forward 10m" data-player-action="seekforwardlarge" class="active-on-playing ui-disabled">&gt;&gt;</a></li>
+						</ul>
+						<div>
+								<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
+						</div>
 					</div>
 					<div>
 						<ul id="playlist-list" data-inset="true" data-role="listview"></ul>

@@ -1,13 +1,13 @@
 YouTuPi
 =======
 
-YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in your 
-[Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. It 
-provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the 
+YouTuPi lets you play local and [YouTube](http://www.youtube.com/) videos in your
+[Raspberry Pi](http://www.raspberrypi.org/) using a (mobile) web interface. It
+provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the
 [raspbian](http://www.raspbian.org/) media player). It has three modules:
 
  * Local file search and browse for available media in the filesystem
- * Youtube support thanks to [pafy](https://github.com/np1/pafy) 
+ * Youtube support thanks to [pafy](https://github.com/np1/pafy)
  * Paste video URL from anywhere
 
 Screenshots
@@ -36,6 +36,7 @@ Manual installation
     YOUTUPI_HOME=/home/pi/youtupi
     git clone git://github.com/kktuax/youtupi.git $YOUTUPI_HOME
     cd $YOUTUPI_HOME
+    cp youtupi.conf.example youtupi.conf
     git submodule init
     git submodule update
     ```
@@ -56,7 +57,7 @@ Scripted installation
     cd ~
     curl https://raw.githubusercontent.com/kktuax/youtupi/master/service/install.sh -o youtupi-install.sh
     cat youtupi-install.sh         # well, you need to check whether this shell script from the net is clean.
-    chmod +x youtupi-install.sh 
+    chmod +x youtupi-install.sh
     sudo ./youtupi-install.sh
 
 Note: If you want to run youtupi under a different user than `pi` or from a different directory than `/home/pi/youtupi/`, you'll need to modify `youtupi-install.sh` after downloading and `/etc/init.d/youtupi` after installing.
@@ -93,7 +94,7 @@ This'll give you all the debug messages on the command line. Add more by adding 
 
 You can customize the download folder and some other parameters in the JSON configuration file
 
-    nano /home/pi/youtupi/youtupi.conf
+    nano ~/youtupi/youtupi.conf
 
 <!-- -->
 

@@ -10,22 +10,6 @@ provides a web UI for [Omxplayer](https://github.com/huceke/omxplayer) (the
  * Youtube support thanks to [pafy](https://github.com/np1/pafy) 
  * Paste video URL from anywhere
 
-This is an augmented fork of [kktuax' YouTuPi web app](https://github.com/kktuax/youtupi). 
-We're cherrypicking each other's commits from time to time :)
-
-Differences to kktuax' original:
- * Slight UI changes:
-   * Player View does not hide in a submenu.
-   * Tabs are fixed on top of screen and do not scroll out of view.
- * MPD autopause while playing video.
- * Does find .ogm files in local searches.
- * Is able to browse the folder structure.
- * Can submit arbitrary pasted video URLs to omxplayer.
- * REST interface prepared for third-party clients.
-   * Minimal information needed, Youtube ID suffices.
-   * Youtube Playlist IDs are also possible.
- * Errors like "This video is not available in your country" are displayed in playlist view.
-
 Screenshots
 -----------
 
@@ -43,14 +27,14 @@ Manual installation
     ```bash
     sudo apt-get update
     sudo apt-get install omxplayer python-pip python-magic python-dbus git
-    sudo pip install web.py beautifulsoup4 youtube_dl mpd
+    sudo pip install web.py beautifulsoup4 youtube_dl betterprint
     ```
 
 2. Clone repository:
 
     ```bash
     YOUTUPI_HOME=/home/pi/youtupi
-    git clone git://github.com/orithena/youtupi.git $YOUTUPI_HOME
+    git clone git://github.com/kktuax/youtupi.git $YOUTUPI_HOME
     cd $YOUTUPI_HOME
     git submodule init
     git submodule update
@@ -70,7 +54,7 @@ Scripted installation
 ---------------------
 
     cd ~
-    curl https://raw.githubusercontent.com/orithena/youtupi/master/service/install.sh -o youtupi-install.sh
+    curl https://raw.githubusercontent.com/kktuax/youtupi/master/service/install.sh -o youtupi-install.sh
     cat youtupi-install.sh         # well, you need to check whether this shell script from the net is clean.
     chmod +x youtupi-install.sh 
     sudo ./youtupi-install.sh
@@ -128,4 +112,4 @@ Try updating, or installing again a newer version
 
     sudo /etc/init.d/youtupi update
 
-Still no luck? Raise [an issue](https://github.com/orithena/youtupi/issues/new)
+Still no luck? Raise [an issue](https://github.com/kktuax/youtupi/issues/new)

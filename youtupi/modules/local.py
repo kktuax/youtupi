@@ -24,7 +24,7 @@ def find_files(rootfolder=expanduser("~"), search="", count=20, extension=(".avi
 				if isFileInKeyWords(filename, search):
 					files.add(os.path.join(dirname, filename))
 	return sorted(files)[0:count]
-	
+
 def find_files_and_folders(rootfolder, path, extension=(".avi", ".mp4", ".mp3", ".mkv", ".ogm", ".mov", ".MOV")):
 	while path.startswith("/"):
 		path = path[1:]
@@ -33,12 +33,13 @@ def find_files_and_folders(rootfolder, path, extension=(".avi", ".mp4", ".mp3", 
 	files = set()
 	for item, f in [ (os.path.join(folder,f),f) for f in os.listdir(folder) ]:
 		if os.path.isdir(item):
-			dirs.add(f)
+			if not f.startswith('.'):
+				dirs.add(f)
 		elif os.path.isfile(item):
 			if item.endswith(extension):
 				files.add(os.path.join(item))
 	return sorted(dirs), sorted(files)
-		
+
 def find_newest_files(rootfolder=expanduser("~"), count=20, extension=(".avi", ".mp4", ".mkv", ".ogm", ".mov", ".MOV")):
 	return heapq.nlargest(count,
 		(os.path.join(dirname, filename)
@@ -80,6 +81,7 @@ class browse:
 		user_data = web.input()
 		search = user_data.search.strip()
 		count = int(user_data.count)
+		extensions = config.conf.get('local-search-extensions', [".avi", ".mp4", ".mp3", ".ogg", ".mkv", ".flv"])
 		local_dirs = list()
 		local_videos = list()
 		rootfolders = config.conf.get('local-folders', ['~'])
@@ -93,7 +95,7 @@ class browse:
 			elif search.startswith("/%s" % rootfoldername):
 				local_dirs.append({'id': os.path.dirname(search), 'description': "Go back", 'title': "..", 'type': 'local-dir', 'operations' : []})
 				prefix = search[(len(rootfoldername)+1):]
-				dirs, files = find_files_and_folders(expanduser(rootfolder), prefix)
+				dirs, files = find_files_and_folders(expanduser(rootfolder), prefix, extension=tuple(extensions))
 				for local_dir in dirs:
 					name = os.path.basename(local_dir)
 					local_browse_folder = {'id': os.path.join(search,local_dir), 'description': "Folder", 'title': name, 'type': 'local-dir', 'operations' : []}

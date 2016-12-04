@@ -16,9 +16,10 @@ class OMXPlayerEngine(PlaybackEngine):
     '''
 
     def __init__(self):
-        self.baseVolume = -1800
+        pass
 
     player = None
+    baseVolume = 0
 
     def subtitleBlock(self, id, text):
         id = max(id, 1)

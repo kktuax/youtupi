@@ -1,6 +1,7 @@
 from youtupi.engine.OMXPlayerEngine import OMXPlayerEngine
 from youtupi.engine.VlcEngine import VlcEngine
 from youtupi.engine.MockEngine import MockEngine
+from youtupi.util import config
 
 def which(program):
     import os
@@ -19,14 +20,18 @@ def which(program):
     return None
 
 def createEngine():
+    baseVolume = config.conf.get('base-volume', 0)
+    engine = None
     if which("omxplayer"):
         print 'Using OMX Player engine'
-        return OMXPlayerEngine()
+        engine = OMXPlayerEngine()
     elif which("vlc"):
         print 'Using VLC engine'
-        return VlcEngine()
+        engine = VlcEngine()
     else:
         print 'No player detected, using mock player engine'
-        return MockEngine()
-    
+        engine = MockEngine()
+    engine.setBaseVolume(baseVolume)
+    return engine
+
 engine = createEngine()

@@ -13,7 +13,7 @@ def getUrl(data):
 		return None
 
 def ydlInfo(video):
-	vdata = {'id': video['url'], 'title': video['url'], 'type': 'url', 'operations' : []}
+	vdata = {'id': video['url'], 'title': video['url'], 'description': '', 'type': 'url', 'operations' : []}
 	if 'title' in video:
 		vdata['title'] = video['title']
 	if 'description' in video:
@@ -30,15 +30,17 @@ class search:
 		count = int(user_data.count)
 		videos = list()
 		if search:
-			ydl = youtube_dl.YoutubeDL({})
+			ydl = youtube_dl.YoutubeDL({'ignoreerrors': True})
 			with ydl:
 				result = ydl.extract_info(search, download=False)
 				if 'entries' in result:
 					for video in result['entries']:
-						videos.append(ydlInfo(video))
+						if 'url' in video:
+							videos.append(ydlInfo(video))
 				else:
 					video = result
-					videos.append(ydlInfo(video))
+					if 'url' in video:
+						videos.append(ydlInfo(video))
 		return json.dumps(videos[0:count], indent=4)
 
 urls = (

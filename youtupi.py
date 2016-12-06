@@ -109,5 +109,5 @@ if __name__ == "__main__":
 	)
 	app = MyApplication(urls, globals())
 	port = config.conf.get('port', 8080)
-	port = config.conf.get('host', '0.0.0.0')
-	app.run(port=port)
+	host = config.conf.get('host', '0.0.0.0')
+	app.run(host=host, port=port)

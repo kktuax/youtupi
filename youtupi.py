@@ -92,9 +92,9 @@ class control:
 				engine.setPosition(int(data['seconds']))
 
 class MyApplication(web.application):
-    def run(self, port=8080, *middleware):
+    def run(self, host='0.0.0.0', port=8080, *middleware):
         func = self.wsgifunc(*middleware)
-        return web.httpserver.runsimple(func, ('0.0.0.0', port))
+        return web.httpserver.runsimple(func, (host, port))
 
 if __name__ == "__main__":
 	urls = (
@@ -109,4 +109,5 @@ if __name__ == "__main__":
 	)
 	app = MyApplication(urls, globals())
 	port = config.conf.get('port', 8080)
+	port = config.conf.get('host', '0.0.0.0')
 	app.run(port=port)

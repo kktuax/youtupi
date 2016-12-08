@@ -4,8 +4,6 @@ from youtupi.modules.videoUrl import prepareVideo
 from youtupi.modules.youtube import updateVideoData, resolveYoutubePlaylist
 from youtupi.engine.PlaybackEngineFactory import engine
 
-TIMEOUT = 60
-
 videos = list()
 
 def resetPlaylist():
@@ -74,7 +72,7 @@ def playNextVideo():
 
 def updateData(data):
     data.update(updateVideoData(data))
-    
+
 def addYoutubePlaylist(data):
     for video in resolveYoutubePlaylist(data):
         addVideos(video)

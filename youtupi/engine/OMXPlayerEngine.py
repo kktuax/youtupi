@@ -44,7 +44,8 @@ class OMXPlayerEngine(PlaybackEngine):
             raise RuntimeError("Video URL not found")
         if self.isPlaying():
             self.stop()
-        playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "%d" % self.baseVolume ]
+        volume = self.baseVolume * 100 # OMXPlayer requires factor 100 to dB input
+        playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "%d" % volume ]
         if video.data:
             self.prepareSubtitles(TITLE_DISPLAY_SRT, video)
             playerArgs.extend(("--subtitles", TITLE_DISPLAY_SRT))
@@ -89,8 +90,10 @@ class OMXPlayerEngine(PlaybackEngine):
         return None
 
     def setBaseVolume(self, vol):
-        # OMXPlayer requires factor 100 to dB input
-        self.baseVolume = vol * 100
+        self.baseVolume = vol
+
+    def getBaseVolume(self):
+        return self.baseVolume
 
     def volumeUp(self):
         self.tryToSendAction(dbus.Int32("18"))

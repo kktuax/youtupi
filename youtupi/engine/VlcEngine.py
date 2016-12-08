@@ -28,7 +28,8 @@ class VlcEngine(PlaybackEngine):
         else:
             self.player.set_media(vlc.Instance().media_new(video.url))
         if self.baseVolume:
-            self.player.audio_set_volume(self.baseVolume)
+            linear = pow(10.0, self.baseVolume/20.0)
+            self.player.audio_set_volume(int(100 * linear))
         self.player.play()
 
     def stop(self):
@@ -59,10 +60,11 @@ class VlcEngine(PlaybackEngine):
                 return durmillis/SECONDS_FACTOR
         return None
 
-    def setBaseVolume(self, dB):
-        linear = pow(10.0, dB/20.0)
-        print "requested " + str(dB) + " dB, converted as " + str(linear)
-        baseVolume = int(100 * linear)
+    def setBaseVolume(self, vol):
+        self.baseVolume = vol
+
+    def getBaseVolume(self):
+        return self.baseVolume
 
     def volumeUp(self):
         if self.player:

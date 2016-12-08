@@ -13,6 +13,7 @@ class MockEngine(PlaybackEngine):
     '''
 
     player = None
+    baseVolume = None
 
     def play(self, video):
         if self.isPlaying():
@@ -45,9 +46,11 @@ class MockEngine(PlaybackEngine):
             return SECONDS_SLEEP
         return None
 
-    def setBaseVolume(self, volume):
-        print 'Requested volume ' + str(volume)
-        pass
+    def setBaseVolume(self, vol):
+        self.baseVolume = vol
+
+    def getBaseVolume(self):
+        return self.baseVolume
 
     def volumeUp(self):
         print 'Volume up requested'

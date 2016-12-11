@@ -5,58 +5,109 @@ $(document).bind('pageinit', function () {
   $.mobile.defaultPageTransition = 'none';
 });
 
+
+function Video(data){
+
+  this.data = data;
+
+  this.id = function(){
+    return this.data.id;
+  };
+
+  this.title = function(){
+    var title = this.data.title;
+    if(title == undefined) {
+      title = "Loading data for " + this.data.id;
+    }
+    var	duration = this.getDurationString();
+    if(duration){
+      return title + " [" + duration + "]";
+    }else{
+      return title;
+    }
+  };
+
+  this.getDurationString = function(){
+    var time = this.data.duration;
+    if(time == undefined) return "";
+    var duration = "";
+    var hours = Math.floor(time / 3600);
+    if(hours > 0) duration = duration + hours + ":";
+    time = time - hours * 3600;
+    var minutes = Math.floor(time / 60);
+    duration = duration + (((minutes < 10) && (hours > 0)) ? ("0" + minutes) : minutes);
+    var seconds = time - minutes * 60;
+    duration = duration + ((seconds < 10) ? (":0" + seconds) : (":" + seconds));
+    return duration;
+  };
+
+  this.description = function(){
+    return (this.data.description != undefined) ? this.data.description : "";
+  };
+
+  this.thumbnail = function (){
+    var thumbnail = "images/video.png";
+    if(this.data.type == "local-dir") {
+      thumbnail = "images/folder_open.png";
+      if(this.data.title == "..") {
+        thumbnail = "images/folder.png";
+      }
+    }
+    if(this.data.thumbnail != undefined){
+      thumbnail = this.data.thumbnail;
+    }
+    return thumbnail;
+  };
+
+}
+
 /**
 * Refresh listview with array of videos
 * @param {entries} array of videos
 * @param {listSelect} selector of listview to update
-* @param {function} event on video click, by default adds to playlist
+* @param {function} event on video click
 * */
-function fillVideoList(entries, listSelect, clickEvent){
-  var playlistList = true;
-  if(typeof clickEvent === 'undefined') {
-    playlistList = false;
-    clickEvent = function(event){
+function fillPlayList(entries, listSelect, clickEvent){
+  $(listSelect).empty();
+  for (var i = 0; i < entries.length; i++) {
+    var video = new Video(entries[i]);
+    if(i == 0){
+      adjustCurrentPositionSlider(video.duration, video.position);
+    }else if(i == 1){
+      $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
+    }
+    var theme = i == 0 ? 'b' : 'a';
+    var icon = i > 0 ? 'false' : 'carat-r';
+    var count = i > 0 ? ' <span class="ui-li-count">'+ i +'</span>' : '';
+    var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3>'+count+'<p>' + video.description() + '</p></a></li>');
+    itemval.bind('click', {video: video.data}, clickEvent);
+    $(listSelect).append(itemval);
+  }
+  try {
+    $(listSelect).listview("refresh");
+  } catch(err) {}
+}
+
+/**
+* Refresh listview with array of videos
+* @param {entries} array of videos
+* @param {listSelect} selector of listview to update
+* */
+function fillResults(entries, listSelect){
+  $(listSelect).empty();
+  for (var i = 0; i < entries.length; i++) {
+    var video = new Video(entries[i]);
+    var theme = 'a';
+    var icon = 'carat-r';
+    var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3><p>' + video.description() + '</p></a></li>');
+    itemval.bind('click', {video: video.data}, function(event){
       if(event.data.video.type == "local-dir") {
         $("#search-basic").val(event.data.video.id);
         $("#search-basic").trigger("change");
       } else {
         loadVideo(event.data.video);
       }
-    };
-  }
-
-  $(listSelect).empty();
-  for (var i = 0; i < entries.length; i++) {
-    var video = entries[i];
-    if(playlistList){
-      if(i == 0){
-        adjustCurrentPositionSlider(video.duration, video.position);
-      }else if(i == 1){
-        $(listSelect).append($('<li data-role="list-divider"></li>'));
-      }
-    }
-    thumbnail = "images/video.png";
-    if(video.type == "local-dir") {
-      thumbnail = "images/folder_open.png";
-      if(video.title == "..") {
-        thumbnail = "images/folder.png";
-      }
-    }
-    if(video.thumbnail != undefined){
-      thumbnail = video.thumbnail;
-    }
-    var	duration = getDurationString(video.duration);
-    if(duration){
-      duration = " [" + duration + "]";
-    }
-    if(video.title == undefined) {
-      video.title = "Loading data for " + video.id;
-      video.description = "";
-    }
-    var theme = playlistList && i == 0 ? 'b' : 'a';
-    var icon = playlistList && i > 0 ? 'gear' : 'carat-r';
-    var itemval = $('<li data-video-id="' + video.id + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ thumbnail + '" /><h3>' + video.title + duration + '</h3><p>' + video.description + '</p></a></li>');
-    itemval.bind('click', {video: video}, clickEvent);
+    });
     $(listSelect).append(itemval);
   }
   try {
@@ -77,18 +128,6 @@ function adjustCurrentPositionSlider(duration, position){
   } catch(err) {}
 }
 
-function getDurationString(time){
-  if(time == undefined) return "";
-  var duration = "";
-  var hours = Math.floor(time / 3600);
-  if(hours > 0) duration = duration + hours + ":";
-  time = time - hours * 3600;
-  var minutes = Math.floor(time / 60);
-  duration = duration + (((minutes < 10) && (hours > 0)) ? ("0" + minutes) : minutes);
-  var seconds = time - minutes * 60;
-  duration = duration + ((seconds < 10) ? (":0" + seconds) : (":" + seconds));
-  return duration;
-}
 
 /**
 * Load playlist items with play video on click event
@@ -143,7 +182,7 @@ function loadPlayList(entries){
       buttons : buttons
     });
   };
-  fillVideoList(entries, "#playlist-list", playlist_entry_handler);
+  fillPlayList(entries, "#playlist-list", playlist_entry_handler);
 }
 
 function jumpToPosition(seconds){
@@ -229,7 +268,7 @@ function getVideosFromHistory(){
   }
   var history = localStorage.getObj("history");
   if(history != undefined){
-    fillVideoList($.map(history, function(value, index) {
+    fillResults($.map(history, function(value, index) {
       return [value];
     }).sort(function (a, b) {
       return b.playedTimes - a.playedTimes;
@@ -328,7 +367,7 @@ $(document).delegate("#search", "pageinit", function() {
         $("#spinner-search").show();
         $.getJSON(url, getSearchData(), function(response){
           var pResponse = processSearchResponse(response);
-          fillVideoList(pResponse, "#results");
+          fillResults(pResponse, "#results");
           updateSearchControls(pResponse, isNextPageAvailable(response));
         }).always(function() {
           $("#spinner-search").hide();

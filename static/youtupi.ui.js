@@ -53,8 +53,11 @@ function updateControls(playListLength){
 		$("#playlist-playing").show();
     $(".active-on-playing").removeClass("ui-disabled");
 		if(playListLength <= 1){
+      $("#reorder-control").hide();
 			$("#next-button").addClass("ui-disabled");
-		}
+		}else{
+      $("#reorder-control").show();
+    }
 	}
 }
 

@@ -71,8 +71,12 @@ function fillPlayList(entries, listSelect, clickEvent){
   $(listSelect).empty();
   for (var i = 0; i < entries.length; i++) {
     var video = new Video(entries[i]);
+    var videoEvent = clickEvent;
     if(i == 0){
       adjustCurrentPositionSlider(video.duration, video.position);
+      videoEvent = function(){
+        $('#seek-controls').css('border-bottom', '6px solid #f37736').animate({borderWidth: 0}, 200);
+      };
     }else if(i == 1){
       $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
     }
@@ -80,7 +84,7 @@ function fillPlayList(entries, listSelect, clickEvent){
     var icon = i > 0 ? 'false' : 'carat-r';
     var count = i > 0 ? ' <span class="ui-li-count">'+ i +'</span>' : '';
     var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3>'+count+'<p>' + video.description() + '</p></a></li>');
-    itemval.bind('click', {video: video.data}, clickEvent);
+    itemval.bind('click', {video: video.data}, videoEvent);
     $(listSelect).append(itemval);
   }
   try {

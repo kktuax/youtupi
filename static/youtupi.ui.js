@@ -77,32 +77,19 @@ function initSearchControls(){
 	$("#clear-history-button").bind("click", function(event, ui) {
 		HistorySearch.clearHistory();
 	});
-  $("#add-all-random-button").bind("click", function(event, ui) {
-		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) {
-			j=Math.floor(Math.random()*(i+1)), temp=$x[i], $x[i]=$x[j], $x[j]=temp;
-		}
-		$x.each(function(i, el) {
-			$(el).trigger('click');
-		});
-	});
 }
 
 function updateSearchControls(search){
-  var results = search.results;
-  var resultsLength = results.length
-  $("#add-all-button").unbind("click");
-	if(resultsLength == 0){
+  if(search.results.length == 0){
 		$("#results-empty").show();
-		$("#add-all-button").addClass("ui-disabled");
-		$("#add-all-random-button").addClass("ui-disabled");
 	}else{
-    $("#add-all-button").bind("click", function(event, ui) {
-      loadVideos(results);
-    });
-		$("#results-empty").hide();
-		$("#add-all-button").removeClass("ui-disabled");
-		$("#add-all-random-button").removeClass("ui-disabled");
+    $("#results-empty").hide();
 	}
+  var videos = $.grep(search.results, function(v){
+    return v.type != 'search';
+  });
+  updateButtonState("#add-all-button", videos.length > 0);
+  updateButtonState("#add-all-random-button", videos.length > 0);
   updateButtonState("#next-page-button", search.nextPageAvailable);
   updateButtonState("#prev-page-button", search.prevPageAvailable);
 }

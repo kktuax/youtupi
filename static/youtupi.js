@@ -215,10 +215,14 @@ function setServerParam(param, value){
   );
 }
 
-function loadVideos(videos){
+function loadVideos(ivideos, random){
   tabPlaylist();
   $("#spinner").css('opacity', 1);
   var url = server + "/playlist";
+  var videos = random ? shuffle(ivideos) : ivideos;
+  videos = $.grep(videos, function(v){
+    return v.type != 'search';
+  });
   $.post(url, $.toJSON(videos), function(entries){
     loadPlayList(entries);
   }, "json").fail(function() {
@@ -226,6 +230,18 @@ function loadVideos(videos){
   }).always(function() {
     $("#spinner").css('opacity', 0);
   });
+}
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
 }
 
 function loadVideo(video){
@@ -289,6 +305,12 @@ $(document).delegate("#search", "pageinit", function() {
       fillResults(s.results, "#results");
       updateSearchControls(s);
     });
+  });
+  $("#add-all-button").bind("click", function(event, ui) {
+    loadVideos(search.results, false);
+  });
+  $("#add-all-random-button").bind("click", function(event, ui) {
+    loadVideos(search.results, true);
   });
   $("#engine").bind("change", function(event, ui) {
     $("#search-basic").val("");

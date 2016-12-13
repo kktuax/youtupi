@@ -88,17 +88,17 @@ class browse:
 		print 'Browsing "' + search + '" in folders: ' + ', '.join(rootfolders)
 		for rootfolder in rootfolders:
 			rootfoldername = os.path.basename(rootfolder)
-			if search == "/":
+			if search == "" or search == "/":
 				name = rootfoldername
-				local_browse_folder = {'id': "/%s" % rootfoldername, 'description': "", 'title': name, 'type': 'local-dir', 'operations' : []}
+				local_browse_folder = {'id': "/%s" % rootfoldername, 'description': "", 'title': name, 'type': 'search', 'operations' : []}
 				local_dirs.append(local_browse_folder)
 			elif search.startswith("/%s" % rootfoldername):
-				local_dirs.append({'id': os.path.dirname(search), 'description': "Go back", 'title': "..", 'type': 'local-dir', 'operations' : []})
+				local_dirs.append({'id': os.path.dirname(search), 'description': "Go back", 'title': "..", 'type': 'search', 'operations' : []})
 				prefix = search[(len(rootfoldername)+1):]
 				dirs, files = find_files_and_folders(expanduser(rootfolder), prefix, extension=tuple(extensions))
 				for local_dir in dirs:
 					name = os.path.basename(local_dir)
-					local_browse_folder = {'id': os.path.join(search,local_dir), 'description': "Folder", 'title': name, 'type': 'local-dir', 'operations' : []}
+					local_browse_folder = {'id': os.path.join(search,local_dir), 'description': "Folder", 'title': name, 'type': 'search', 'operations' : []}
 					local_dirs.append(local_browse_folder)
 				for local_video_file in files:
 					date = datetime.date.fromtimestamp(os.path.getmtime(local_video_file)).isoformat()

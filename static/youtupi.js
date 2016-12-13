@@ -106,7 +106,12 @@ function fillResults(entries, listSelect){
     var icon = 'carat-r';
     var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3><p>' + video.description() + '</p></a></li>');
     itemval.bind('click', {video: video.data}, function(event){
-      loadVideo(event.data.video);
+      if(event.data.video.type == "search") {
+        $("#search-basic").val(event.data.video.id);
+        $("#search-basic").trigger("change");
+      }else{
+        loadVideo(event.data.video);
+      }
     });
     $(listSelect).append(itemval);
   }
@@ -230,28 +235,20 @@ function loadVideos(videos){
 }
 
 function loadVideo(video){
-  if(video.type == "local-dir") {
-    $("#search-basic").val(video.id);
-    $("#search-basic").trigger("change");
-  } else if(video.type == "youtube:playlist"){
-    $("#search-basic").val("list:" + video.id);
-    $("#search-basic").trigger("change");
-  }else{
-    $("#spinner").css('opacity', 1);
-    if(video.type == "youtube"){
-      video.format = $("#quality").val();
-    }
-    var url = server + "/playlist";
-    var data = $.toJSON(video);
-    $.post(url, data, function(entries){
-      loadPlayList(entries);
-      showNotification("Video queued");
-    }, "json").fail(function() {
-      showNotification("Error loading video");
-    }).always(function() {
-      $("#spinner").css('opacity', 0);
-    });
+  $("#spinner").css('opacity', 1);
+  if(video.type == "youtube"){
+    video.format = $("#quality").val();
   }
+  var url = server + "/playlist";
+  var data = $.toJSON(video);
+  $.post(url, data, function(entries){
+    loadPlayList(entries);
+    showNotification("Video queued");
+  }, "json").fail(function() {
+    showNotification("Error loading video");
+  }).always(function() {
+    $("#spinner").css('opacity', 0);
+  });
 }
 
 function tabPlaylist(){
@@ -295,11 +292,7 @@ $(document).delegate("#search", "pageinit", function() {
     });
   });
   $("#engine").bind("change", function(event, ui) {
-    if( $("#engine").val() == "local-dir") {
-      $("#search-basic").val("/");
-    } else {
-      $("#search-basic").val("youtupi:history");
-    }
+    $("#search-basic").val("");
     $("#search-basic").trigger("change");
   });
   $("#volume").bind("change", function(event, ui) {
@@ -308,6 +301,7 @@ $(document).delegate("#search", "pageinit", function() {
   if(addLocalStorageFor("#volume", "volume")){
     $("#volume").slider("refresh");
   }
+  $("#search-basic").trigger("change");
 });
 
 $(document).delegate("#playlist", "pageinit", function() {

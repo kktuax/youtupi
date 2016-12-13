@@ -160,11 +160,11 @@ YoutubeSearch.createPlaylist = function(entry){
 		return null;
 	}
 	var video = {};
-	video.id = entry.id.playlistId;
+	video.id = "list:" + entry.id.playlistId;
 	video.title = entry.snippet.title;
 	video.description = entry.snippet.description;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
-	video.type = "youtube:playlist";
+	video.type = "search";
 	video.operations = [];
 	return video;
 };

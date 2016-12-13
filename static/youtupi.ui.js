@@ -103,14 +103,14 @@ function updateSearchControls(search){
 		$("#add-all-button").removeClass("ui-disabled");
 		$("#add-all-random-button").removeClass("ui-disabled");
 	}
-	if(search.nextPageAvailable){
-		$("#next-page-button").removeClass("ui-disabled");
+  updateButtonState("#next-page-button", search.nextPageAvailable);
+  updateButtonState("#prev-page-button", search.prevPageAvailable);
+}
+
+function updateButtonState(selector, enabled){
+  if(enabled){
+		$(selector).removeClass("ui-disabled");
 	}else{
-		$("#next-page-button").addClass("ui-disabled");
-	}
-  if(search.prevPageAvailable){
-		$("#prev-page-button").removeClass("ui-disabled");
-	}else{
-		$("#prev-page-button").addClass("ui-disabled");
+		$(selector).addClass("ui-disabled");
 	}
 }

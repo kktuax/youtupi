@@ -45,7 +45,7 @@ function Video(data){
 
   this.thumbnail = function (){
     var thumbnail = "images/video.png";
-    if(this.data.type == "local-dir") {
+    if(this.data.type == "search") {
       thumbnail = "images/folder_open.png";
       if(this.data.title == "..") {
         thumbnail = "images/folder.png";
@@ -218,12 +218,6 @@ function setServerParam(param, value){
 function loadVideos(videos){
   tabPlaylist();
   $("#spinner").css('opacity', 1);
-  for (var i = 0; i < videos.length; i++) {
-    video = videos[i];
-    if(video.type == "youtube"){
-      video.format = $("#quality").val();
-    }
-  }
   var url = server + "/playlist";
   $.post(url, $.toJSON(videos), function(entries){
     loadPlayList(entries);
@@ -236,9 +230,6 @@ function loadVideos(videos){
 
 function loadVideo(video){
   $("#spinner").css('opacity', 1);
-  if(video.type == "youtube"){
-    video.format = $("#quality").val();
-  }
   var url = server + "/playlist";
   var data = $.toJSON(video);
   $.post(url, data, function(entries){

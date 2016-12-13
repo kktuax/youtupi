@@ -203,17 +203,17 @@ YoutubeSearch.createVideo = function(entry){
 	video.duration = entry.duration;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "youtube";
+  video.format = this.format;
 	video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
 	return video;
 };
-
-var availableSearchEngines = [YoutubeSearch, LocalDirSearch, Search];
 
 function createSearch(query, selectedEngine, count, format){
   var searchPrototype;
   if(query == 'youtupi:history'){
     searchPrototype = HistorySearch;
   }else{
+    var availableSearchEngines = [YoutubeSearch, LocalDirSearch, Search];
     for (var i = 0; i < availableSearchEngines.length; i++) {
       searchPrototype = availableSearchEngines[i];
       if(searchPrototype.engine == selectedEngine){

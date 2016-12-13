@@ -87,8 +87,9 @@ function initSearchControls(){
 	});
 }
 
-function updateSearchControls(results, nextPageAvailable){
-  resultsLength = results.length
+function updateSearchControls(search){
+  var results = search.results;
+  var resultsLength = results.length
   $("#add-all-button").unbind("click");
 	if(resultsLength == 0){
 		$("#results-empty").show();
@@ -102,9 +103,14 @@ function updateSearchControls(results, nextPageAvailable){
 		$("#add-all-button").removeClass("ui-disabled");
 		$("#add-all-random-button").removeClass("ui-disabled");
 	}
-	if(nextPageAvailable){
+	if(search.nextPageAvailable){
 		$("#next-page-button").removeClass("ui-disabled");
 	}else{
 		$("#next-page-button").addClass("ui-disabled");
+	}
+  if(search.prevPageAvailable){
+		$("#prev-page-button").removeClass("ui-disabled");
+	}else{
+		$("#prev-page-button").addClass("ui-disabled");
 	}
 }

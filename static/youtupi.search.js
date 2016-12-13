@@ -7,6 +7,8 @@ var Search = {
   results: [],
   count: 50,
   pageNumber: 1,
+  previousPageNumber: 1,
+  prevPageAvailable: false,
   nextPageAvailable: false,
   search: function(callback){
     this.fetchResults(function(s){
@@ -34,13 +36,18 @@ var Search = {
   },
   processResults: function(){
     var start = this.count * (this.pageNumber - 1);
-    if(this.results.length > (start + this.count)){
-      this.nextPageAvailable = true;
-    }
+    this.nextPageAvailable = this.results.length > (start + this.count);
+    this.prevPageAvailable = this.pageNumber > 1;
     this.results = this.results.slice(start, start + this.count);
   },
   incrementPageNumber: function(callback){
+    this.previousPageNumber = this.pageNumber;
     this.pageNumber = this.pageNumber + 1;
+    this.search(callback);
+  },
+  decrementPageNumber: function(callback){
+    this.previousPageNumber = this.pageNumber;
+    this.pageNumber = this.pageNumber - 1;
     this.search(callback);
   }
 };
@@ -108,8 +115,10 @@ YoutubeSearch.url = function(){
 	var url = 'https://www.googleapis.com/youtube/v3/';
 	var key = '&key=AIzaSyAdAR3PofKiUSGFsfQ03FBEpVkVa1WA0J4';
 	var maxResults = '&maxResults='+this.count;
-	if(this.pageNumber > 1){
-		maxResults += "&pageToken=" + this.pageToken;
+	if(this.pageNumber > this.previousPageNumber){
+		maxResults += "&pageToken=" + this.nextPageToken;
+	}else if(this.pageNumber < this.previousPageNumber){
+		maxResults += "&pageToken=" + this.prevPageToken;
 	}
 	var listLookup = 'list:';
 	var listsLookup = 'lists:';
@@ -134,11 +143,10 @@ YoutubeSearch.fetchResults = function(callback){
     return;
   }
   $.getJSON(url, undefined, function(response){
-    search.pageToken = undefined;
-    if(response.nextPageToken != undefined){
-      search.nextPageAvailable = true;
-      search.pageToken = response.nextPageToken;
-    }
+    search.nextPageAvailable = response.nextPageToken != undefined;
+    search.nextPageToken = search.nextPageAvailable ? response.nextPageToken : undefined;
+    search.prevPageAvailable = response.prevPageToken != undefined;
+    search.prevPageToken = search.prevPageAvailable ? response.prevPageToken : undefined;
     var entries = response.items || [];
     for (var i = 0; i < entries.length; i++) {
       var entry = entries[i];

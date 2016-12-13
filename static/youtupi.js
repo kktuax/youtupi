@@ -279,16 +279,24 @@ $(document).delegate("#search", "pageinit", function() {
     $("#spinner-search").show();
     search.search(function(s){
       fillResults(s.results, "#results");
-      updateSearchControls(s.results, s.nextPageAvailable);
+      updateSearchControls(s);
     });
     $("#spinner-search").hide();
+  });
+  $("#prev-page-button").bind("click", function(event, ui) {
+    $('#results').empty();
+    $("#results").listview("refresh");
+    search.decrementPageNumber(function(s){
+      fillResults(s.results, "#results");
+      updateSearchControls(s);
+    });
   });
   $("#next-page-button").bind("click", function(event, ui) {
     $('#results').empty();
     $("#results").listview("refresh");
     search.incrementPageNumber(function(s){
       fillResults(s.results, "#results");
-      updateSearchControls(s.results, s.nextPageAvailable);
+      updateSearchControls(s);
     });
   });
   $("#engine").bind("change", function(event, ui) {

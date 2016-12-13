@@ -75,7 +75,7 @@ function initSearchControls(){
 		$("#save-history" ).slider("refresh");
 	}
 	$("#clear-history-button").bind("click", function(event, ui) {
-		clearHistory();
+		HistorySearch.clearHistory();
 	});
   $("#add-all-random-button").bind("click", function(event, ui) {
 		for (var $x=$("#results").children(), i=$x.length-1, j, temp; i>=0; i--) {

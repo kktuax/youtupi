@@ -63,40 +63,6 @@ function Video(data){
 * Refresh listview with array of videos
 * @param {entries} array of videos
 * @param {listSelect} selector of listview to update
-* @param {function} event on video click
-* */
-function fillPlayList(entries, listSelect, clickEvent){
-  $(listSelect).empty();
-  for (var i = 0; i < entries.length; i++) {
-    var video = new Video(entries[i]);
-    var videoEvent = clickEvent;
-    if(i == 0){
-      adjustCurrentPositionSlider(video.duration, video.position);
-      if('on' == $('#save-history').val()){
-        HistorySearch.saveVideoToHistory(video.data);
-      }
-      videoEvent = function(){
-        $('#seek-controls').css('border-bottom', '6px solid #f37736').animate({borderWidth: 0}, 200);
-      };
-    }else if(i == 1){
-      $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
-    }
-    var theme = i == 0 ? 'b' : 'a';
-    var icon = i > 0 ? 'false' : 'carat-r';
-    var count = i > 0 ? ' <span class="ui-li-count">'+ i +'</span>' : '';
-    var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3>'+count+'<p>' + video.description() + '</p></a></li>');
-    itemval.bind('click', {video: video.data}, videoEvent);
-    $(listSelect).append(itemval);
-  }
-  try {
-    $(listSelect).listview("refresh");
-  } catch(err) {}
-}
-
-/**
-* Refresh listview with array of videos
-* @param {entries} array of videos
-* @param {listSelect} selector of listview to update
 * */
 function fillResults(entries, listSelect){
   $(listSelect).empty();
@@ -136,6 +102,36 @@ function createResultItem(video, theme, icon){
   return itemval;
 }
 
+/**
+* Load playlist items with play video on click event
+* */
+function loadPlayList(entries){
+  $('#spinner').css('opacity', 0);
+  updateControls(entries.length);
+  var listSelect = "#playlist-list";
+  $(listSelect).empty();
+  for (var i = 0; i < entries.length; i++) {
+    var video = new Video(entries[i]);
+    if(i == 0){
+      adjustCurrentPositionSlider(video.duration, video.position);
+      if('on' == $('#save-history').val()){
+        HistorySearch.saveVideoToHistory(video.data);
+      }
+    }else if(i == 1){
+      $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
+    }
+    var theme = i == 0 ? 'b' : 'a';
+    var icon = i > 0 ? 'false' : 'carat-r';
+    var count = i > 0 ? ' <span class="ui-li-count">'+ i +'</span>' : '';
+    var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3>'+count+'<p>' + video.description() + '</p></a></li>');
+    itemval.bind('click', {video: video.data}, playlistClickHandler(video, i));
+    $(listSelect).append(itemval);
+  }
+  try {
+    $(listSelect).listview("refresh");
+  } catch(err) {}
+}
+
 function adjustCurrentPositionSlider(duration, position){
   var positionPct = (position != undefined && duration != undefined) ? 100*position/duration : 0;
   $("#position").val(positionPct);
@@ -149,61 +145,60 @@ function adjustCurrentPositionSlider(duration, position){
   } catch(err) {}
 }
 
-
-/**
-* Load playlist items with play video on click event
-* */
-function loadPlayList(entries){
-  $('#spinner').css('opacity', 0);
-  updateControls(entries.length);
-  var playlist_entry_handler = function(event) {
-    var data = $.toJSON(event.data.video);
-    var playBtn = {
-      click: function () {
-        var url = server + "/control/play";
-        $.post(url, data, loadPlayList, "json");
-      },
-      close: true
+function playlistClickHandler(video, position){
+  if(position == 0){
+    return function(event){
+      $('#seek-controls').css('border-bottom', '6px solid #f37736').animate({borderWidth: 0}, 200);
     };
-    var playNextBtn = {
-      click: function () {
-        var url = server + "/control/playNext";
-        $.post(url, data, loadPlayList, "json");
-      },
-      close: true
-    };
-    var deleteBtn = {
-      click: function () {
-        var url = server + "/playlist";
-        $.ajax({url: url, type: 'DELETE', data: data, dataType: 'json', success: loadPlayList});
-      },
-      close: true
-    };
-    var buttons = { 'Play': playBtn, 'Play Next': playNextBtn, 'Skip': deleteBtn };
-    for(operationKey in event.data.video.operations){
-      var operation = event.data.video.operations[operationKey];
-      var type = event.data.video.type;
-      var buttonClick = function(e, type, operation, data){
-        var successFunction = function(){
-          showNotification(operation.successMessage);
-        }
-        var url = server + "/" + type + "-" + operation.name;
-        $.post(url, data).done(successFunction, "json");
-      }
-      buttons[operation.text] = {
-        click: buttonClick,
-        args: new Array(type, operation, data),
+  }else{
+    return function(event) {
+      var data = $.toJSON(event.data.video);
+      var playBtn = {
+        click: function () {
+          var url = server + "/control/play";
+          $.post(url, data, loadPlayList, "json");
+        },
         close: true
       };
-    }
-    $(document).simpledialog2({
-      mode: 'button',
-      headerText: event.data.video.title,
-      headerClose: true,
-      buttons : buttons
-    });
-  };
-  fillPlayList(entries, "#playlist-list", playlist_entry_handler);
+      var playNextBtn = {
+        click: function () {
+          var url = server + "/control/playNext";
+          $.post(url, data, loadPlayList, "json");
+        },
+        close: true
+      };
+      var deleteBtn = {
+        click: function () {
+          var url = server + "/playlist";
+          $.ajax({url: url, type: 'DELETE', data: data, dataType: 'json', success: loadPlayList});
+        },
+        close: true
+      };
+      var buttons = { 'Play': playBtn, 'Play Next': playNextBtn, 'Skip': deleteBtn };
+      for(operationKey in event.data.video.operations){
+        var operation = event.data.video.operations[operationKey];
+        var type = event.data.video.type;
+        var buttonClick = function(e, type, operation, data){
+          var successFunction = function(){
+            showNotification(operation.successMessage);
+          }
+          var url = server + "/" + type + "-" + operation.name;
+          $.post(url, data).done(successFunction, "json");
+        }
+        buttons[operation.text] = {
+          click: buttonClick,
+          args: new Array(type, operation, data),
+          close: true
+        };
+      }
+      $(document).simpledialog2({
+        mode: 'button',
+        headerText: event.data.video.title,
+        headerClose: true,
+        buttons : buttons
+      });
+    };
+  }
 }
 
 function jumpToPosition(seconds){

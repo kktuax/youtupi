@@ -80,11 +80,6 @@ function initSearchControls(){
 }
 
 function updateSearchControls(search){
-  if(search.results.length == 0){
-		$("#results-empty").show();
-	}else{
-    $("#results-empty").hide();
-	}
   var videos = $.grep(search.results, function(v){
     return v.type != 'search';
   });

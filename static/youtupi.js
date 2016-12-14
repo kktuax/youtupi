@@ -102,22 +102,38 @@ function fillResults(entries, listSelect){
   $(listSelect).empty();
   for (var i = 0; i < entries.length; i++) {
     var video = new Video(entries[i]);
-    var theme = 'a';
-    var icon = 'carat-r';
-    var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3><p>' + video.description() + '</p></a></li>');
-    itemval.bind('click', {video: video.data}, function(event){
-      if(event.data.video.type == "search") {
-        $("#search-basic").val(event.data.video.id);
-        $("#search-basic").trigger("change");
-      }else{
-        loadVideo(event.data.video);
-      }
-    });
+    $(listSelect).append(createResultItem(video, 'a', 'carat-r'));
+  }
+  if(entries.length == 0){
+    var itemval = $('<li data-role="list-divider">No results found</li>');
     $(listSelect).append(itemval);
+    var otherVideos = [{
+      'id' : 'youtupi:history',
+      'title' : 'History',
+      'description' : 'Recently played items',
+      'type' : 'search',
+    }];
+    for (var i = 0; i < otherVideos.length; i++) {
+      var video = new Video(otherVideos[i]);
+      $(listSelect).append(createResultItem(video, 'a', 'carat-r'));
+    }
   }
   try {
     $(listSelect).listview("refresh");
   } catch(err) {}
+}
+
+function createResultItem(video, theme, icon){
+  var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3><p>' + video.description() + '</p></a></li>');
+  itemval.bind('click', {video: video.data}, function(event){
+    if(event.data.video.type == "search") {
+      $("#search-basic").val(event.data.video.id);
+      $("#search-basic").trigger("change");
+    }else{
+      loadVideo(event.data.video);
+    }
+  });
+  return itemval;
 }
 
 function adjustCurrentPositionSlider(duration, position){

@@ -52,12 +52,64 @@ var Search = {
   }
 };
 
+var SearchHistorySearch = Object.create(Search);
+SearchHistorySearch.localStorageName = "searchHstory";
+SearchHistorySearch.maxHistoryElements = 50;
+SearchHistorySearch.fetchResults = function(callback){
+  var search = this;
+  search.results = [];
+  if(supports_html5_storage()){
+    var history = localStorage.getObj(this.localStorageName);
+    if(history != undefined){
+      search.results = $.map(Object.keys(history), function(value, index) {
+        return history[value];
+      }).sort(function (a, b) {
+        return b.lastSearched > a.lastSearched;
+      });
+    }
+  }
+  callback(search);
+};
+SearchHistorySearch.clearHistory = function (){
+  if(supports_html5_storage()){
+    localStorage.setObj(this.localStorageName, {});
+  }
+};
+SearchHistorySearch.saveSearchToHistory = function(search){
+  if(!supports_html5_storage()){
+    return;
+  }
+  var history = localStorage.getObj(this.localStorageName);
+  if(history == undefined){
+    history = {};
+  }
+  var id = search.engine + "." + search.id;
+  if(id in Object.keys(history)){
+    var existing = history[id];
+    existing.lastSearched = new Date();
+  }else{
+    search.lastSearched = new Date();
+    history[id] = search;
+  }
+  if(Object.keys(history).length > this.maxHistoryElements){
+    var lastSearch = $.map(Object.keys(history), function(value, index) {
+      return history[value];
+    }).sort(function (a, b) {
+      return b.lastSearched < a.lastSearched;
+    })[0];
+    delete history[lastSearch.id];
+  }
+  localStorage.setObj(this.localStorageName, history);
+};
+
 var HistorySearch = Object.create(Search);
+HistorySearch.localStorageName = "history";
+HistorySearch.maxHistoryElements = 50;
 HistorySearch.fetchResults = function(callback){
   var search = this;
   search.results = [];
   if(supports_html5_storage()){
-    var history = localStorage.getObj("history");
+    var history = localStorage.getObj(this.localStorageName);
     if(history != undefined){
       search.results = $.map(Object.keys(history), function(value, index) {
         return history[value];
@@ -70,15 +122,14 @@ HistorySearch.fetchResults = function(callback){
 };
 HistorySearch.clearHistory = function (){
   if(supports_html5_storage()){
-    localStorage.setObj("history", {});
+    localStorage.setObj(this.localStorageName, {});
   }
 };
-HistorySearch.maxHistoryElements = 50;
 HistorySearch.saveVideoToHistory = function(video){
   if(!supports_html5_storage()){
     return;
   }
-  var history = localStorage.getObj("history");
+  var history = localStorage.getObj(this.localStorageName);
   if(history == undefined){
     history = {};
   }
@@ -97,7 +148,7 @@ HistorySearch.saveVideoToHistory = function(video){
     })[0];
     delete history[lastVideo.id];
   }
-  localStorage.setObj("history", history);
+  localStorage.setObj(this.localStorageName, history);
 };
 
 var LocalDirSearch = Object.create(Search);
@@ -173,6 +224,7 @@ YoutubeSearch.createPlaylist = function(entry){
 	video.description = entry.snippet.description;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "search";
+  video.engine = "youtube";
 	video.operations = [];
 	return video;
 };
@@ -208,15 +260,26 @@ YoutubeSearch.createVideo = function(entry){
 	return video;
 };
 
-function createSearch(query, selectedEngine, count, format){
+function createSearch(query, selectedEngine, count, format, saveInHistory){
   var searchPrototype;
-  if(query == 'youtupi:history'){
+  if(query == 'youtupi:searchHistory'){
+    searchPrototype = SearchHistorySearch;
+  }else if(query == 'youtupi:history'){
     searchPrototype = HistorySearch;
   }else{
     var availableSearchEngines = [YoutubeSearch, LocalDirSearch, Search];
     for (var i = 0; i < availableSearchEngines.length; i++) {
       searchPrototype = availableSearchEngines[i];
       if(searchPrototype.engine == selectedEngine){
+        if(query && saveInHistory){
+          SearchHistorySearch.saveSearchToHistory({
+            'id' : query,
+            'title' : query,
+            'description' : 'Searched in ' + selectedEngine,
+            'type' : 'search',
+            'engine': selectedEngine
+          });
+        }
         break;
       }
     }

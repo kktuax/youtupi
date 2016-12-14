@@ -27,7 +27,7 @@ function loadPlayList(entries){
     var video = new Video(entries[i]);
     if(i == 0){
       adjustCurrentPositionSlider(video.duration, video.position);
-      if('on' == $('#save-history').val()){
+      if(isHistoryEnabled()){
         HistorySearch.saveVideoToHistory(video.data);
       }
     }else if(i == 1){
@@ -56,6 +56,10 @@ function adjustCurrentPositionSlider(duration, position){
   try {
     $("#position").slider("refresh");
   } catch(err) {}
+}
+
+function isHistoryEnabled(){
+  return 'on' == $('#save-history').val();
 }
 
 function playlistClickHandler(video, position){
@@ -197,6 +201,7 @@ function initSearchControls(){
 	}
 	$("#clear-history-button").bind("click", function(event, ui) {
 		HistorySearch.clearHistory();
+    SearchHistorySearch.clearHistory();
 	});
   $("#search-basic").bind("change", function(event, params) {
     $('#results').empty();
@@ -205,7 +210,7 @@ function initSearchControls(){
     var selectedEngine = $("#engine").val();
     var count = $("#slider").val();
     var format = $("#quality").val();
-    search = createSearch(query, selectedEngine, count, format);
+    search = createSearch(query, selectedEngine, count, format, isHistoryEnabled());
     $("#spinner-search").show();
     search.search(function(s){
       fillResults(s.results, "#results");
@@ -319,6 +324,11 @@ function fillResults(entries, listSelect){
     var itemval = $('<li data-role="list-divider">No results found</li>');
     $(listSelect).append(itemval);
     var otherVideos = [{
+      'id' : 'youtupi:searchHistory',
+      'title' : 'Search History',
+      'description' : 'Recent searches',
+      'type' : 'search',
+    },{
       'id' : 'youtupi:history',
       'title' : 'History',
       'description' : 'Recently played items',
@@ -338,6 +348,12 @@ function createResultItem(video, theme, icon){
   var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3><p>' + video.description() + '</p></a></li>');
   itemval.bind('click', {video: video.data}, function(event){
     if(event.data.video.type == "search") {
+      var engine = event.data.video.engine;
+      var selectedEngine = $("#engine").val();
+      if(engine && (selectedEngine != engine)){
+        $("#engine").val(engine);
+        $("#engine").selectmenu("refresh");
+      }
       $("#search-basic").val(event.data.video.id);
       $("#search-basic").trigger("change");
     }else{

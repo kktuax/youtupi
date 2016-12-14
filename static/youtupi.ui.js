@@ -26,7 +26,7 @@ function loadPlayList(entries){
   for (var i = 0; i < entries.length; i++) {
     var video = new Video(entries[i]);
     if(i == 0){
-      adjustCurrentPositionSlider(video.duration, video.position);
+      adjustCurrentPositionSlider(video.data.duration, video.data.position);
       if(isHistoryEnabled()){
         HistorySearch.saveVideoToHistory(video.data);
       }

@@ -52,56 +52,6 @@ var Search = {
   }
 };
 
-var SearchHistorySearch = Object.create(Search);
-SearchHistorySearch.localStorageName = "searchHstory";
-SearchHistorySearch.maxHistoryElements = 50;
-SearchHistorySearch.fetchResults = function(callback){
-  var search = this;
-  search.results = [];
-  if(supports_html5_storage()){
-    var history = localStorage.getObj(this.localStorageName);
-    if(history != undefined){
-      search.results = $.map(Object.keys(history), function(value, index) {
-        return history[value];
-      }).sort(function (a, b) {
-        return b.lastSearched > a.lastSearched;
-      });
-    }
-  }
-  callback(search);
-};
-SearchHistorySearch.clearHistory = function (){
-  if(supports_html5_storage()){
-    localStorage.setObj(this.localStorageName, {});
-  }
-};
-SearchHistorySearch.saveSearchToHistory = function(search){
-  if(!supports_html5_storage()){
-    return;
-  }
-  var history = localStorage.getObj(this.localStorageName);
-  if(history == undefined){
-    history = {};
-  }
-  var id = search.engine + "." + search.id;
-  if(id in Object.keys(history)){
-    var existing = history[id];
-    existing.lastSearched = new Date();
-  }else{
-    search.lastSearched = new Date();
-    history[id] = search;
-  }
-  if(Object.keys(history).length > this.maxHistoryElements){
-    var lastSearch = $.map(Object.keys(history), function(value, index) {
-      return history[value];
-    }).sort(function (a, b) {
-      return b.lastSearched < a.lastSearched;
-    })[0];
-    delete history[lastSearch.id];
-  }
-  localStorage.setObj(this.localStorageName, history);
-};
-
 var HistorySearch = Object.create(Search);
 HistorySearch.localStorageName = "history";
 HistorySearch.maxHistoryElements = 50;
@@ -125,7 +75,7 @@ HistorySearch.clearHistory = function (){
     localStorage.setObj(this.localStorageName, {});
   }
 };
-HistorySearch.saveVideoToHistory = function(video){
+HistorySearch.saveToHistory = function(video){
   if(!supports_html5_storage()){
     return;
   }
@@ -133,12 +83,13 @@ HistorySearch.saveVideoToHistory = function(video){
   if(history == undefined){
     history = {};
   }
-  if(video.id in Object.keys(history)){
-    var existingVideo = history[video.id];
+  var id = this.localStoreageId(video);
+  if(id in Object.keys(history)){
+    var existingVideo = history[id];
     existingVideo.lastPlayed = new Date();
   }else{
     video.lastPlayed = new Date();
-    history[video.id] = video;
+    history[id] = video;
   }
   if(Object.keys(history).length > HistorySearch.maxHistoryElements){
     var lastVideo = $.map(Object.keys(history), function(value, index) {
@@ -149,6 +100,15 @@ HistorySearch.saveVideoToHistory = function(video){
     delete history[lastVideo.id];
   }
   localStorage.setObj(this.localStorageName, history);
+};
+HistorySearch.localStoreageId = function(video){
+  return video.id;
+};
+
+var SearchHistorySearch = Object.create(HistorySearch);
+SearchHistorySearch.localStorageName = "searchHstory";
+SearchHistorySearch.localStoreageId = function(search){
+  return search.engine + "." + search.id;
 };
 
 var LocalDirSearch = Object.create(Search);
@@ -272,7 +232,7 @@ function createSearch(query, selectedEngine, count, format, saveInHistory){
       searchPrototype = availableSearchEngines[i];
       if(searchPrototype.engine == selectedEngine){
         if(query && saveInHistory){
-          SearchHistorySearch.saveSearchToHistory({
+          SearchHistorySearch.saveToHistory({
             'id' : query,
             'title' : query,
             'description' : 'Searched in ' + selectedEngine,

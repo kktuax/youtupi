@@ -28,7 +28,7 @@ function loadPlayList(entries){
     if(i == 0){
       adjustCurrentPositionSlider(video.data.duration, video.data.position);
       if(isHistoryEnabled()){
-        HistorySearch.saveVideoToHistory(video.data);
+        HistorySearch.saveToHistory(video.data);
       }
     }else if(i == 1){
       $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));

@@ -1,8 +1,77 @@
-var server = window.location.protocol + "//" + window.location.host;
-
-$(document).bind('pageinit', function () {
-  $.mobile.defaultPageTransition = 'none';
-});
+var YouTuPi = {};
+YouTuPi.server = window.location.protocol + "//" + window.location.host;
+YouTuPi.refreshPlaylist = function(success){
+  var url = this.server + "/playlist";
+  return $.getJSON(url, success);
+};
+YouTuPi.playVideo = function(video, success){
+  var url = this.server + "/control/play";
+  return $.post(url, $.toJSON(video), success, "json");
+};
+YouTuPi.playVideoNext = function(video, success){
+  var url = this.server + "/control/playNext";
+  return $.post(url, $.toJSON(video), success, "json");
+};
+YouTuPi.deleteVideo = function(video, success){
+  var url = this.server + "/playlist";
+  return $.ajax({url: url, type: 'DELETE', data: $.toJSON(video), dataType: 'json', success: success});
+};
+YouTuPi.jumpToPosition = function(seconds, success){
+  var data = $.toJSON({seconds : seconds});
+  var url = this.server + "/control/position";
+  return $.post(url, data, success);
+};
+YouTuPi.changePlaylistPosition = function(videoId, newPosition, success){
+  if(newPosition > 0){
+    var data = $.toJSON({id : videoId, order: newPosition + 1});
+    var url = this.server + "/control/order";
+    return $.post(url, data, success, "json");
+  }else if(newPosition == 0){
+    var url = this.server + "/control/play";
+    return $.post(url, $.toJSON({id : videoId}), success, "json");
+  }else{
+    return $.Deferred().resolve().promise();
+  }
+};
+YouTuPi.controlServer = function(action, success){
+  var url = this.server + "/control/" + action;
+  return $.get(url, {}, success);
+};
+YouTuPi.setServerParam = function(param, value, success){
+  var jsonobj = {};
+  jsonobj[param] = value;
+  var url = this.server + "/control/" + param;
+  return $.post(url, $.toJSON(jsonobj), success);
+};
+YouTuPi.addVideo = function(video, success){
+  var url = this.server + "/playlist";
+  var data = $.toJSON(video);
+  return $.post(url, data, success, "json");
+};
+YouTuPi.addVideos = function(ivideos, random, success){
+  var url = this.server + "/playlist";
+  var videos = random ? YouTuPi._shuffle(ivideos) : ivideos;
+  videos = $.grep(videos, function(v){
+    return v.type != 'search';
+  });
+  return $.post(url, $.toJSON(videos), success, "json");
+};
+YouTuPi._shuffle = function(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+};
+YouTuPi.videoOperation = function(video, operation, success){
+  var type = video.type;
+  var url = this.server + "/" + type + "-" + operation.name;
+  return $.post(url, $.toJSON(video), success);
+};
 
 function Video(data){
 
@@ -57,291 +126,4 @@ function Video(data){
     return thumbnail;
   };
 
-}
-
-/**
-* Refresh listview with array of videos
-* @param {entries} array of videos
-* @param {listSelect} selector of listview to update
-* */
-function fillResults(entries, listSelect){
-  $(listSelect).empty();
-  for (var i = 0; i < entries.length; i++) {
-    var video = new Video(entries[i]);
-    $(listSelect).append(createResultItem(video, 'a', 'carat-r'));
-  }
-  if(entries.length == 0){
-    var itemval = $('<li data-role="list-divider">No results found</li>');
-    $(listSelect).append(itemval);
-    var otherVideos = [{
-      'id' : 'youtupi:history',
-      'title' : 'History',
-      'description' : 'Recently played items',
-      'type' : 'search',
-    }];
-    for (var i = 0; i < otherVideos.length; i++) {
-      var video = new Video(otherVideos[i]);
-      $(listSelect).append(createResultItem(video, 'a', 'carat-r'));
-    }
-  }
-  try {
-    $(listSelect).listview("refresh");
-  } catch(err) {}
-}
-
-function createResultItem(video, theme, icon){
-  var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3><p>' + video.description() + '</p></a></li>');
-  itemval.bind('click', {video: video.data}, function(event){
-    if(event.data.video.type == "search") {
-      $("#search-basic").val(event.data.video.id);
-      $("#search-basic").trigger("change");
-    }else{
-      loadVideo(event.data.video);
-    }
-  });
-  return itemval;
-}
-
-/**
-* Load playlist items with play video on click event
-* */
-function loadPlayList(entries){
-  $('#spinner').css('opacity', 0);
-  updateControls(entries.length);
-  var listSelect = "#playlist-list";
-  $(listSelect).empty();
-  for (var i = 0; i < entries.length; i++) {
-    var video = new Video(entries[i]);
-    if(i == 0){
-      adjustCurrentPositionSlider(video.duration, video.position);
-      if('on' == $('#save-history').val()){
-        HistorySearch.saveVideoToHistory(video.data);
-      }
-    }else if(i == 1){
-      $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
-    }
-    var theme = i == 0 ? 'b' : 'a';
-    var icon = i > 0 ? 'false' : 'carat-r';
-    var count = i > 0 ? ' <span class="ui-li-count">'+ i +'</span>' : '';
-    var itemval = $('<li data-video-id="' + video.id() + '" data-theme="' + theme + '" data-icon="' + icon + '"><a href="#"><img src="'+ video.thumbnail() + '" /><h3>' + video.title() + '</h3>'+count+'<p>' + video.description() + '</p></a></li>');
-    itemval.bind('click', {video: video.data}, playlistClickHandler(video, i));
-    $(listSelect).append(itemval);
-  }
-  try {
-    $(listSelect).listview("refresh");
-  } catch(err) {}
-}
-
-function adjustCurrentPositionSlider(duration, position){
-  var positionPct = (position != undefined && duration != undefined) ? 100*position/duration : 0;
-  $("#position").val(positionPct);
-  if(duration != undefined){
-    if(duration !=  $("#position").data("duration")){
-      $("#position").data("duration", duration);
-    }
-  }
-  try {
-    $("#position").slider("refresh");
-  } catch(err) {}
-}
-
-function playlistClickHandler(video, position){
-  if(position == 0){
-    return function(event){
-      $('#seek-controls').css('border-bottom', '6px solid #f37736').animate({borderWidth: 0}, 200);
-    };
-  }else{
-    return function(event) {
-      var data = $.toJSON(event.data.video);
-      var playBtn = {
-        click: function () {
-          var url = server + "/control/play";
-          $.post(url, data, loadPlayList, "json");
-        },
-        close: true
-      };
-      var playNextBtn = {
-        click: function () {
-          var url = server + "/control/playNext";
-          $.post(url, data, loadPlayList, "json");
-        },
-        close: true
-      };
-      var deleteBtn = {
-        click: function () {
-          var url = server + "/playlist";
-          $.ajax({url: url, type: 'DELETE', data: data, dataType: 'json', success: loadPlayList});
-        },
-        close: true
-      };
-      var buttons = { 'Play': playBtn, 'Play Next': playNextBtn, 'Skip': deleteBtn };
-      for(operationKey in event.data.video.operations){
-        var operation = event.data.video.operations[operationKey];
-        var type = event.data.video.type;
-        var buttonClick = function(e, type, operation, data){
-          var successFunction = function(){
-            showNotification(operation.successMessage);
-          }
-          var url = server + "/" + type + "-" + operation.name;
-          $.post(url, data).done(successFunction, "json");
-        }
-        buttons[operation.text] = {
-          click: buttonClick,
-          args: new Array(type, operation, data),
-          close: true
-        };
-      }
-      $(document).simpledialog2({
-        mode: 'button',
-        headerText: event.data.video.title,
-        headerClose: true,
-        buttons : buttons
-      });
-    };
-  }
-}
-
-function jumpToPosition(seconds){
-  var data = $.toJSON({seconds : seconds});
-  var url = server + "/control/position";
-  $.post(url, data, loadPlayList, "json");
-}
-
-function changePlaylistPosition(videoId, newPosition){
-  if(newPosition > 0){
-    var data = $.toJSON({id : videoId, order: newPosition + 1});
-    var url = server + "/control/order";
-    $.post(url, data, loadPlayList, "json");
-  }else if(newPosition == 0){
-    var url = server + "/control/play";
-    $.post(url, $.toJSON({id : videoId}), loadPlayList, "json");
-  }
-}
-
-function setServerParam(param, value){
-  var jsonobj = {};
-  jsonobj[param] = value;
-  $.post(
-    server + "/control/" + param, $.toJSON(jsonobj), function(){}, "json"
-  );
-}
-
-function loadVideos(ivideos, random){
-  tabPlaylist();
-  $("#spinner").css('opacity', 1);
-  var url = server + "/playlist";
-  var videos = random ? shuffle(ivideos) : ivideos;
-  videos = $.grep(videos, function(v){
-    return v.type != 'search';
-  });
-  $.post(url, $.toJSON(videos), function(entries){
-    loadPlayList(entries);
-  }, "json").fail(function() {
-    showNotification("Error loading videos");
-  }).always(function() {
-    $("#spinner").css('opacity', 0);
-  });
-}
-
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-  while (0 !== currentIndex) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-  return array;
-}
-
-function loadVideo(video){
-  $("#spinner").css('opacity', 1);
-  var url = server + "/playlist";
-  var data = $.toJSON(video);
-  $.post(url, data, function(entries){
-    loadPlayList(entries);
-    showNotification("Video queued");
-  }, "json").fail(function() {
-    showNotification("Error loading video");
-  }).always(function() {
-    $("#spinner").css('opacity', 0);
-  });
-}
-
-function tabPlaylist(){
-  $(".link-playlist").first().trigger('click');
-}
-
-function showNotification(message){
-  $("<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'><h2>"+message+"</h2></div>").css({ "display": "block", "opacity": 0.8, "top": 60, "left":"50\%", "transform":"translateX(-50\%)", "z-index":"499", "padding": "0.3em 1em", "position":"fixed" })
-  .appendTo( $.mobile.pageContainer )
-  .delay( 1500 )
-  .fadeOut( 400, function(){
-    $(this).remove();
-  });
-}
-
-var search = null;
-
-$(document).delegate("#search", "pageinit", function() {
-  initSearchControls();
-  $("#search-basic").bind("change", function(event, params) {
-    $('#results').empty();
-    $("#results").listview("refresh");
-    var query = $("#search-basic").val().trim();
-    var selectedEngine = $("#engine").val();
-    var count = $("#slider").val();
-    var format = $("#quality").val();
-    search = createSearch(query, selectedEngine, count, format);
-    $("#spinner-search").show();
-    search.search(function(s){
-      fillResults(s.results, "#results");
-      updateSearchControls(s);
-    });
-    $("#spinner-search").hide();
-  });
-  $("#prev-page-button").bind("click", function(event, ui) {
-    $('#results').empty();
-    $("#results").listview("refresh");
-    search.decrementPageNumber(function(s){
-      fillResults(s.results, "#results");
-      updateSearchControls(s);
-    });
-  });
-  $("#next-page-button").bind("click", function(event, ui) {
-    $('#results').empty();
-    $("#results").listview("refresh");
-    search.incrementPageNumber(function(s){
-      fillResults(s.results, "#results");
-      updateSearchControls(s);
-    });
-  });
-  $("#add-all-button").bind("click", function(event, ui) {
-    loadVideos(search.results, false);
-  });
-  $("#add-all-random-button").bind("click", function(event, ui) {
-    loadVideos(search.results, true);
-  });
-  $("#engine").bind("change", function(event, ui) {
-    $("#search-basic").val("");
-    $("#search-basic").trigger("change");
-  });
-  $("#volume").bind("change", function(event, ui) {
-    setServerParam('volume', $("#volume").val());
-  });
-  if(addLocalStorageFor("#volume", "volume")){
-    $("#volume").slider("refresh");
-  }
-  $("#search-basic").trigger("change");
-});
-
-$(document).delegate("#playlist", "pageinit", function() {
-  initControls();
-  window.setInterval(function(){
-    $('#spinner').css('opacity', 1);
-    $.getJSON(
-      server + "/playlist", loadPlayList
-    );
-  }, 5000);
-});
+};

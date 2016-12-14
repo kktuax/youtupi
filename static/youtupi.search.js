@@ -222,7 +222,7 @@ function createSearch(query, selectedEngine, count, format){
     }
   }
   var search = Object.create(searchPrototype);
-  search.server = server;
+  search.server = YouTuPi.server;
   search.engine = selectedEngine;
   search.count = count;
   search.format = format;

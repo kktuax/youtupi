@@ -19,7 +19,6 @@ def getUrl(data):
                                         return data['url']
                                 else:
                                         video = pafy.new(data['id'])
-                                        data.update(video._ydl_info)
                                 if data['format'] == "audio":
                                         bestaudio = video.getbestaudio(preftype="m4a")
                                         return bestaudio.url
@@ -39,7 +38,7 @@ def getUrl(data):
                                 data['description'] = e.message.split(':')[-1:]
                                 return "error"
                 return None
-	
+
 def resolveYoutubePlaylist(data):
         with infoLock:
                 if data['type'] == "youtube":
@@ -53,8 +52,8 @@ def resolveYoutubePlaylist(data):
                                         yield data
                         except Exception as e:
                                 print "Error fetching youtube playlist ", e
-                
-	
+
+
 def updateVideoData(data):
         with infoLock:
                 if(data['type'] == "youtube"):

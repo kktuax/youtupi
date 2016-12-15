@@ -12,6 +12,7 @@ $(document).delegate("#playlist", "pageinit", function() {
 
 $(document).delegate("#search", "pageinit", function() {
   initSearchControls();
+  $("#search-basic").val("youtupi:home");
   $("#search-basic").trigger("change");
 });
 
@@ -221,7 +222,6 @@ function initSearchControls(){
   initSearchPageControls();
   initAddAllControls();
   $("#engine").bind("change", function(event, ui) {
-    $("#search-basic").val("");
     $("#search-basic").trigger("change");
   });
   initVolumeControl();
@@ -324,14 +324,9 @@ function fillResults(entries, listSelect){
     var itemval = $('<li data-role="list-divider">No results found</li>');
     $(listSelect).append(itemval);
     var otherVideos = [{
-      'id' : 'youtupi:searchHistory',
-      'title' : 'Search History',
-      'description' : 'Recent searches',
-      'type' : 'search',
-    },{
-      'id' : 'youtupi:history',
-      'title' : 'History',
-      'description' : 'Recently played items',
+      'id' : 'youtupi:home',
+      'title' : 'Home',
+      'description' : 'Back to home',
       'type' : 'search',
     }];
     for (var i = 0; i < otherVideos.length; i++) {

@@ -19,20 +19,7 @@ var Search = {
     });
   },
   fetchResults: function(callback){
-    var search = this;
-    search.results = [];
-    var url = this.url();
-    if(url === undefined){
-      callback(search);
-      return;
-    }
-    $.getJSON(url, { 'search': this.query, 'count': this.count, 'format': this.format, 'pageNumber': this.pageNumber }, function(response){
-      search.results = search.results.concat(response);
-      callback(search);
-    });
-  },
-  url: function(){
-    return this.server + "/" + this.engine + "-search";
+    callback(this);
   },
   processResults: function(){
     var start = this.count * (this.pageNumber - 1);
@@ -49,10 +36,54 @@ var Search = {
     this.previousPageNumber = this.pageNumber;
     this.pageNumber = this.pageNumber - 1;
     this.search(callback);
-  }
+  },
+  saveInHistory: false
 };
 
+var EngineSearch = Object.create(Search);
+EngineSearch.fetchResults = function(callback){
+  var search = this;
+  search.results = [];
+  var url = this.url();
+  if(url === undefined){
+    callback(search);
+    return;
+  }
+  $.getJSON(url, { 'search': this.query, 'count': this.count, 'format': this.format, 'pageNumber': this.pageNumber }, function(response){
+    search.results = search.results.concat(response);
+    callback(search);
+  });
+};
+EngineSearch.url = function(){
+  return this.server + "/" + this.engine + "-search";
+};
+
+var LocalSearch = Object.create(EngineSearch);
+LocalSearch.saveInHistory = true;
+LocalSearch.engine = 'local';
+
+var LocalDirSearch = Object.create(EngineSearch);
+LocalDirSearch.engine = 'local-dir';
+LocalDirSearch.url = function(){
+  return this.server + "/local-browse";
+};
+
+var HomeSearch = Object.create(Search);
+HomeSearch.keyword = 'home';
+HomeSearch.results = [{
+  'id' : 'youtupi:searchHistory',
+  'title' : 'Search History',
+  'description' : 'Recent searches',
+  'type' : 'search',
+},{
+  'id' : 'youtupi:history',
+  'title' : 'History',
+  'description' : 'Recently played items',
+  'type' : 'search',
+}];
+
 var HistorySearch = Object.create(Search);
+HistorySearch.keyword = 'history';
 HistorySearch.localStorageName = "history";
 HistorySearch.maxHistoryElements = 50;
 HistorySearch.fetchResults = function(callback){
@@ -106,18 +137,14 @@ HistorySearch.localStoreageId = function(video){
 };
 
 var SearchHistorySearch = Object.create(HistorySearch);
+SearchHistorySearch.keyword = 'searchHistory';
 SearchHistorySearch.localStorageName = "searchHstory";
 SearchHistorySearch.localStoreageId = function(search){
   return search.engine + "." + search.id;
 };
 
-var LocalDirSearch = Object.create(Search);
-LocalDirSearch.engine = 'local-dir';
-LocalDirSearch.url = function(){
-  return this.server + "/local-browse";
-};
-
 var YoutubeSearch = Object.create(Search);
+YoutubeSearch.saveInHistory = true;
 YoutubeSearch.engine = 'youtube';
 YoutubeSearch.url = function(){
 	if(this.query == ''){
@@ -220,28 +247,29 @@ YoutubeSearch.createVideo = function(entry){
 	return video;
 };
 
-function createSearch(query, selectedEngine, count, format, saveInHistory){
+function createSearch(query, selectedEngine, count, format, historyEnabled){
   var searchPrototype;
-  if(query == 'youtupi:searchHistory'){
-    searchPrototype = SearchHistorySearch;
-  }else if(query == 'youtupi:history'){
-    searchPrototype = HistorySearch;
-  }else{
-    var availableSearchEngines = [YoutubeSearch, LocalDirSearch, Search];
-    for (var i = 0; i < availableSearchEngines.length; i++) {
-      searchPrototype = availableSearchEngines[i];
-      if(searchPrototype.engine == selectedEngine){
-        if(query && saveInHistory){
-          SearchHistorySearch.saveToHistory({
-            'id' : query,
-            'title' : query,
-            'description' : 'Searched in ' + selectedEngine,
-            'type' : 'search',
-            'engine': selectedEngine
-          });
+  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, YoutubeSearch, LocalDirSearch, LocalSearch, Search];
+  for (var i = 0; i < availableSearchEngines.length; i++) {
+    searchPrototype = availableSearchEngines[i];
+    if(query && searchPrototype.keyword){
+      if(query.startsWith("youtupi:")){
+        var keyword = query.substring("youtupi:".length);
+        if(keyword == searchPrototype.keyword){
+          break;
         }
-        break;
       }
+    }else if(searchPrototype.engine == selectedEngine){
+      if(query && historyEnabled && searchPrototype.saveInHistory){
+        SearchHistorySearch.saveToHistory({
+          'id' : query,
+          'title' : query,
+          'description' : 'Searched in ' + selectedEngine,
+          'type' : 'search',
+          'engine': selectedEngine
+        });
+      }
+      break;
     }
   }
   var search = Object.create(searchPrototype);

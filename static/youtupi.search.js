@@ -249,7 +249,7 @@ YoutubeSearch.createVideo = function(entry){
 
 function createSearch(query, selectedEngine, count, format, historyEnabled){
   var searchPrototype;
-  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, YoutubeSearch, LocalDirSearch, LocalSearch, Search];
+  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, YoutubeSearch, LocalDirSearch, LocalSearch, EngineSearch];
   for (var i = 0; i < availableSearchEngines.length; i++) {
     searchPrototype = availableSearchEngines[i];
     if(query && searchPrototype.keyword){

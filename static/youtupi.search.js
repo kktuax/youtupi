@@ -253,7 +253,7 @@ function createSearch(query, selectedEngine, count, format, historyEnabled){
   for (var i = 0; i < availableSearchEngines.length; i++) {
     searchPrototype = availableSearchEngines[i];
     if(query && searchPrototype.keyword){
-      if(query.startsWith("youtupi:")){
+      if(query.lastIndexOf("youtupi:", 0) === 0){
         var keyword = query.substring("youtupi:".length);
         if(keyword == searchPrototype.keyword){
           break;

@@ -7,6 +7,7 @@ from youtupi.modules.youtube import module_youtube
 from youtupi.modules.url import module_url
 from youtupi.modules.control import module_control
 from youtupi.modules.playlist import module_playlist
+from youtupi.modules.preset import module_preset
 from youtupi.util import config
 
 class redirect:
@@ -30,6 +31,7 @@ if __name__ == "__main__":
 		'/url', module_url,
 		'/local', module_local,
 		'/youtube', module_youtube,
+		'/preset', module_preset,
 		'/', 'index'
 	)
 	app = MyApplication(urls, globals())

@@ -40,6 +40,21 @@ var Search = {
   saveInHistory: false
 };
 
+var PresetSearch = Object.create(Search);
+PresetSearch.engine = 'preset';
+PresetSearch.fetchResults = function(callback){
+  var search = this;
+  search.results = [];
+  var url = this.server + "/preset";
+  if(this.query){
+    url = url + "/" + this.query;
+  }
+  $.getJSON(url, { 'search': this.query, 'count': this.count, 'format': this.format, 'pageNumber': this.pageNumber }, function(response){
+    search.results = search.results.concat(response);
+    callback(search);
+  });
+};
+
 var EngineSearch = Object.create(Search);
 EngineSearch.fetchResults = function(callback){
   var search = this;
@@ -249,7 +264,7 @@ YoutubeSearch.createVideo = function(entry){
 
 function createSearch(query, selectedEngine, count, format, historyEnabled){
   var searchPrototype;
-  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, YoutubeSearch, LocalDirSearch, LocalSearch, EngineSearch];
+  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, PresetSearch, YoutubeSearch, LocalDirSearch, LocalSearch, EngineSearch];
   for (var i = 0; i < availableSearchEngines.length; i++) {
     searchPrototype = availableSearchEngines[i];
     if(query && searchPrototype.keyword){

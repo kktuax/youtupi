@@ -207,7 +207,9 @@ YoutubeSearch.fetchResults = function(callback){
       if(video === null){
         video = search.createVideo(entry);
       }
-      search.results.push(video);
+      if(video !== null){
+        search.results.push(video);
+      }
     }
     callback(search);
   });
@@ -226,7 +228,7 @@ YoutubeSearch.createPlaylist = function(entry){
 	video.description = entry.snippet.description;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "search";
-  video.engine = "youtube";
+        video.engine = "youtube";
 	video.operations = [];
 	return video;
 };
@@ -250,14 +252,18 @@ YoutubeSearch.createVideo = function(entry){
 	if(typeof entry.id.videoId != 'undefined'){
 		video.id = entry.id.videoId;
 	} else {
-		video.id = entry.snippet.resourceId.videoId;
+		try {
+                        video.id = entry.snippet.resourceId.videoId;
+		} catch(err) {
+                        return null;
+		}
 	}
 	video.description = entry.snippet.description;
 	video.title = entry.snippet.title;
 	video.duration = entry.duration;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "youtube";
-  video.format = this.format;
+        video.format = this.format;
 	video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
 	return video;
 };

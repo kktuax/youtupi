@@ -175,7 +175,11 @@ YoutubeSearch.url = function(){
 	}
 	var listLookup = 'list:';
 	var listsLookup = 'lists:';
-	if(this.query.indexOf(listLookup) > -1){
+  var relatedLookup = 'related:';
+  if(this.query.indexOf(relatedLookup) > -1){
+    var lookup = this.query.split(relatedLookup);
+    url += 'search?order=relevance&part=snippet&relatedToVideoId='+lookup[1]+'&type=video' + maxResults + key;
+  } else if(this.query.indexOf(listLookup) > -1){
 		var lid = this.query.split(listLookup);
 		url += 'playlistItems?part=snippet&playlistId='+lid[1]+'&type=video' + maxResults + key;
 	} else if(this.query.indexOf(listsLookup) > -1){
@@ -228,7 +232,7 @@ YoutubeSearch.createPlaylist = function(entry){
 	video.description = entry.snippet.description;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "search";
-        video.engine = "youtube";
+  video.engine = "youtube";
 	video.operations = [];
 	return video;
 };
@@ -253,9 +257,9 @@ YoutubeSearch.createVideo = function(entry){
 		video.id = entry.id.videoId;
 	} else {
 		try {
-                        video.id = entry.snippet.resourceId.videoId;
+      video.id = entry.snippet.resourceId.videoId;
 		} catch(err) {
-                        return null;
+      return null;
 		}
 	}
 	video.description = entry.snippet.description;
@@ -263,12 +267,12 @@ YoutubeSearch.createVideo = function(entry){
 	video.duration = entry.duration;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "youtube";
-        video.format = this.format;
+  video.format = this.format;
 	video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
 	return video;
 };
 
-function createSearch(query, selectedEngine, count, format, historyEnabled){
+function createSearch(query, selectedEngine, count, format){
   var searchPrototype;
   var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, PresetSearch, YoutubeSearch, LocalDirSearch, LocalSearch, EngineSearch];
   for (var i = 0; i < availableSearchEngines.length; i++) {
@@ -281,7 +285,7 @@ function createSearch(query, selectedEngine, count, format, historyEnabled){
         }
       }
     }else if(searchPrototype.engine == selectedEngine){
-      if(query && historyEnabled && searchPrototype.saveInHistory){
+      if(query && YouTuPi.isHistoryEnabled() && searchPrototype.saveInHistory){
         SearchHistorySearch.saveToHistory({
           'id' : query,
           'title' : query,

@@ -28,9 +28,6 @@ function loadPlayList(entries){
     var video = new Video(entries[i]);
     if(i == 0){
       adjustCurrentPositionSlider(video.data.duration, video.data.position);
-      if(isHistoryEnabled()){
-        HistorySearch.saveToHistory(video.data);
-      }
     }else if(i == 1){
       $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
     }
@@ -59,56 +56,61 @@ function adjustCurrentPositionSlider(duration, position){
   } catch(err) {}
 }
 
-function isHistoryEnabled(){
-  return 'on' == $('#save-history').val();
-}
-
 function playlistClickHandler(video, position){
-  if(position == 0){
-    return function(event){
-      $('#seek-controls').css('border-bottom', '6px solid #f37736').animate({borderWidth: 0}, 200);
-    };
-  }else{
-    return function(event) {
-      var video = event.data.video;
-      var buttons = { 'Play': {
+  return function(event) {
+    var video = event.data.video;
+    var buttons = {};
+    if(position > 0){
+      buttons['Play'] = {
         click: function () {
           YouTuPi.playVideo(video, loadPlayList);
         },
         close: true
-      }, 'Play Next': {
+      };
+      buttons['Play Next'] = {
         click: function () {
           YouTuPi.playVideoNext(video, loadPlayList);
         },
         close: true
-      }, 'Skip': {
+      };
+      buttons['Skip'] = {
         click: function () {
           YouTuPi.deleteVideo(video, loadPlayList);
         },
         close: true
-      }};
-      for(operationKey in event.data.video.operations){
-        var operation = event.data.video.operations[operationKey];
-        var buttonClick = function(e, video, operation){
-          showNotification("Operation requested");
-          YouTuPi.videoOperation(video, operation).done(function(){
-            showNotification(operation.successMessage);
-          });
-        }
-        buttons[operation.text] = {
-          click: buttonClick,
-          args: new Array(video, operation),
-          close: true
-        };
+      };
+    }
+    if(video.type == "youtube"){
+      buttons['Search related'] = {
+        click: function () {
+          tabSearch();
+          $("#search-basic").val("related:" + video.id);
+          $("#search-basic").trigger("change");
+        },
+        close: true
+      };
+    }
+    for(operationKey in event.data.video.operations){
+      var operation = event.data.video.operations[operationKey];
+      var buttonClick = function(e, video, operation){
+        showNotification("Operation requested");
+        YouTuPi.videoOperation(video, operation).done(function(){
+          showNotification(operation.successMessage);
+        });
       }
-      $(document).simpledialog2({
-        mode: 'button',
-        headerText: event.data.video.title,
-        headerClose: true,
-        buttons : buttons
-      });
-    };
-  }
+      buttons[operation.text] = {
+        click: buttonClick,
+        args: new Array(video, operation),
+        close: true
+      };
+    }
+    $(document).simpledialog2({
+      mode: 'button',
+      headerText: event.data.video.title,
+      headerClose: true,
+      buttons : buttons
+    });
+  };
 }
 
 function showNotification(message){
@@ -200,9 +202,11 @@ function initSearchControls(){
 	if(addLocalStorageFor("#save-history", "save-history")){
 		$("#save-history" ).slider("refresh");
 	}
+  $("#save-history").bind("change", function(event, ui) {
+    YouTuPi.conf['save-history'] = $("#save-history").val() == 'on' ? true : false;
+  });
 	$("#clear-history-button").bind("click", function(event, ui) {
-		HistorySearch.clearHistory();
-    SearchHistorySearch.clearHistory();
+		YouTuPi.clearHistory();
 	});
   $("#search-basic").bind("change", function(event, params) {
     $('#results').empty();
@@ -211,7 +215,7 @@ function initSearchControls(){
     var selectedEngine = $("#engine").val();
     var count = $("#slider").val();
     var format = $("#quality").val();
-    search = createSearch(query, selectedEngine, count, format, isHistoryEnabled());
+    search = createSearch(query, selectedEngine, count, format);
     $("#spinner-search").show();
     search.search(function(s){
       fillResults(s.results, "#results");
@@ -259,6 +263,10 @@ function loadVideo(video){
 
 function tabPlaylist(){
   $(".link-playlist").first().trigger('click');
+}
+
+function tabSearch(){
+  $(".link-search").first().trigger('click');
 }
 
 function initSearchPageControls(){

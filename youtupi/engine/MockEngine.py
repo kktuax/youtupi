@@ -76,6 +76,12 @@ class MockEngine(PlaybackEngine):
     def nextAudioTrack(self):
         print 'Next Audio Track requested'
 
+    def prevSubtitle(self):
+        print 'Previous Subtitle requested'
+
+    def nextSubtitle(self):
+        print 'Next Subtitle requested'
+
     def isPlaying(self):
         if self.player:
             if self.player.poll() == None:

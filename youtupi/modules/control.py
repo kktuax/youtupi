@@ -32,6 +32,10 @@ class control:
 				engine.prevAudioTrack()
 			elif action == "nextaudiotrack":
 				engine.nextAudioTrack()
+			elif action == "nextsubtitle":
+				engine.nextSubtitle()
+			elif action == "prevsubtitle":
+				engine.prevSubtitle()
 
 	def POST(self, action):
 		with engineLock:

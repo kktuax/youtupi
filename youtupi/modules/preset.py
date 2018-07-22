@@ -8,6 +8,8 @@ def presetFactory(data):
 	if isinstance(data, dict):
 		if data.get('type', '') == "peerflix-server":
 			return PeerflixServerPreset(data.get('url', ''))
+		if data.get('type', '') == "TV-Online-TDT-Spain":
+			return TvOnlineTDTSpainPreset(data.get('url', ''))
 	return Preset(data)
 
 class Preset(object):
@@ -41,6 +43,16 @@ class PeerflixServerPreset(Preset):
 		for torrent in torrents:
 			for torrentFile in torrent.get('files', []):
 				content.append({'type': 'url', 'id': self.url + torrentFile.get('link', ''), 'title': torrentFile.get('name', '')})
+		return content
+
+class TvOnlineTDTSpainPreset(Preset):
+	def fetch(self):
+		response = urllib.urlopen(self.url)
+		content = []
+		channels = json.loads(response.read())
+		for channel in channels:
+			if channel.get('enabled', False):
+				content.append({'type': 'url', 'id': channel.get('link_m3u8', ''), 'title': channel.get('name', '')})
 		return content
 
 class list:

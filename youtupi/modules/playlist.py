@@ -4,6 +4,7 @@ from youtupi.playlist import removeVideo, addVideos, playList
 
 class playlist:
 	def GET(self):
+		web.header('Content-Type', 'application/json')
 		playlistVideos = list()
 		for video in playList():
 			playlistVideos.append(video.data)

@@ -30,7 +30,7 @@ function loadPlayList(entries){
     if(i == 0){
       adjustCurrentPositionSlider(video.data.duration, video.data.position);
     }else if(i == 1){
-      $(listSelect).append($('<li data-role="list-divider">Coming soon</li>'));
+      $(listSelect).append($('<li data-role="list-divider">' + $.i18n.prop("comingsoon") + '</li>'));
     }
     var theme = i == 0 ? 'b' : 'a';
     var icon = i > 0 ? 'false' : 'carat-r';
@@ -82,7 +82,7 @@ function playlistClickHandler(video, position){
       };
     }
     if(video.type == "youtube"){
-      buttons['Search related'] = {
+      buttons[$.i18n.prop("btn.related")] = {
         click: function () {
           tabSearch();
           $("#search-basic").val("related:" + video.id);
@@ -349,12 +349,12 @@ function fillResults(entries, listSelect){
     $(listSelect).append(createResultItem(video, 'a', 'carat-r'));
   }
   if(entries.length == 0){
-    var itemval = $('<li data-role="list-divider">No results found</li>');
+    var itemval = $('<li data-role="list-divider">' + $.i18n.prop("search.empty") + '</li>');
     $(listSelect).append(itemval);
     var otherVideos = [{
       'id' : 'youtupi:home',
-      'title' : 'Home',
-      'description' : 'Back to home',
+      'title' : $.i18n.prop("search.home.title"),
+      'description' : $.i18n.prop("search.home.description"),
       'type' : 'search',
     }];
     for (var i = 0; i < otherVideos.length; i++) {

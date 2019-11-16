@@ -131,7 +131,12 @@ function translate(){
 		cache: true,
 		callback: function() { 
 			$("[data-i18n]").each(function(index) {
-				$(this).text($.i18n.prop($(this).attr("data-i18n")));
+				var i18n = $.i18n.prop($(this).data("i18n"));
+				if($(this).data("i18n-att")){
+					$(this).attr($(this).data("i18n-att"), i18n);
+				}else{
+					$(this).text(i18n);
+				}
 			});
 		}
 	});

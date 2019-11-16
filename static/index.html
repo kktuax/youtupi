@@ -59,11 +59,11 @@
 					<h3>Now Playing</h3>
 					<div id="seek-controls" data-role="navbar" class="ui-body-b">
 						<ul>
-							<li><a href="#" data-role="button" title="seek back 10m" data-player-action="seekbacklarge" class="active-on-playing ui-disabled">&lt;&lt;</a></li>
-							<li><a href="#" data-role="button" title="seek back 30s" data-player-action="seekbacksmall" class="active-on-playing ui-disabled">&lt;</a></li>
-							<li><a href="#" data-role="button" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a></li>
-							<li><a href="#" data-role="button" title="seek forward 30s" data-player-action="seekforwardsmall" class="active-on-playing ui-disabled">&gt;</a></li>
-							<li><a href="#" data-role="button" title="seek forward 10m" data-player-action="seekforwardlarge" class="active-on-playing ui-disabled">&gt;&gt;</a></li>
+							<li><a href="#" data-role="button" data-i18n-att="title" data-i18n="btn.seek.back.long" title="seek back 10m" data-player-action="seekbacklarge" class="active-on-playing ui-disabled">&lt;&lt;</a></li>
+							<li><a href="#" data-role="button" data-i18n-att="title" data-i18n="btn.seek.back.short" title="seek back 30s" data-player-action="seekbacksmall" class="active-on-playing ui-disabled">&lt;</a></li>
+							<li><a href="#" data-role="button" data-i18n-att="title" data-i18n="btn.pause" title="Pause/Resume" data-player-action="pause" class="active-on-playing ui-disabled">||</a></li>
+							<li><a href="#" data-role="button" data-i18n-att="title" data-i18n="btn.seek.forward.short" title="seek forward 30s" data-player-action="seekforwardsmall" class="active-on-playing ui-disabled">&gt;</a></li>
+							<li><a href="#" data-role="button" data-i18n-att="title" data-i18n="btn.seek.forward.long" title="seek forward 10m" data-player-action="seekforwardlarge" class="active-on-playing ui-disabled">&gt;&gt;</a></li>
 						</ul>
 						<div>
 								<input type="range" name="position" id="position" value="0" min="0" max="100" step="10" data-highlight="true" class="ui-hidden-accessible">
@@ -103,14 +103,14 @@
 						<div class="ui-block-a">
 							<select name="select-choice-0" id="engine">
 								<option value="youtube" selected="selected">Youtube</option>
-								<option value="local">Search local</option>
-								<option	value="local-dir">Browse local</option>
-								<option value="url">Paste Video URL</option>
-								<option value="preset">Presets</option>
+								<option value="local" data-i18n="engine.local">Search local</option>
+								<option	value="local-dir" data-i18n="engine.local-dir">Browse local</option>
+								<option value="url" data-i18n="engine.url">Paste Video URL</option>
+								<option value="preset" data-i18n="engine.presets">Presets</option>
 							</select>
 						</div>
 						<div class="ui-block-b">
-							<a href="#settings" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup">Settings</a>
+							<a href="#settings" data-role="button" data-icon="gear" data-iconpos="right" data-transition="pop" data-rel="popup" data-i18n="btn.settings">Settings</a>
 						</div>
 					</fieldset>
 					<input type="search" name="search" id="search-basic" value="" />
@@ -120,33 +120,33 @@
 					</div>
 					<div id="results-end-controls" data-role="navbar">
 						<ul>
-							<li><a href="#" data-icon="arrow-l" id="prev-page-button" class="ui-disabled">Prev. page</a></li>
-							<li><a href="#" data-icon="arrow-r" id="next-page-button" class="ui-disabled">Next page</a></li>
-							<li><a href="#" data-icon="plus" id="add-all-button" class="ui-disabled">Add all</a></li>
-							<li><a href="#" data-icon="refresh" id="add-all-random-button" class="ui-disabled">Random add all</a></li>
+							<li><a href="#" data-icon="arrow-l" id="prev-page-button" data-i18n="btn.page.prev" class="ui-disabled">Prev. page</a></li>
+							<li><a href="#" data-icon="arrow-r" id="next-page-button" data-i18n="btn.page.next" class="ui-disabled">Next page</a></li>
+							<li><a href="#" data-icon="plus" id="add-all-button" data-i18n="btn.add.all" class="ui-disabled">Add all</a></li>
+							<li><a href="#" data-icon="refresh" id="add-all-random-button" data-i18n="btn.add.all.random" class="ui-disabled">Random add all</a></li>
 						</ul>
 					</div>
 				</div>
 				<div data-role="popup" data-overlay-theme="a" data-content-theme="c" id="settings" class="ui-content">
-				 	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-left">Close</a>
-					<h3>Settings</h3>
+				 	<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" data-i18n="btn.close" class="ui-btn-left">Close</a>
+					<h3 data-i18n="cfg.title">Settings</h3>
 					<div class="ui-body ui-body-c">
-						<label for="volume">Start Volume (dB):</label>
+						<label for="volume" data-i18n="cfg.volume">Start Volume (dB):</label>
 						<input type="range" name="volume" id="volume" value="-18" min="-30" max="0" step="3" />
-						<label for="quality">Video quality:</label>
+						<label for="quality" data-i18n="cfg.quality">Video quality:</label>
 						<select name="select-choice-1" id="quality">
-							<option value="low">Low quality</option>
-							<option value="high" selected="selected">High quality</option>
-							<option value="audio">Audio only</option>
+							<option value="low" data-i18n="cfg.quality.low">Low quality</option>
+							<option value="high" selected="selected" data-i18n="cfg.quality.high">High quality</option>
+							<option value="audio" data-i18n="cfg.quality.audio">Audio only</option>
 						</select>
-						<label for="slider">Show # results:</label>
+						<label for="slider" data-i18n="cfg.results.number">Show # results:</label>
 						<input type="range" name="slider" id="slider" value="25" min="10" max="50"  />
-						<label for="save-history">Store loaded items in history:</label>
+						<label for="save-history" data-i18n="cfg.history">Store loaded items in history:</label>
 						<select name="save-history" id="save-history" data-role="slider">
-							<option value="off">Off</option>
-							<option value="on" selected="selected">On</option>
+							<option value="off" data-i18n="cfg.history.off">Off</option>
+							<option value="on" data-i18n="cfg.history.on" selected="selected">On</option>
 						</select>
-						<a href="#" data-role="button" data-icon="delete" title="Clear History" id="clear-history-button">Clear history</a>
+						<a href="#" data-role="button" data-icon="delete" data-i18n="cfg.history.clear.btn" title="Clear History" id="clear-history-button">Clear history</a>
 					</div>
 				</div>
 			</div>

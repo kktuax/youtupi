@@ -85,17 +85,21 @@ LocalDirSearch.url = function(){
 
 var HomeSearch = Object.create(Search);
 HomeSearch.keyword = 'home';
-HomeSearch.results = [{
-  'id' : 'youtupi:searchHistory',
-  'title' : 'Search History',
-  'description' : 'Recent searches',
-  'type' : 'search',
-},{
-  'id' : 'youtupi:history',
-  'title' : 'History',
-  'description' : 'Recently played items',
-  'type' : 'search',
-}];
+HomeSearch.fetchResults = function(callback){
+  var search = this;
+  search.results = [{
+	  'id' : 'youtupi:searchHistory',
+	  'title' : $.i18n.prop("search.history.search.title"),
+	  'description' : $.i18n.prop("search.history.search.description"),
+	  'type' : 'search'
+	},{
+	  'id' : 'youtupi:history',
+	  'title' : $.i18n.prop("search.history.title"),
+	  'description' : $.i18n.prop("search.history.description"),
+	  'type' : 'search'
+	}];
+	callback(search);
+};
 
 var HistorySearch = Object.create(Search);
 HistorySearch.keyword = 'history';
@@ -268,7 +272,7 @@ YoutubeSearch.createVideo = function(entry){
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "youtube";
   video.format = this.format;
-	video.operations = [ {'name': 'download', 'text': 'Download', 'successMessage': 'Video downloaded'} ];
+	video.operations = [ {'name': 'download', 'text': $.i18n.prop("btn.download"), 'successMessage': $.i18n.prop("notification.download.ok")} ];
 	return video;
 };
 
@@ -289,7 +293,7 @@ function createSearch(query, selectedEngine, count, format){
         SearchHistorySearch.saveToHistory({
           'id' : query,
           'title' : query,
-          'description' : 'Searched in ' + selectedEngine,
+          'description' : $.i18n.prop("search.history.search.item.description") + ' ' + selectedEngine,
           'type' : 'search',
           'engine': selectedEngine
         });

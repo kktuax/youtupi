@@ -97,7 +97,7 @@ function Video(data){
   this.title = function(){
     var title = this.data.title;
     if(title == undefined) {
-      title = "Loading data for " + this.data.id;
+      title = $.i18n.prop("video.loading") + " " + this.data.id;
     }
     var	duration = this.getDurationString();
     if(duration){

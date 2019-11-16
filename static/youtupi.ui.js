@@ -1,6 +1,5 @@
 $(document).bind('pageinit', function () {
   $.mobile.defaultPageTransition = 'none';
-  translate();
 });
 
 $(document).delegate("#playlist", "pageinit", function() {
@@ -123,7 +122,7 @@ function showNotification(message){
   });
 }
 
-function translate(){
+$(document).ready(function() {
 	jQuery.i18n.properties({
 		mode: 'map',
 		name: 'Messages', 
@@ -140,7 +139,7 @@ function translate(){
 			});
 		}
 	});
-}
+});
 
 function initControls(){
   $(".active-on-playing").each(function() {

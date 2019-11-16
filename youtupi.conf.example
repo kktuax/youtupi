@@ -4,7 +4,7 @@
 	],
 	"local-search-extensions": [".avi", ".mpg", ".mp4", ".mp3", ".mov", ".ogg", ".ogm", ".mkv", ".flv"],
 	"download-folder": "~/Downloads",
-	"base-volume" : -18,
+	"base-volume" : 0,
 	"port": 8080,
 	"host": "0.0.0.0"
 }

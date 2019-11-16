@@ -94,7 +94,7 @@ function playlistClickHandler(video, position){
     for(operationKey in event.data.video.operations){
       var operation = event.data.video.operations[operationKey];
       var buttonClick = function(e, video, operation){
-        showNotification("Operation requested");
+        showNotification($.i18n.prop("notification.ok"));
         YouTuPi.videoOperation(video, operation).done(function(){
           showNotification(operation.successMessage);
         });
@@ -161,7 +161,7 @@ function initControls(){
 		var seconds = $("#position").data("duration") * $("#position").val() / 100;
     if(!isNaN(seconds)){
       YouTuPi.jumpToPosition(seconds, function(){
-        showNotification("Changed video time");
+        showNotification($.i18n.prop("notification.seeked"));
       });
     }
 	});
@@ -264,7 +264,7 @@ function loadVideos(ivideos, random){
   tabPlaylist();
   $("#spinner").css('opacity', 1);
   YouTuPi.addVideos(ivideos, random, loadPlayList).fail(function() {
-    showNotification("Error loading videos");
+    showNotification($.i18n.prop("notification.load.videos.error"));
   }).always(function() {
     $("#spinner").css('opacity', 0);
   });
@@ -273,9 +273,9 @@ function loadVideos(ivideos, random){
 function loadVideo(video){
   $("#spinner").css('opacity', 1);
   YouTuPi.addVideo(video, loadPlayList).done(function(){
-    showNotification("Video queued");
+	showNotification($.i18n.prop("notification.load.video.queued"));
   }).fail(function() {
-    showNotification("Error loading video");
+    showNotification($.i18n.prop("notification.load.video.error"));
   }).always(function() {
     $("#spinner").css('opacity', 0);
   });
@@ -329,7 +329,7 @@ function updateButtonState(selector, enabled){
 function initVolumeControl(){
   $("#volume").bind("change", function(event, ui) {
     YouTuPi.setServerParam('volume', $("#volume").val(), function(){
-      showNotification("Updated volume")
+      showNotification($.i18n.prop("notification.volume.updated"));
     });
   });
   if(addLocalStorageFor("#volume", "volume")){

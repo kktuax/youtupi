@@ -7,6 +7,7 @@
 		<link rel="stylesheet" href="jquery-ui-1.12.1.min.css" />
 		<link rel="stylesheet" href="youtupi.css" />
 		<script src="jquery-1.11.1.min.js"></script>
+		<script src="jquery.i18n.properties.min.js"></script>
 		<script src="jquery-ui-1.12.1.min.js"></script>
 		<script src="jquery.ui.touch-punch.min.js"></script>
 		<script src="jquery.json-2.4.min.js"></script>
@@ -52,7 +53,7 @@
 					</div>
 				</div>
 				<div id="playlist-empty" style="display:none">
-					<h3>No entries in the playlist</h3>
+					<h3 data-i18n="noentries">No entries in the playlist</h3>
 				</div>
 				<div id="playlist-playing" style="display:none;">
 					<h3>Now Playing</h3>
@@ -150,5 +151,20 @@
 				</div>
 			</div>
 		</div>
+		<script>
+			$(document).ready(function() {
+				jQuery.i18n.properties({
+					debug: true,
+					mode: 'map',
+					name: 'Messages', 
+					path: '/static/',
+					callback: function() { 
+						$("[data-i18n]").each(function(index) {
+							$(this).text($.i18n.prop($(this).attr("data-i18n")));
+						});
+					}
+				});
+			});
+		</script>
 	</body>
 </html>

@@ -119,6 +119,12 @@ class OMXPlayerEngine(PlaybackEngine):
     def nextAudioTrack(self):
         self.tryToSendAction(dbus.Int32("7"))
 
+    def prevSubtitle(self):
+        self.tryToSendAction(dbus.Int32("10"))
+
+    def nextSubtitle(self):
+        self.tryToSendAction(dbus.Int32("11"))
+
     def isPlaying(self):
         if self.isProcessRunning():
             pos = self.getPosition()

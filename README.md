@@ -26,7 +26,7 @@ Manual installation
 
     ```bash
     sudo apt-get update
-    sudo apt-get install omxplayer python-pip python-magic python-dbus git
+    sudo apt-get install -y libpcre3 fonts-freefont-ttf omxplayer python-pip python-magic python-dbus git
     sudo pip install web.py beautifulsoup4 youtube_dl betterprint
     ```
 

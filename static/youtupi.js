@@ -1,5 +1,8 @@
 var YouTuPi = {};
 YouTuPi.server = window.location.protocol + "//" + window.location.host;
+YouTuPi.conf = {
+  'save-history' : true
+}
 YouTuPi.refreshPlaylist = function(success){
   var url = this.server + "/playlist";
   return $.getJSON(url, success);
@@ -45,6 +48,9 @@ YouTuPi.setServerParam = function(param, value, success){
 };
 YouTuPi.addVideo = function(video, success){
   var url = this.server + "/playlist";
+  if(this.isHistoryEnabled()){
+    HistorySearch.saveToHistory(video);
+  }
   var data = $.toJSON(video);
   return $.post(url, data, success, "json");
 };
@@ -72,6 +78,13 @@ YouTuPi.videoOperation = function(video, operation, success){
   var url = this.server + "/" + type + "-" + operation.name;
   return $.post(url, $.toJSON(video), success);
 };
+YouTuPi.isHistoryEnabled = function(){
+  return this.conf['save-history'] ? true : false;
+}
+YouTuPi.clearHistory = function(){
+  HistorySearch.clearHistory();
+  SearchHistorySearch.clearHistory();
+}
 
 function Video(data){
 

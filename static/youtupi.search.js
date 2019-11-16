@@ -40,6 +40,21 @@ var Search = {
   saveInHistory: false
 };
 
+var PresetSearch = Object.create(Search);
+PresetSearch.engine = 'preset';
+PresetSearch.fetchResults = function(callback){
+  var search = this;
+  search.results = [];
+  var url = this.server + "/preset";
+  if(this.query){
+    url = url + "/" + this.query;
+  }
+  $.getJSON(url, { 'search': this.query, 'count': this.count, 'format': this.format, 'pageNumber': this.pageNumber }, function(response){
+    search.results = search.results.concat(response);
+    callback(search);
+  });
+};
+
 var EngineSearch = Object.create(Search);
 EngineSearch.fetchResults = function(callback){
   var search = this;
@@ -160,7 +175,11 @@ YoutubeSearch.url = function(){
 	}
 	var listLookup = 'list:';
 	var listsLookup = 'lists:';
-	if(this.query.indexOf(listLookup) > -1){
+  var relatedLookup = 'related:';
+  if(this.query.indexOf(relatedLookup) > -1){
+    var lookup = this.query.split(relatedLookup);
+    url += 'search?order=relevance&part=snippet&relatedToVideoId='+lookup[1]+'&type=video' + maxResults + key;
+  } else if(this.query.indexOf(listLookup) > -1){
 		var lid = this.query.split(listLookup);
 		url += 'playlistItems?part=snippet&playlistId='+lid[1]+'&type=video' + maxResults + key;
 	} else if(this.query.indexOf(listsLookup) > -1){
@@ -192,7 +211,9 @@ YoutubeSearch.fetchResults = function(callback){
       if(video === null){
         video = search.createVideo(entry);
       }
-      search.results.push(video);
+      if(video !== null){
+        search.results.push(video);
+      }
     }
     callback(search);
   });
@@ -235,7 +256,11 @@ YoutubeSearch.createVideo = function(entry){
 	if(typeof entry.id.videoId != 'undefined'){
 		video.id = entry.id.videoId;
 	} else {
-		video.id = entry.snippet.resourceId.videoId;
+		try {
+      video.id = entry.snippet.resourceId.videoId;
+		} catch(err) {
+      return null;
+		}
 	}
 	video.description = entry.snippet.description;
 	video.title = entry.snippet.title;
@@ -247,9 +272,9 @@ YoutubeSearch.createVideo = function(entry){
 	return video;
 };
 
-function createSearch(query, selectedEngine, count, format, historyEnabled){
+function createSearch(query, selectedEngine, count, format){
   var searchPrototype;
-  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, YoutubeSearch, LocalDirSearch, LocalSearch, EngineSearch];
+  var availableSearchEngines = [HomeSearch, SearchHistorySearch, HistorySearch, PresetSearch, YoutubeSearch, LocalDirSearch, LocalSearch, EngineSearch];
   for (var i = 0; i < availableSearchEngines.length; i++) {
     searchPrototype = availableSearchEngines[i];
     if(query && searchPrototype.keyword){
@@ -260,7 +285,7 @@ function createSearch(query, selectedEngine, count, format, historyEnabled){
         }
       }
     }else if(searchPrototype.engine == selectedEngine){
-      if(query && historyEnabled && searchPrototype.saveInHistory){
+      if(query && YouTuPi.isHistoryEnabled() && searchPrototype.saveInHistory){
         SearchHistorySearch.saveToHistory({
           'id' : query,
           'title' : query,

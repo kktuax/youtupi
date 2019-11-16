@@ -72,6 +72,14 @@ class PlaybackEngine(object):
         pass
 
     @abstractmethod
+    def prevSubtitle(self):
+        pass
+
+    @abstractmethod
+    def nextSubtitle(self):
+        pass
+
+    @abstractmethod
     def getBaseVolume(self):
         pass
 

@@ -102,6 +102,16 @@ class VlcEngine(PlaybackEngine):
             currentTrack = self.player.audio_get_track()
             self.player.audio_set_track(currentTrack + 1)
 
+    def prevSubtitle(self):
+        if self.player:
+            current = self.player.video_get_spu()
+            self.player.video_set_spu(current - 1)
+
+    def nextSubtitle(self):
+        if self.player:
+            current = self.player.video_get_spu()
+            self.player.video_set_spu(current + 1)
+
     def isPlaying(self):
         if self.player:
             pos = self.getPosition()

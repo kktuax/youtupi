@@ -1,0 +1,7 @@
+[Unit] 
+Description=Update Youtupi
+
+[Service] 
+Type=oneshot
+WorkingDirectory=/home/pi/youtupi/service
+ExecStart=/bin/bash update.sh

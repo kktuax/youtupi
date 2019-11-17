@@ -1,0 +1,18 @@
+[Unit] 
+Description=Youtupi 
+After=network.target
+
+[Service] 
+WorkingDirectory=/home/pi/youtupi
+ExecStart=/usr/bin/python youtupi.py
+User=pi
+TimeoutStopSec=25
+KillMode=process
+Restart=on-failure
+StandardOutput=null
+StandardError=null
+
+[Install]
+WantedBy=multi-user.target
+
+

@@ -2,7 +2,7 @@
 Description=Update Youtupi
 
 [Timer]
-OnCalendar=daily
+OnCalendar=Mon 04:30
 Persistent=true
 
 [Install]

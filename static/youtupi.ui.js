@@ -29,7 +29,7 @@ function loadPlayList(entries){
     if(i == 0){
       adjustCurrentPositionSlider(video.data.duration, video.data.position);
     }else if(i == 1){
-      $(listSelect).append($('<li data-role="list-divider">' + $.i18n.prop("comingsoon") + '</li>'));
+      $(listSelect).append($('<li data-role="list-divider">' + $.i18n.prop("playlist.soon") + '</li>'));
     }
     var theme = i == 0 ? 'b' : 'a';
     var icon = i > 0 ? 'false' : 'carat-r';

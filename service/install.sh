@@ -20,5 +20,6 @@ cp $YOUTUPI_HOME/service/youtupi.service /etc/systemd/system/
 cp $YOUTUPI_HOME/service/youtupi-update.service /etc/systemd/system/
 cp $YOUTUPI_HOME/service/youtupi-update.timer /etc/systemd/system/
 systemctl enable youtupi
+systemctl start youtupi
 systemctl enable youtupi-update.timer
 systemctl start youtupi-update.timer

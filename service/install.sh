@@ -8,7 +8,7 @@ if [ -d "$YOUTUPI_HOME" ]; then
 fi
 
 apt-get update && apt-get install -y libpcre3 fonts-freefont-ttf omxplayer python-pip python-magic python-dbus python-lxml git 
-pip install web.py beautifulsoup4 youtube_dl betterprint
+pip install web.py==0.39 beautifulsoup4 youtube_dl betterprint
 git clone git://github.com/kktuax/youtupi.git $YOUTUPI_HOME
 cd $YOUTUPI_HOME
 git submodule init

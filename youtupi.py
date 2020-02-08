@@ -9,6 +9,9 @@ from youtupi.modules.control import module_control
 from youtupi.modules.playlist import module_playlist
 from youtupi.modules.preset import module_preset
 from youtupi.util import config
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class redirect:
 	def GET(self, path):

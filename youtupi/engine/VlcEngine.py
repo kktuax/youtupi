@@ -25,6 +25,7 @@ class VlcEngine(PlaybackEngine):
             self.stop()
         if not self.player:
             self.player = vlc.MediaPlayer(video.url)
+            self.player.set_fullscreen(True)
         else:
             self.player.set_media(vlc.Instance().media_new(video.url))
         if self.baseVolume:

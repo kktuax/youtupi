@@ -46,7 +46,9 @@ class OMXPlayerEngine(PlaybackEngine):
             self.stop()
         volume = self.baseVolume * 100 # OMXPlayer requires factor 100 to dB input
         playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "%d" % volume ]
-        if video.data:
+        if video.subtitles:
+            playerArgs.extend(("--subtitles", video.subtitles))
+        elif video.data:
             self.prepareSubtitles(TITLE_DISPLAY_SRT, video)
             playerArgs.extend(("--subtitles", TITLE_DISPLAY_SRT))
         playerArgs.append(video.url)

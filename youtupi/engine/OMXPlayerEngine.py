@@ -1,10 +1,11 @@
 from youtupi.engine.PlaybackEngine import PlaybackEngine
+from youtupi.modules import local
 import os, signal, subprocess, dbus, time, textwrap, codecs, getpass
 from betterprint import pprint
 
 SECONDS_FACTOR = 1000000
 DBUS_RETRY_LIMIT = 50
-TITLE_DISPLAY_SRT = "/run/shm/youtupi.srt"
+DISPLAY_SRT = "/run/shm/youtupi.srt"
 
 '''
 @author: Max
@@ -47,10 +48,11 @@ class OMXPlayerEngine(PlaybackEngine):
         volume = self.baseVolume * 100 # OMXPlayer requires factor 100 to dB input
         playerArgs = ["omxplayer", "-b", "-o", "both", "--vol", "%d" % volume ]
         if video.subtitles:
-            playerArgs.extend(("--subtitles", video.subtitles))
+            local.copyAsUtf8File(video.subtitles, DISPLAY_SRT)
+            playerArgs.extend(("--subtitles", DISPLAY_SRT))
         elif video.data:
-            self.prepareSubtitles(TITLE_DISPLAY_SRT, video)
-            playerArgs.extend(("--subtitles", TITLE_DISPLAY_SRT))
+            self.prepareSubtitles(DISPLAY_SRT, video)
+            playerArgs.extend(("--subtitles", DISPLAY_SRT))
         playerArgs.append(video.url)
         print "Running player: " + " ".join(playerArgs)
         self.player = subprocess.Popen(playerArgs, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, preexec_fn=os.setsid)
@@ -60,7 +62,7 @@ class OMXPlayerEngine(PlaybackEngine):
             try:
                 self.controller().Action(dbus.Int32("15"))
             except:
-		print "Failed sending stop signal"
+                print "Failed sending stop signal"
                 os.killpg(self.player.pid, signal.SIGTERM)
         self.player = None
 

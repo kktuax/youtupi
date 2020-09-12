@@ -9,6 +9,7 @@ def prepareVideo(video):
         if not video.subtitles and video.data['type'] == "local":
             path = os.path.splitext(video.vid)[0] + ".srt"
             if os.path.exists(path):
+                print "Found subtitles in {}".format(path)
                 video.subtitles = path
         if not video.url:
             return_url = local.getUrl(video.data)

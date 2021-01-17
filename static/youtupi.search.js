@@ -256,22 +256,25 @@ YoutubeSearch.createVideo = function(entry){
 	if(typeof entry.video != 'undefined'){
 		entry = entry.video;
 	}
+	if (typeof entry.snippet == 'undefined'){
+		return null;
+	}
 	var video = {};
 	if(typeof entry.id.videoId != 'undefined'){
 		video.id = entry.id.videoId;
 	} else {
 		try {
-      video.id = entry.snippet.resourceId.videoId;
+			video.id = entry.snippet.resourceId.videoId;
+			video.description = entry.snippet.description;
+			video.title = entry.snippet.title;
 		} catch(err) {
-      return null;
+			return null;
 		}
 	}
-	video.description = entry.snippet.description;
-	video.title = entry.snippet.title;
 	video.duration = entry.duration;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "youtube";
-  video.format = this.format;
+	video.format = this.format;
 	video.operations = [ {'name': 'download', 'text': $.i18n.prop("btn.download"), 'successMessage': $.i18n.prop("notification.download.ok")} ];
 	return video;
 };

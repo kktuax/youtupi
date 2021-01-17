@@ -264,13 +264,13 @@ YoutubeSearch.createVideo = function(entry){
 		video.id = entry.id.videoId;
 	} else {
 		try {
-			video.id = entry.snippet.resourceId.videoId;
-			video.description = entry.snippet.description;
-			video.title = entry.snippet.title;
+			video.id = entry.snippet.resourceId.videoId;			
 		} catch(err) {
 			return null;
 		}
 	}
+	video.description = entry.snippet.description;
+	video.title = entry.snippet.title;
 	video.duration = entry.duration;
 	video.thumbnail = this.thumbnailFromSnippet(entry.snippet);
 	video.type = "youtube";

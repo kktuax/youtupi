@@ -246,7 +246,7 @@ YoutubeSearch.thumbnailFromSnippet = function(snippet){
 			return snippet.thumbnails.high.url;
 		}else if(typeof snippet.thumbnails.medium != 'undefined'){
 			return snippet.thumbnails.medium.url;
-		}else{
+		}else if(typeof snippet.thumbnails.default != 'undefined'){
 			return snippet.thumbnails.default.url;
 		}
 	}

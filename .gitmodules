@@ -3,7 +3,7 @@
 	url = git://github.com/kktuax/periscope.git
 [submodule "pafy"]
 	path = pafy
-	url = https://github.com/mps-youtube/pafy.git
+	url = git://github.com/kktuax/pafy.git
 [submodule "vlc"]
 	path = vlc
 	url = https://github.com/geoffsalmon/vlc-python.git
